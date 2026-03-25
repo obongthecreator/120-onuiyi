@@ -272,10 +272,27 @@ class Stand120_Ajax_Handler {
             return;
         }
         
+        // Check if an active product with the same name already exists
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_products';
+        $existing = $wpdb->get_row($wpdb->prepare(
+            "SELECT id FROM $table WHERE name = %s AND status = 'active'",
+            $data['name']
+        ));
+        
+        if ($existing) {
+            // Update existing product instead of duplicating
+            $update_data = $data;
+            unset($update_data['status']); // Don't change status
+            Stand120_Database::update_product($existing->id, $update_data);
+            Stand120_Database::log_activity('update_product', 'stand120_products', $existing->id, null, $update_data);
+            wp_send_json_success(array('message' => 'Product updated successfully', 'product_id' => $existing->id));
+            return;
+        }
+        
         $result = Stand120_Database::add_product($data);
         
         if ($result === false) {
-            global $wpdb;
             wp_send_json_error(array('message' => 'Failed to add product: ' . $wpdb->last_error));
             return;
         }

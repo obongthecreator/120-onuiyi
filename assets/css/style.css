@@ -1219,12 +1219,13 @@ select.form-control {
     padding: 12px 24px;
     background: transparent;
     border: none;
-    color: var(--text-white);
+    color: var(--text-primary);
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
     transition: all var(--transition-fast);
     position: relative;
+    border-radius: var(--border-radius-sm);
 }
 
 .tab-btn::after {
@@ -1240,7 +1241,8 @@ select.form-control {
 }
 
 .tab-btn:hover {
-    color: var(--primary-light);
+    background: var(--primary-color);
+    color: var(--text-white);
 }
 
 .tab-btn.active {

@@ -33,21 +33,32 @@ class Stand120_Admin_Panel {
             return array('success' => false, 'message' => 'Unauthorized');
         }
         
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_products';
+        
         foreach ($products as $product) {
             $id = intval($product['id'] ?? 0);
+            $name = sanitize_text_field($product['name'] ?? '');
+            $data = array(
+                'name' => $name,
+                'price' => floatval($product['price'] ?? 0),
+                'type' => sanitize_text_field($product['type'] ?? 'menu')
+            );
             
             if ($id) {
-                Stand120_Database::update_product($id, array(
-                    'name' => sanitize_text_field($product['name'] ?? ''),
-                    'price' => floatval($product['price'] ?? 0),
-                    'type' => sanitize_text_field($product['type'] ?? 'menu')
-                ));
+                Stand120_Database::update_product($id, $data);
             } else {
-                Stand120_Database::add_product(array(
-                    'name' => sanitize_text_field($product['name'] ?? ''),
-                    'price' => floatval($product['price'] ?? 0),
-                    'type' => sanitize_text_field($product['type'] ?? 'menu')
+                // Check if active product with same name already exists
+                $existing = $wpdb->get_row($wpdb->prepare(
+                    "SELECT id FROM $table WHERE name = %s AND status = 'active'",
+                    $name
                 ));
+                
+                if ($existing) {
+                    Stand120_Database::update_product($existing->id, $data);
+                } else {
+                    Stand120_Database::add_product(array_merge($data, array('status' => 'active')));
+                }
             }
         }
         
