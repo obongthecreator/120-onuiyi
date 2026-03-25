@@ -42,13 +42,12 @@ class Stand120_Chopping_Inventory {
             $opening = $existing->opening_whole;
             $import_whole = $existing->import_whole;
         } else {
-            // Get yesterday's closing as today's opening
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date = %s",
-                $product_id, $yesterday
+            // Get most recent previous closing as today's opening
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date < %s ORDER BY chop_date DESC LIMIT 1",
+                $product_id, $date
             ));
-            $opening = $yesterday_record ? $yesterday_record->closing_whole : 0;
+            $opening = $prev_record ? $prev_record->closing_whole : 0;
             
             // Get import from import records
             $import_whole = self::get_import_whole($product_id, $date);
@@ -133,13 +132,12 @@ class Stand120_Chopping_Inventory {
                 'closing_whole' => $closing
             ), array('id' => $existing->id));
         } else {
-            // Get yesterday's closing
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date = %s",
-                $product_id, $yesterday
+            // Get most recent previous closing
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date < %s ORDER BY chop_date DESC LIMIT 1",
+                $product_id, $date
             ));
-            $opening = $yesterday_record ? $yesterday_record->closing_whole : 0;
+            $opening = $prev_record ? $prev_record->closing_whole : 0;
             
             $wpdb->insert($table, array(
                 'product_id' => $product_id,
@@ -218,13 +216,12 @@ class Stand120_Chopping_Inventory {
                     'remarks' => $record->remarks
                 );
             } else {
-                // Get yesterday's closing
-                $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-                $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                    "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date = %s",
-                    $fruit->id, $yesterday
+                // Get most recent previous closing
+                $prev_record = $wpdb->get_row($wpdb->prepare(
+                    "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date < %s ORDER BY chop_date DESC LIMIT 1",
+                    $fruit->id, $date
                 ));
-                $opening = $yesterday_record ? floatval($yesterday_record->closing_whole) : 0;
+                $opening = $prev_record ? floatval($prev_record->closing_whole) : 0;
                 
                 // Get import from import records
                 $import = self::get_import_whole($fruit->id, $date);

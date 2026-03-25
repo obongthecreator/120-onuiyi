@@ -38,13 +38,12 @@ class Stand120_Order_Preparation {
         if ($existing) {
             $opening = $existing->opening_value;
         } else {
-            // Get yesterday's closing as today's opening
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_value FROM $table WHERE product_id = %d AND prep_date = %s",
-                $product_id, $yesterday
+            // Get most recent previous closing as today's opening
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT closing_value FROM $table WHERE product_id = %d AND prep_date < %s ORDER BY prep_date DESC LIMIT 1",
+                $product_id, $date
             ));
-            $opening = $yesterday_record ? $yesterday_record->closing_value : 0;
+            $opening = $prev_record ? $prev_record->closing_value : 0;
         }
         
         // Calculate closing
@@ -150,13 +149,12 @@ class Stand120_Order_Preparation {
                     'closing' => floatval($record->closing_value)
                 );
             } else {
-                // Get yesterday's closing
-                $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-                $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                    "SELECT closing_value FROM $table WHERE product_id = %d AND prep_date = %s",
-                    $fruit->id, $yesterday
+                // Get most recent previous closing
+                $prev_record = $wpdb->get_row($wpdb->prepare(
+                    "SELECT closing_value FROM $table WHERE product_id = %d AND prep_date < %s ORDER BY prep_date DESC LIMIT 1",
+                    $fruit->id, $date
                 ));
-                $opening = $yesterday_record ? floatval($yesterday_record->closing_value) : 0;
+                $opening = $prev_record ? floatval($prev_record->closing_value) : 0;
                 
                 $data[] = array(
                     'product_id' => $fruit->id,

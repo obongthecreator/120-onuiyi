@@ -40,13 +40,12 @@ class Stand120_Stock_Inventory {
             $opening = $existing->opening_packs;
             $added = $existing->added_packs;
         } else {
-            // Get yesterday's closing as today's opening
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date = %s",
-                $product_id, $yesterday
+            // Get most recent previous closing as today's opening
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date < %s ORDER BY stock_date DESC LIMIT 1",
+                $product_id, $date
             ));
-            $opening = $yesterday_record ? $yesterday_record->closing_packs : 0;
+            $opening = $prev_record ? $prev_record->closing_packs : 0;
             
             // Get added packs from import records (for non-fruits)
             $product = Stand120_Database::get_product($product_id);
@@ -142,13 +141,12 @@ class Stand120_Stock_Inventory {
                 'closing_packs' => $closing
             ), array('id' => $existing->id));
         } else {
-            // Get yesterday's closing
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date = %s",
-                $product_id, $yesterday
+            // Get most recent previous closing
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date < %s ORDER BY stock_date DESC LIMIT 1",
+                $product_id, $date
             ));
-            $opening = $yesterday_record ? $yesterday_record->closing_packs : 0;
+            $opening = $prev_record ? $prev_record->closing_packs : 0;
             
             $wpdb->insert($table, array(
                 'product_id' => $product_id,
@@ -224,13 +222,12 @@ class Stand120_Stock_Inventory {
                     'closing' => floatval($record->closing_packs)
                 );
             } else {
-                // Get yesterday's closing
-                $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-                $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                    "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date = %s",
-                    $product->id, $yesterday
+                // Get most recent previous closing
+                $prev_record = $wpdb->get_row($wpdb->prepare(
+                    "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date < %s ORDER BY stock_date DESC LIMIT 1",
+                    $product->id, $date
                 ));
-                $opening = $yesterday_record ? floatval($yesterday_record->closing_packs) : 0;
+                $opening = $prev_record ? floatval($prev_record->closing_packs) : 0;
                 
                 // Get added from import or chopping
                 $added = 0;

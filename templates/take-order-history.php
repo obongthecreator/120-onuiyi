@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
 
 $page_title = 'Order History - 120 Stand Inventory';
 $current_user = Stand120_Auth::get_current_user_data();
+$is_admin = Stand120_Auth::is_admin();
+$is_super_admin = Stand120_Auth::is_super_admin();
 
 include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 ?>
@@ -54,6 +56,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <th>Items</th>
                     <th>Payment</th>
                     <th>Total</th>
+                    <?php if ($is_admin): ?>
+                    <th>Action</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody id="historyBody">
@@ -76,6 +81,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <script>
     let currentPage = 1;
     const perPage = 20;
+    const isAdmin = <?php echo $is_admin ? 'true' : 'false'; ?>;
+    const isSuperAdmin = <?php echo $is_super_admin ? 'true' : 'false'; ?>;
+    const todayStr = '<?php echo date('Y-m-d'); ?>';
     
     $(document).ready(function() {
         loadOrders();
@@ -96,6 +104,33 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             currentPage++;
             loadOrders();
         });
+        
+        // Delete order handler
+        $(document).on('click', '.delete-order-btn', async function() {
+            const orderId = $(this).data('order-id');
+            
+            const confirmed = await Stand120.showModal({
+                title: 'Delete Order',
+                content: '<p>Are you sure you want to delete this order? This will also update the financial summary for that day.</p>',
+                confirmText: 'Delete Order'
+            });
+            
+            if (!confirmed) return;
+            
+            Stand120.showLoading('Deleting order...');
+            Stand120.ajax('delete_order', { order_id: orderId }).then(response => {
+                Stand120.hideLoading();
+                if (response.success) {
+                    Stand120.showAlert('success', response.data.message || 'Order deleted successfully');
+                    loadOrders();
+                } else {
+                    Stand120.showAlert('danger', response.data?.message || 'Failed to delete order');
+                }
+            }).catch(() => {
+                Stand120.hideLoading();
+                Stand120.showAlert('danger', 'Failed to delete order');
+            });
+        });
     });
     
     function loadOrders() {
@@ -115,14 +150,26 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     function renderOrders(orders) {
         const $tbody = $('#historyBody');
         $tbody.empty();
+        const colSpan = isAdmin ? 8 : 7;
         
         if (orders.length === 0) {
-            $tbody.append('<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No orders found</td></tr>');
+            $tbody.append(`<tr><td colspan="${colSpan}" style="text-align: center; color: var(--text-muted);">No orders found</td></tr>`);
             return;
         }
         
         orders.forEach(order => {
             const items = order.items ? order.items.map(i => i.product_name + ' x' + i.quantity).join(', ') : '-';
+            const canDelete = isSuperAdmin || (isAdmin && order.order_date === todayStr);
+            
+            let actionCol = '';
+            if (isAdmin) {
+                if (canDelete) {
+                    actionCol = `<td><button class="btn btn-sm btn-danger delete-order-btn" data-order-id="${order.id}" style="padding: 4px 10px; border-radius: 8px; font-size: 0.8rem;"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon></button></td>`;
+                } else {
+                    actionCol = `<td><span style="color: var(--text-muted); font-size: 0.75rem;">—</span></td>`;
+                }
+            }
+            
             const row = `
                 <tr>
                     <td>#${order.id}</td>
@@ -132,6 +179,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;" title="${items}">${items}</td>
                     <td>${order.payment_method}</td>
                     <td class="formatted-number">₦${Stand120.formatNumber(order.grand_total)}</td>
+                    ${actionCol}
                 </tr>
             `;
             $tbody.append(row);

@@ -50,13 +50,12 @@ class Stand120_Financial_Summary {
                 'data' => self::get_for_date($date)
             );
         } else {
-            // Get yesterday's cash left as today's old cash
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT cash_left FROM $table WHERE summary_date = %s",
-                $yesterday
+            // Get most recent previous cash_left as today's old cash
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT cash_left FROM $table WHERE summary_date < %s ORDER BY summary_date DESC LIMIT 1",
+                $date
             ));
-            $old_cash = $yesterday_record ? floatval($yesterday_record->cash_left) : 0;
+            $old_cash = $prev_record ? floatval($prev_record->cash_left) : 0;
             
             // Get today's totals from orders
             $orders_table = $wpdb->prefix . 'stand120_orders';
@@ -181,13 +180,12 @@ class Stand120_Financial_Summary {
             $date
         ));
         
-        // Get yesterday's cash left
-        $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-        $yesterday_record = $wpdb->get_row($wpdb->prepare(
-            "SELECT cash_left FROM $table WHERE summary_date = %s",
-            $yesterday
+        // Get most recent previous cash_left
+        $prev_record = $wpdb->get_row($wpdb->prepare(
+            "SELECT cash_left FROM $table WHERE summary_date < %s ORDER BY summary_date DESC LIMIT 1",
+            $date
         ));
-        $old_cash = $yesterday_record ? floatval($yesterday_record->cash_left) : 0;
+        $old_cash = $prev_record ? floatval($prev_record->cash_left) : 0;
         
         $cash_sales = floatval($totals->cash_sales ?? 0);
         
