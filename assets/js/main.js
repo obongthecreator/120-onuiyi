@@ -1353,9 +1353,9 @@ const FinancialSummary = {
     bindEvents: function() {
         const self = this;
         
-        // Real-time calculation on extras and expenses input
-        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount');
-        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount', function() {
+        // Real-time calculation on extras, expenses, and market card cash input
+        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount, #marketCardCash');
+        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount, #marketCardCash', function() {
             self.calculateCashLeft();
             self.debouncedSave();
         });
@@ -1396,6 +1396,7 @@ const FinancialSummary = {
         $('#extrasRemark').val(data.extras_remark || '');
         $('#expensesAmount').val(data.expenses_amount || '');
         $('#expensesRemark').val(data.expenses_remark || '');
+        $('#marketCardCash').val(data.market_card_cash || '');
         
         this.calculateCashLeft();
     },
@@ -1415,10 +1416,13 @@ const FinancialSummary = {
         const extrasVal = $('#extrasAmount').val() || '0';
         const extras = parseFloat(extrasVal.toString().replace(/,/g, '')) || 0;
         
+        const marketCardCashVal = $('#marketCardCash').val() || '0';
+        const marketCardCash = parseFloat(marketCardCashVal.toString().replace(/,/g, '')) || 0;
+        
         const expensesVal = $('#expensesAmount').val() || '0';
         const expenses = parseFloat(expensesVal.toString().replace(/,/g, '')) || 0;
         
-        const cashLeft = (cashSales + oldCash + extras) - expenses;
+        const cashLeft = (cashSales + oldCash + extras + marketCardCash) - expenses;
         
         // Update cash left immediately
         $('#cashLeft').text('₦' + Stand120.formatNumber(cashLeft));
@@ -1434,7 +1438,8 @@ const FinancialSummary = {
             extras_amount: Stand120.parseNumber($('#extrasAmount').val()),
             extras_remark: $('#extrasRemark').val(),
             expenses_amount: Stand120.parseNumber($('#expensesAmount').val()),
-            expenses_remark: $('#expensesRemark').val()
+            expenses_remark: $('#expensesRemark').val(),
+            market_card_cash: Stand120.parseNumber($('#marketCardCash').val())
         });
     }
 };

@@ -22,6 +22,7 @@ class Stand120_Financial_Summary {
         $extras_remark = sanitize_textarea_field($data['extras_remark'] ?? '');
         $expenses_amount = floatval($data['expenses_amount'] ?? 0);
         $expenses_remark = sanitize_textarea_field($data['expenses_remark'] ?? '');
+        $market_card_cash = floatval($data['market_card_cash'] ?? 0);
         $staff_id = Stand120_Auth::get_current_staff_id();
         
         // Get existing record
@@ -32,7 +33,7 @@ class Stand120_Financial_Summary {
         
         if ($existing) {
             // Recalculate cash left
-            $cash_left = ($existing->cash_sales + $existing->old_cash + $extras_amount) - $expenses_amount;
+            $cash_left = ($existing->cash_sales + $existing->old_cash + $extras_amount + $market_card_cash) - $expenses_amount;
             
             // Update existing
             $wpdb->update($table, array(
@@ -40,6 +41,7 @@ class Stand120_Financial_Summary {
                 'extras_remark' => $extras_remark,
                 'expenses_amount' => $expenses_amount,
                 'expenses_remark' => $expenses_remark,
+                'market_card_cash' => $market_card_cash,
                 'cash_left' => $cash_left,
                 'staff_id' => $staff_id
             ), array('id' => $existing->id));
@@ -75,7 +77,7 @@ class Stand120_Financial_Summary {
             $cash_sales = floatval($totals->cash_sales ?? 0);
             $delivery_fees = floatval($totals->delivery_fees ?? 0);
             
-            $cash_left = ($cash_sales + $old_cash + $extras_amount) - $expenses_amount;
+            $cash_left = ($cash_sales + $old_cash + $extras_amount + $market_card_cash) - $expenses_amount;
             
             // Insert new
             $wpdb->insert($table, array(
@@ -88,6 +90,7 @@ class Stand120_Financial_Summary {
                 'extras_remark' => $extras_remark,
                 'expenses_amount' => $expenses_amount,
                 'expenses_remark' => $expenses_remark,
+                'market_card_cash' => $market_card_cash,
                 'old_cash' => $old_cash,
                 'cash_left' => $cash_left,
                 'staff_id' => $staff_id
@@ -127,7 +130,8 @@ class Stand120_Financial_Summary {
         ));
         
         if ($existing) {
-            $cash_left = (floatval($totals->cash_sales ?? 0) + $existing->old_cash + $existing->extras_amount) - $existing->expenses_amount;
+            $market_card_cash = floatval($existing->market_card_cash ?? 0);
+            $cash_left = (floatval($totals->cash_sales ?? 0) + $existing->old_cash + $existing->extras_amount + $market_card_cash) - $existing->expenses_amount;
             
             $wpdb->update($table, array(
                 'total_sales' => floatval($totals->total_sales ?? 0),
@@ -163,6 +167,7 @@ class Stand120_Financial_Summary {
                 'extras_remark' => $record->extras_remark,
                 'expenses_amount' => floatval($record->expenses_amount),
                 'expenses_remark' => $record->expenses_remark,
+                'market_card_cash' => floatval($record->market_card_cash ?? 0),
                 'old_cash' => floatval($record->old_cash),
                 'cash_left' => floatval($record->cash_left)
             );
@@ -199,6 +204,7 @@ class Stand120_Financial_Summary {
             'extras_remark' => '',
             'expenses_amount' => 0,
             'expenses_remark' => '',
+            'market_card_cash' => 0,
             'old_cash' => $old_cash,
             'cash_left' => $cash_sales + $old_cash
         );
