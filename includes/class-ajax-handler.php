@@ -163,6 +163,9 @@ class Stand120_Ajax_Handler {
             case 'get_analytics':
                 self::get_analytics();
                 break;
+            case 'get_target_recommendation':
+                self::get_target_recommendation();
+                break;
             case 'export_data':
                 self::export_data();
                 break;
@@ -844,6 +847,10 @@ class Stand120_Ajax_Handler {
                     $date_from = date('Y-m-01', $reference_timestamp);
                     $date_to = date('Y-m-t', $reference_timestamp);
                     break;
+                case 'yearly':
+                    $date_from = date('Y-01-01', $reference_timestamp);
+                    $date_to = date('Y-12-31', $reference_timestamp);
+                    break;
             }
         }
         
@@ -1011,6 +1018,51 @@ class Stand120_Ajax_Handler {
                     $date_from, $date_to
                 ));
                 
+                // Expenses from the expenses table
+                $expenses_table = $wpdb->prefix . 'stand120_expenses';
+                $analytics['detailed_expenses'] = $wpdb->get_results($wpdb->prepare(
+                    "SELECT e.description, SUM(e.total) as total_amount, SUM(e.quantity) as total_qty
+                    FROM $expenses_table e
+                    WHERE e.expense_date BETWEEN %s AND %s
+                    GROUP BY e.description
+                    ORDER BY total_amount DESC",
+                    $date_from, $date_to
+                ));
+
+                $analytics['total_expenses'] = $wpdb->get_var($wpdb->prepare(
+                    "SELECT SUM(total) FROM $expenses_table WHERE expense_date BETWEEN %s AND %s",
+                    $date_from, $date_to
+                )) ?: 0;
+
+                // Revenue = total sales
+                $analytics['revenue'] = $analytics['total_sales'];
+
+                // Total expenses from both financial_summary and expenses table
+                $fin_expenses = 0;
+                if ($analytics['financials']) {
+                    $fin_expenses = floatval($analytics['financials']->expenses_amount ?? 0);
+                }
+                $analytics['total_all_expenses'] = $fin_expenses + floatval($analytics['total_expenses']);
+
+                // Profit = Revenue - Total Expenses
+                $analytics['profit'] = floatval($analytics['revenue']) - floatval($analytics['total_all_expenses']);
+
+                // Loss (if profit is negative)
+                $analytics['loss'] = $analytics['profit'] < 0 ? abs($analytics['profit']) : 0;
+
+                // Product profitability
+                $analytics['product_revenue'] = $wpdb->get_results($wpdb->prepare(
+                    "SELECT oi.product_name, SUM(oi.quantity) as qty_sold, SUM(oi.total) as revenue,
+                        p.price as unit_price
+                    FROM $items_table oi
+                    JOIN $orders_table o ON oi.order_id = o.id
+                    LEFT JOIN {$products_table} p ON oi.product_id = p.id AND p.status = 'active'
+                    WHERE o.order_date BETWEEN %s AND %s
+                    GROUP BY oi.product_name, p.price
+                    ORDER BY revenue DESC",
+                    $date_from, $date_to
+                ));
+                
                 $analytics['period'] = array(
                     'date_from' => $date_from,
                     'date_to' => $date_to,
@@ -1135,6 +1187,77 @@ class Stand120_Ajax_Handler {
         } else {
             wp_send_json_error($result);
         }
+    }
+    
+    /**
+     * Get target recommendation
+     */
+    private static function get_target_recommendation() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized'));
+            return;
+        }
+        
+        $target = floatval($_POST['target_amount'] ?? 0);
+        if ($target <= 0) {
+            wp_send_json_error(array('message' => 'Please enter a valid target amount'));
+            return;
+        }
+        
+        global $wpdb;
+        $products_table = $wpdb->prefix . 'stand120_products';
+        $items_table = $wpdb->prefix . 'stand120_order_items';
+        $orders_table = $wpdb->prefix . 'stand120_orders';
+        
+        // Get menu products with their prices and recent sales data
+        $products = $wpdb->get_results(
+            "SELECT p.id, p.name, p.price, p.type,
+                COALESCE((SELECT AVG(oi.quantity) FROM $items_table oi JOIN $orders_table o ON oi.order_id = o.id WHERE oi.product_id = p.id AND o.order_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)), 0) as avg_daily_sales
+            FROM $products_table p
+            WHERE p.status = 'active' AND p.price > 0
+            ORDER BY p.price DESC"
+        );
+        
+        // Suggest 20% above average daily sales, or at least 1
+        $target_sales_multiplier = 1.2;
+        
+        // Calculate recommendation: distribute target across products based on avg sales
+        $recommendations = array();
+        $remaining = $target;
+        
+        foreach ($products as $product) {
+            if ($remaining <= 0) break;
+            $price = floatval($product->price);
+            if ($price <= 0) continue;
+            
+            $avg = floatval($product->avg_daily_sales);
+            $suggested_qty = max(1, round($avg > 0 ? $avg * $target_sales_multiplier : 1));
+            $product_total = $price * $suggested_qty;
+            
+            if ($product_total > $remaining) {
+                $suggested_qty = max(1, ceil($remaining / $price));
+                $product_total = $price * $suggested_qty;
+            }
+            
+            $recommendations[] = array(
+                'product_name' => $product->name,
+                'price' => $price,
+                'suggested_qty' => $suggested_qty,
+                'projected_revenue' => $product_total,
+                'avg_daily_sales' => round($avg, 1)
+            );
+            
+            $remaining -= $product_total;
+        }
+        
+        $total_projected = array_sum(array_column($recommendations, 'projected_revenue'));
+        
+        wp_send_json_success(array(
+            'target' => $target,
+            'recommendations' => $recommendations,
+            'total_projected' => $total_projected,
+            'achievable' => $total_projected >= $target
+        ));
     }
     
     private static function clear_all_records() {
