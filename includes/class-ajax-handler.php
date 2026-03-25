@@ -1370,16 +1370,13 @@ class Stand120_Ajax_Handler {
         );
         
         // Log activity
-        $activity_table = $wpdb->prefix . 'stand120_activity_log';
-        if ($wpdb->get_var("SHOW TABLES LIKE '$activity_table'") === $activity_table) {
-            $user = wp_get_current_user();
-            $wpdb->insert($activity_table, array(
-                'user_id' => get_current_user_id(),
-                'action' => 'delete_order',
-                'description' => sprintf('Deleted order #%d (₦%s) from %s', $order_id, number_format($order->grand_total, 2), $order_date),
-                'created_at' => current_time('mysql')
-            ));
-        }
+        Stand120_Database::log_activity(
+            'delete_order',
+            'stand120_orders',
+            $order_id,
+            array('grand_total' => $order->grand_total, 'order_date' => $order_date),
+            null
+        );
         
         wp_send_json_success(array(
             'message' => sprintf('Order #%d deleted successfully. Financial summary for %s has been recalculated.', $order_id, $order_date)
@@ -1429,9 +1426,12 @@ class Stand120_Ajax_Handler {
         $total_pages = max(1, ceil($total / $per_page));
         
         // Get orders
+        $staff_table = $wpdb->prefix . 'stand120_staff';
         $query = "SELECT o.*, 
+                    s.full_name as staff_name,
                     (SELECT COUNT(*) FROM $items_table WHERE order_id = o.id) as item_count
                   FROM $orders_table o 
+                  LEFT JOIN $staff_table s ON o.staff_id = s.id
                   WHERE $where 
                   ORDER BY o.order_date DESC, o.id DESC 
                   LIMIT %d OFFSET %d";
@@ -1497,15 +1497,13 @@ class Stand120_Ajax_Handler {
         }
         
         // Log activity
-        $activity_table = $wpdb->prefix . 'stand120_activity_log';
-        if ($wpdb->get_var("SHOW TABLES LIKE '$activity_table'") === $activity_table) {
-            $wpdb->insert($activity_table, array(
-                'user_id' => get_current_user_id(),
-                'action' => 'update_financial_field',
-                'description' => sprintf('Updated %s to %s for date %s', $field_name, $field_value, $date),
-                'created_at' => current_time('mysql')
-            ));
-        }
+        Stand120_Database::log_activity(
+            'update_financial_field',
+            'stand120_financial_summary',
+            null,
+            array('field' => $field_name, 'date' => $date),
+            array('field' => $field_name, 'value' => $field_value, 'date' => $date)
+        );
         
         wp_send_json_success(array(
             'message' => sprintf('Field "%s" updated successfully for %s', $field_name, $date)
