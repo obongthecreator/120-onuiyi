@@ -862,6 +862,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             return;
         }
 
+        const $btn = $('#calculateTarget');
+        $btn.prop('disabled', true).html('<iconify-icon icon="solar:refresh-linear" class="spin"></iconify-icon> Calculating...');
+
         Stand120.ajax('get_target_recommendation', {
             target_amount: targetAmount
         }).then(response => {
@@ -873,8 +876,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     ? '<span style="color: #4caf50;">✓ Target is achievable</span>'
                     : '<span style="color: #ff9800;">⚠ Target may not be fully achievable with current products</span>';
                 $('#targetSummary').html(
-                    'Target: ₦' + Stand120.formatNumber(data.target) + ' | ' +
-                    'Projected Total: ₦' + Stand120.formatNumber(data.total_projected) + ' | ' +
+                    'Target: <span class="naira">₦</span><strong>' + Stand120.formatNumber(data.target) + '</strong> | ' +
+                    'Projected Total: <span class="naira">₦</span><strong>' + Stand120.formatNumber(data.total_projected) + '</strong> | ' +
                     statusText
                 );
 
@@ -890,11 +893,16 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         '</tr>');
                     });
                 } else {
-                    $tbody.append('<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No products available</td></tr>');
+                    $tbody.append('<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No products available for recommendation</td></tr>');
                 }
             } else {
-                Stand120.showNotification(response.data?.message || 'Failed to calculate', 'error');
+                Stand120.showNotification(response.data?.message || 'Failed to calculate target recommendation', 'error');
             }
+        }).catch(function(error) {
+            Stand120.showNotification('Network error — please try again', 'error');
+            console.error('Target recommendation error:', error);
+        }).finally(function() {
+            $btn.prop('disabled', false).html('<iconify-icon icon="solar:calculator-linear"></iconify-icon> Calculate');
         });
     }
 
@@ -944,7 +952,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     data.product_revenue.forEach(product => {
                         $revenueBody.append('<tr>' +
                             '<td>' + product.product_name + '</td>' +
-                            '<td>' + Stand120.formatNumber(product.qty_sold) + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(product.qty_sold) + '</td>' +
                             '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(product.unit_price || 0) + '</td>' +
                             '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(product.revenue) + '</td>' +
                         '</tr>');
@@ -959,7 +967,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     data.detailed_expenses.forEach(exp => {
                         $expBody.append('<tr>' +
                             '<td>' + exp.description + '</td>' +
-                            '<td>' + Stand120.formatNumber(exp.total_qty) + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(exp.total_qty) + '</td>' +
                             '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(exp.total_amount) + '</td>' +
                         '</tr>');
                     });
@@ -1084,7 +1092,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     data.top_products.forEach(product => {
                         $productsBody.append('<tr>' +
                             '<td>' + product.product_name + '</td>' +
-                            '<td>' + Stand120.formatNumber(product.qty_sold) + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(product.qty_sold) + '</td>' +
                             '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(product.revenue) + '</td>' +
                         '</tr>');
                     });

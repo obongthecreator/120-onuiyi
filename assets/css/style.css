@@ -601,11 +601,13 @@ select.form-control {
     cursor: not-allowed;
 }
 
-/* Number Formatting */
+/* Number Formatting - uses Inter which supports weight 900, with tabular-nums for alignment */
 .formatted-number {
-    font-family: 'Courier New', monospace;
-    font-weight: 800;
-    font-size: 1rem;
+    font-family: 'Inter', 'Noto Sans', sans-serif;
+    font-weight: 900 !important;
+    font-size: 1.05rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
 }
 
 /* Bold prices, quantities, amounts across all forms */
@@ -615,7 +617,7 @@ select.form-control {
 .expense-qty,
 .table-input,
 .product-price {
-    font-weight: 800 !important;
+    font-weight: 900 !important;
 }
 
 /* Naira symbol stays normal weight */
@@ -687,8 +689,9 @@ select.form-control {
 
 .grand-total-value {
     font-size: 1.6rem;
-    font-weight: 800;
-    font-family: 'Courier New', monospace;
+    font-weight: 900 !important;
+    font-family: 'Inter', 'Noto Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
 }
 
 /* History Button */
@@ -901,9 +904,10 @@ select.form-control {
 
 .summary-card-value {
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 900 !important;
     color: var(--text-primary);
-    font-family: 'Courier New', monospace;
+    font-family: 'Inter', 'Noto Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
 }
 
 /* Status Badge */
@@ -1614,7 +1618,7 @@ select.form-control {
 
 .profile-stat-value {
     font-size: 1.8rem;
-    font-weight: 800;
+    font-weight: 900 !important;
     color: var(--primary-color);
 }
 

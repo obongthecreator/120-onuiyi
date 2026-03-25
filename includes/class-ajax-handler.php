@@ -1261,7 +1261,7 @@ class Stand120_Ajax_Handler {
      */
     private static function get_target_recommendation() {
         if (!Stand120_Auth::is_admin()) {
-            wp_send_json_error(array('message' => 'Unauthorized'));
+            wp_send_json_error(array('message' => 'Admin access required'));
             return;
         }
         
@@ -1284,6 +1284,16 @@ class Stand120_Ajax_Handler {
             WHERE p.status = 'active' AND p.price > 0
             ORDER BY p.price DESC"
         );
+        
+        if (!$products || !is_array($products) || count($products) === 0) {
+            wp_send_json_success(array(
+                'target' => $target,
+                'recommendations' => array(),
+                'total_projected' => 0,
+                'achievable' => false
+            ));
+            return;
+        }
         
         // Suggest 20% above average daily sales, or at least 1
         $target_sales_multiplier = 1.2;
