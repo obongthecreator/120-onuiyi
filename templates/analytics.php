@@ -232,7 +232,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <table class="table" id="prepAnalyticsTable">
             <thead>
                 <tr>
-                    <th>Fruit</th>
+                    <th>Menu Item</th>
                     <th>Total Added</th>
                     <th>Total Sold</th>
                     <th>Closing</th>
