@@ -298,9 +298,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </div>
         
         <div id="orderPagination" class="pagination" style="margin-top: 16px;">
-            <button class="pagination-btn" id="prevOrderPage" disabled>Previous</button>
+            <button class="pagination-btn" id="prevOrderPage" disabled><iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> Previous</button>
             <span class="pagination-info">Page <span id="orderCurrentPage">1</span> of <span id="orderTotalPages">1</span></span>
-            <button class="pagination-btn" id="nextOrderPage">Next</button>
+            <button class="pagination-btn" id="nextOrderPage">Next <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></button>
         </div>
     </div>
 </div>

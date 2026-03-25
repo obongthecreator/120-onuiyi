@@ -52,7 +52,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <iconify-icon icon="solar:list-1-linear"></iconify-icon>
+            <iconify-icon icon="solar:list-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Items</span>
         <span id="totalItems" class="summary-card-value">0</span>
