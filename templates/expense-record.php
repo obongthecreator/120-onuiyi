@@ -152,7 +152,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 $(this).closest('tr').remove();
                 recalculate();
             } else {
-                Stand120.showAlert('error', 'At least one expense row is required.');
+                Stand120.showAlert('danger', 'At least one expense row is required.');
             }
         });
         
@@ -177,13 +177,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 
                 if (desc === '') {
                     valid = false;
-                    Stand120.showAlert('error', 'Please enter a description for all expense items.');
+                    Stand120.showAlert('danger', 'Please enter a description for all expense items.');
                     return false;
                 }
                 
                 if (amount <= 0) {
                     valid = false;
-                    Stand120.showAlert('error', 'Please enter a valid amount for "' + desc + '".');
+                    Stand120.showAlert('danger', 'Please enter a valid amount for "' + desc + '".');
                     return false;
                 }
                 
@@ -198,13 +198,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             if (!valid) return;
             
             if (items.length === 0) {
-                Stand120.showAlert('error', 'Please add at least one expense item.');
+                Stand120.showAlert('danger', 'Please add at least one expense item.');
                 return;
             }
             
             const date = $('#expenseDate').val();
             if (!date) {
-                Stand120.showAlert('error', 'Please select a date.');
+                Stand120.showAlert('danger', 'Please select a date.');
                 return;
             }
             
@@ -220,10 +220,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     addRow();
                     $('#grandTotal').text('₦0');
                 } else {
-                    Stand120.showAlert('error', response.data || 'Failed to submit expenses.');
+                    Stand120.showAlert('danger', response.data || 'Failed to submit expenses.');
                 }
             }).catch(() => {
-                Stand120.showAlert('error', 'An error occurred. Please try again.');
+                Stand120.showAlert('danger', 'An error occurred. Please try again.');
             });
         });
     });

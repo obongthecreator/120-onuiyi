@@ -116,6 +116,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </span>
     </a>
     
+    <!-- Expense Record -->
+    <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" class="home-card">
+        <div class="home-card-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <h3>Expense Record</h3>
+        <p>Record daily expenses with description, amount, and quantity. View expense history and totals.</p>
+        <span class="home-card-btn">
+            <i class="fas fa-arrow-right"></i> Open
+        </span>
+    </a>
+    
     <!-- Financial Summary -->
     <a href="<?php echo home_url('/120-stand/financial-summary/'); ?>" class="home-card">
         <div class="home-card-icon">
