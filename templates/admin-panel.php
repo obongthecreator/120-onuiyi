@@ -156,7 +156,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 <table class="table" id="prepOpeningTable">
                     <thead>
                         <tr>
-                            <th>Fruit</th>
+                            <th>Menu Item</th>
                             <th>Opening Value (Cup/Bottle)</th>
                         </tr>
                     </thead>

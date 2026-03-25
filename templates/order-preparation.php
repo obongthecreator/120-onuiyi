@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 $page_title = 'Order Preparation - 120 Stand Inventory';
 $current_user = Stand120_Auth::get_current_user_data();
 $is_admin = Stand120_Auth::is_admin();
-$fruits = Stand120_Database::get_fruits();
+$menu_items = Stand120_Database::get_menu_items();
 $today = date('Y-m-d');
 
 include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
@@ -52,7 +52,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <div class="glass-card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: var(--primary-color);">
-            <iconify-icon icon="solar:leaf-linear"></iconify-icon> Fruit Preparation Tracking
+            <iconify-icon icon="solar:chef-hat-linear"></iconify-icon> Menu Item Preparation Tracking
         </h3>
         <input type="date" id="prepDate" class="form-control" value="<?php echo $today; ?>" style="max-width: 200px;">
     </div>
@@ -69,11 +69,12 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <table class="table" id="prepTable">
             <thead>
                 <tr>
-                    <th>Fruit</th>
+                    <th>Menu Item</th>
                     <th>Opening (Cup/Bottle)</th>
                     <th>Total Added</th>
                     <th>Total Sold</th>
                     <th>Closing</th>
+                    <th>Remarks</th>
                 </tr>
             </thead>
             <tbody>
@@ -81,6 +82,17 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             </tbody>
         </table>
     </div>
+    
+    <div class="form-group" style="margin-top: 20px;">
+        <label class="form-label">
+            <iconify-icon icon="solar:document-text-linear"></iconify-icon> Staff Remarks
+        </label>
+        <textarea id="prepRemarks" class="form-control" rows="3" placeholder="Add any remarks or notes here..." style="resize: vertical;"></textarea>
+    </div>
+    
+    <button id="savePrepRemarks" class="btn btn-success" style="margin-top: 12px;">
+        <iconify-icon icon="solar:diskette-linear"></iconify-icon> Save Remarks
+    </button>
 </div>
 
 <script>

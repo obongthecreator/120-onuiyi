@@ -21,6 +21,7 @@ class Stand120_Order_Preparation {
         $date = sanitize_text_field($data['date'] ?? date('Y-m-d'));
         $total_added = floatval($data['total_added'] ?? 0);
         $total_sold = floatval($data['total_sold'] ?? 0);
+        $remarks = sanitize_textarea_field($data['remarks'] ?? '');
         $staff_id = Stand120_Auth::get_current_staff_id();
         
         if (!$product_id) {
@@ -55,6 +56,7 @@ class Stand120_Order_Preparation {
                 'total_added' => $total_added,
                 'total_sold' => $total_sold,
                 'closing_value' => $closing,
+                'remarks' => $remarks,
                 'staff_id' => $staff_id
             ), array('id' => $existing->id));
         } else {
@@ -66,6 +68,7 @@ class Stand120_Order_Preparation {
                 'total_added' => $total_added,
                 'total_sold' => $total_sold,
                 'closing_value' => $closing,
+                'remarks' => $remarks,
                 'staff_id' => $staff_id
             ));
         }
@@ -77,7 +80,8 @@ class Stand120_Order_Preparation {
                 'opening' => $opening,
                 'total_added' => $total_added,
                 'total_sold' => $total_sold,
-                'closing' => $closing
+                'closing' => $closing,
+                'remarks' => $remarks
             )
         );
     }
@@ -128,41 +132,43 @@ class Stand120_Order_Preparation {
         $table = $wpdb->prefix . 'stand120_order_preparation';
         $products_table = $wpdb->prefix . 'stand120_products';
         
-        // Get all fruit products
-        $fruits = Stand120_Database::get_fruits();
+        // Get all menu item products
+        $menu_items = Stand120_Database::get_menu_items();
         
         $data = array();
         
-        foreach ($fruits as $fruit) {
+        foreach ($menu_items as $item) {
             $record = $wpdb->get_row($wpdb->prepare(
                 "SELECT * FROM $table WHERE product_id = %d AND prep_date = %s",
-                $fruit->id, $date
+                $item->id, $date
             ));
             
             if ($record) {
                 $data[] = array(
-                    'product_id' => $fruit->id,
-                    'product_name' => $fruit->name,
+                    'product_id' => $item->id,
+                    'product_name' => $item->name,
                     'opening' => floatval($record->opening_value),
                     'total_added' => floatval($record->total_added),
                     'total_sold' => floatval($record->total_sold),
-                    'closing' => floatval($record->closing_value)
+                    'closing' => floatval($record->closing_value),
+                    'remarks' => $record->remarks ?? ''
                 );
             } else {
                 // Get most recent previous closing
                 $prev_record = $wpdb->get_row($wpdb->prepare(
                     "SELECT closing_value FROM $table WHERE product_id = %d AND prep_date < %s ORDER BY prep_date DESC LIMIT 1",
-                    $fruit->id, $date
+                    $item->id, $date
                 ));
                 $opening = $prev_record ? floatval($prev_record->closing_value) : 0;
                 
                 $data[] = array(
-                    'product_id' => $fruit->id,
-                    'product_name' => $fruit->name,
+                    'product_id' => $item->id,
+                    'product_name' => $item->name,
                     'opening' => $opening,
                     'total_added' => 0,
                     'total_sold' => 0,
-                    'closing' => $opening
+                    'closing' => $opening,
+                    'remarks' => ''
                 );
             }
         }

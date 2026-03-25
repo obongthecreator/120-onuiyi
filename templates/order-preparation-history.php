@@ -44,11 +44,12 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Fruit</th>
+                    <th>Menu Item</th>
                     <th>Opening</th>
                     <th>Added</th>
                     <th>Sold</th>
                     <th>Closing</th>
+                    <th>Remarks</th>
                     <th>Staff</th>
                 </tr>
             </thead>
@@ -84,7 +85,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             if (response.success) {
                 const $tbody = $('#historyBody').empty();
                 if (response.data.records.length === 0) {
-                    $tbody.append('<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">No records found</td></tr>');
+                    $tbody.append('<tr><td colspan="8" style="text-align:center;color:var(--text-muted)">No records found</td></tr>');
                 } else {
                     response.data.records.forEach(r => {
                         $tbody.append(`<tr>
@@ -94,6 +95,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             <td>${Stand120.formatNumber(r.total_added)}</td>
                             <td>${Stand120.formatNumber(r.total_sold)}</td>
                             <td>${Stand120.formatNumber(r.closing_value)}</td>
+                            <td>${r.remarks || '-'}</td>
                             <td>${r.staff_name || '-'}</td>
                         </tr>`);
                     });

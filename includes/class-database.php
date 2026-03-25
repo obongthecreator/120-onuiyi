@@ -99,6 +99,7 @@ class Stand120_Database {
             total_added decimal(10,2) DEFAULT 0,
             total_sold decimal(10,2) DEFAULT 0,
             closing_value decimal(10,2) DEFAULT 0,
+            remarks text,
             staff_id mediumint(9),
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),

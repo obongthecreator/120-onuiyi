@@ -876,6 +876,20 @@ const OrderPreparation = {
         $(document).on('input.orderprep change.orderprep keyup.orderprep', '.prep-added, .prep-sold, .prep-opening', function(e) {
             self.handleInputChange(e);
         });
+        
+        // Auto-save remarks per row on change
+        $(document).off('input.orderprep', '.prep-remarks');
+        $(document).on('input.orderprep', '.prep-remarks', function(e) {
+            const $row = $(e.target).closest('tr');
+            clearTimeout($row.data('saveTimeout'));
+            $row.data('saveTimeout', setTimeout(() => self.saveRow($row), 500));
+        });
+        
+        // Save general remarks button
+        $(document).off('click.orderprep', '#savePrepRemarks');
+        $(document).on('click.orderprep', '#savePrepRemarks', function() {
+            self.saveGeneralRemarks();
+        });
     },
     
     loadData: function() {
@@ -896,7 +910,7 @@ const OrderPreparation = {
         const isAdmin = Stand120.config.is_admin;
         
         if (!this.data || this.data.length === 0) {
-            $tbody.append('<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No fruits found. Admin can add fruits in the Admin Panel.</td></tr>');
+            $tbody.append('<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No menu items found. Admin can add menu items in the Admin Panel.</td></tr>');
             return;
         }
         
@@ -928,6 +942,10 @@ const OrderPreparation = {
                             data-save-action="save_order_preparation">
                     </td>
                     <td class="prep-closing formatted-number">${Stand120.formatNumber(closing)}</td>
+                    <td>
+                        <input type="text" class="table-input prep-remarks" 
+                            value="${item.remarks || ''}" placeholder="Add remarks...">
+                    </td>
                 </tr>
             `;
             $tbody.append(row);
@@ -946,8 +964,6 @@ const OrderPreparation = {
         // Update closing value immediately
         $row.find('.prep-closing').text(Stand120.formatNumber(closing));
         
-        // Log for debugging
-        
         // Auto-save with debounce
         clearTimeout($row.data('saveTimeout'));
         $row.data('saveTimeout', setTimeout(() => this.saveRow($row), 500));
@@ -957,19 +973,45 @@ const OrderPreparation = {
         const productId = $row.data('product-id');
         const added = parseFloat($row.find('.prep-added').val()) || 0;
         const sold = parseFloat($row.find('.prep-sold').val()) || 0;
+        const remarks = $row.find('.prep-remarks').val() || '';
         const date = $('#prepDate').val() || new Date().toISOString().split('T')[0];
         
         Stand120.ajax('save_order_preparation', {
             product_id: productId,
             date: date,
             total_added: added,
-            total_sold: sold
+            total_sold: sold,
+            remarks: remarks
         }).then(response => {
             if (response.success) {
                 $row.addClass('saved');
                 setTimeout(() => $row.removeClass('saved'), 500);
             }
         });
+    },
+    
+    saveGeneralRemarks: function() {
+        const generalRemarks = $('#prepRemarks').val() || '';
+        const date = $('#prepDate').val() || new Date().toISOString().split('T')[0];
+        
+        // Save the general remarks to all rows that have data
+        const $rows = $('#prepTable tbody tr[data-product-id]');
+        if ($rows.length === 0) {
+            Stand120.showAlert('warning', 'No menu items to save remarks for');
+            return;
+        }
+        
+        // Append general remarks to the first product row
+        const $firstRow = $rows.first();
+        const productId = $firstRow.data('product-id');
+        const existingRemarks = $firstRow.find('.prep-remarks').val() || '';
+        const combinedRemarks = generalRemarks ? (existingRemarks ? existingRemarks + ' | ' + generalRemarks : generalRemarks) : existingRemarks;
+        
+        $firstRow.find('.prep-remarks').val(combinedRemarks);
+        this.saveRow($firstRow);
+        
+        Stand120.showAlert('success', 'Remarks saved successfully');
+        $('#prepRemarks').val('');
     }
 };
 
