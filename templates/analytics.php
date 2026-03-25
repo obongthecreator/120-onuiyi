@@ -820,9 +820,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             '<tr>' +
                             '<td>' + productName + '</td>' +
                             '<td>' + bestTime + '</td>' +
-                            '<td>' + Stand120.formatNumber(peakQty) + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(peakQty) + '</td>' +
                             '<td>' + bestDay + '</td>' +
-                            '<td>' + Stand120.formatNumber(peakDayQty) + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(peakDayQty) + '</td>' +
                             '</tr>'
                         );
 
@@ -884,8 +884,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         $tbody.append('<tr>' +
                             '<td>' + rec.product_name + '</td>' +
                             '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(rec.price) + '</td>' +
-                            '<td>' + rec.suggested_qty + '</td>' +
-                            '<td>' + rec.avg_daily_sales + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(rec.suggested_qty) + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(rec.avg_daily_sales) + '</td>' +
                             '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(rec.projected_revenue) + '</td>' +
                         '</tr>');
                     });
@@ -973,7 +973,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     data.staff_performance.forEach(staff => {
                         $staffBody.append('<tr>' +
                             '<td>' + staff.full_name + '</td>' +
-                            '<td>' + Stand120.formatNumber(staff.order_count || 0) + '</td>' +
+                            '<td class="formatted-number">' + Stand120.formatNumber(staff.order_count || 0) + '</td>' +
                             '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(staff.total_sales || 0) + '</td>' +
                         '</tr>');
                     });
