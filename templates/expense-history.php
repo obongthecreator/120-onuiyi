@@ -192,8 +192,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 <td>${expense.staff_name || '-'}</td>
                 <td>${expense.description}</td>
                 <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(amount)}</td>
-                <td>${qty}</td>
-                <td class="formatted-number" style="font-weight: 600;"><span class="naira">₦</span>${Stand120.formatNumber(total)}</td>
+                <td class="formatted-number">${qty}</td>
+                <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(total)}</td>
                 ${actionCol}
             </tr>`);
         });

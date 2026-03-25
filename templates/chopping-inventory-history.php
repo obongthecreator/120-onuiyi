@@ -92,11 +92,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         $tbody.append(`<tr>
                             <td>${r.chop_date}</td>
                             <td>${r.product_name}</td>
-                            <td>${Stand120.formatNumber(r.opening_whole)}</td>
-                            <td>${Stand120.formatNumber(r.import_whole)}</td>
-                            <td>${Stand120.formatNumber(r.prepared_whole)}</td>
-                            <td>${Stand120.formatNumber(r.closing_whole)}</td>
-                            <td>${Stand120.formatNumber(r.packs_gotten)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.opening_whole)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.import_whole)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.prepared_whole)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.closing_whole)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.packs_gotten)}</td>
                             <td>${r.remarks || '-'}</td>
                             <td>${r.staff_name || '-'}</td>
                         </tr>`);

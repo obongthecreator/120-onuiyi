@@ -82,7 +82,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         
         <div style="text-align: right; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-glass);">
             <span style="font-size: 1.1rem; color: var(--text-secondary);">Subtotal: </span>
-            <span id="subtotal" class="formatted-number" style="font-size: 1.3rem; font-weight: 600;"><span class="naira">₦</span>0</span>
+            <span id="subtotal" class="formatted-number" style="font-size: 1.3rem;"><span class="naira">₦</span>0</span>
         </div>
     </div>
     

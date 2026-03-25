@@ -92,10 +92,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             <td>${r.stock_date}</td>
                             <td>${r.product_name}</td>
                             <td><span class="badge badge-${r.product_type}">${r.product_type}</span></td>
-                            <td>${Stand120.formatNumber(r.opening_packs)}</td>
-                            <td>${Stand120.formatNumber(r.added_packs)}</td>
-                            <td>${Stand120.formatNumber(r.used_packs)}</td>
-                            <td>${Stand120.formatNumber(r.closing_packs)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.opening_packs)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.added_packs)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.used_packs)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.closing_packs)}</td>
                             <td>${r.staff_name || '-'}</td>
                         </tr>`);
                     });

@@ -96,7 +96,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.extras_amount)}</td>
                             <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.expenses_amount)}</td>
                             <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.old_cash)}</td>
-                            <td class="formatted-number" style="font-weight:600;color:var(--primary-color)"><span class="naira">₦</span>${Stand120.formatNumber(r.cash_left)}</td>
+                            <td class="formatted-number" style="color:var(--primary-color)"><span class="naira">₦</span>${Stand120.formatNumber(r.cash_left)}</td>
                         </tr>`);
                     });
                 }

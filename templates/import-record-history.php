@@ -92,7 +92,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             <td>${r.import_date}</td>
                             <td>${r.product_name}</td>
                             <td><span class="badge badge-${r.product_type}">${r.product_type}</span></td>
-                            <td>${Stand120.formatNumber(r.quantity_imported)}</td>
+                            <td class="formatted-number">${Stand120.formatNumber(r.quantity_imported)}</td>
                             <td><span class="status-badge ${statusClass}">${r.sync_status}</span></td>
                             <td>${r.staff_name || '-'}</td>
                             <td>${r.updated_at || '-'}</td>

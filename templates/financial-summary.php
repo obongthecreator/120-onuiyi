@@ -70,7 +70,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         <iconify-icon icon="solar:graph-up-linear" style="color: var(--primary-color);"></iconify-icon>
                         Total Sales
                     </td>
-                    <td id="totalSales" class="formatted-number" style="font-size: 1.2rem; font-weight: 600;"><span class="naira">₦</span>0</td>
+                    <td id="totalSales" class="formatted-number" style="font-size: 1.2rem;"><span class="naira">₦</span>0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
