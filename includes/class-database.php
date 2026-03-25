@@ -175,6 +175,7 @@ class Stand120_Database {
             extras_remark text,
             expenses_amount decimal(10,2) DEFAULT 0,
             expenses_remark text,
+            market_card_cash decimal(10,2) DEFAULT 0,
             old_cash decimal(10,2) DEFAULT 0,
             cash_left decimal(10,2) DEFAULT 0,
             staff_id mediumint(9),
