@@ -116,13 +116,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </span>
     </a>
     
-    <!-- Expense Record -->
+    <!-- Market Expense -->
     <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" class="home-card">
         <div class="home-card-icon">
             <iconify-icon icon="solar:document-text-linear"></iconify-icon>
         </div>
-        <h3>Expense Record</h3>
-        <p>Record daily expenses with description, amount, and quantity. View expense history and totals.</p>
+        <h3>Market Expense</h3>
+        <p>Record daily market expenses with description, amount, and quantity. View expense history and totals.</p>
         <span class="home-card-btn">
             <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
@@ -141,6 +141,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </a>
     
     <?php if ($is_admin): ?>
+    <!-- Reconciliation Calendar -->
+    <a href="<?php echo home_url('/120-stand/reconciliation/'); ?>" class="home-card">
+        <div class="home-card-icon">
+            <iconify-icon icon="solar:calendar-check-linear"></iconify-icon>
+        </div>
+        <h3>Reconciliation</h3>
+        <p>Review and confirm daily records. Two admins must verify each day's records for accountability.</p>
+        <span class="home-card-btn">
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
+        </span>
+    </a>
+    
     <!-- Admin Panel -->
     <a href="<?php echo home_url('/120-stand/admin-panel/'); ?>" class="home-card">
         <div class="home-card-icon">

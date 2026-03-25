@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$page_title = 'Expense Record - 120 Stand Inventory';
+$page_title = 'Market Expense - 120 Stand Inventory';
 $current_user = Stand120_Auth::get_current_user_data();
 $is_admin = Stand120_Auth::is_admin();
 $today = date('Y-m-d');
@@ -41,7 +41,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
         <iconify-icon icon="solar:document-text-linear"></iconify-icon>
-        Expense Record
+        Market Expense
     </h1>
     <div style="display: flex; gap: 12px; align-items: center;">
         <input type="date" id="expenseDate" class="form-control" value="<?php echo $today; ?>" style="max-width: 200px;">
@@ -55,7 +55,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <form id="expenseForm">
     <div class="glass-card">
         <h3 style="margin-bottom: 16px; color: var(--primary-color);">
-            <iconify-icon icon="solar:list-linear"></iconify-icon> Expense Items
+            <iconify-icon icon="solar:list-linear"></iconify-icon> Market Expense Items
         </h3>
         
         <div class="table-responsive">
@@ -77,7 +77,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         
         <div style="margin-top: 16px;">
             <button type="button" id="addExpenseRow" class="btn btn-primary">
-                <iconify-icon icon="solar:add-circle-linear"></iconify-icon> Add Expense
+                <iconify-icon icon="solar:add-circle-linear"></iconify-icon> Add Item
             </button>
         </div>
     </div>
@@ -93,7 +93,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Submit Button -->
     <div style="margin-top: 24px; text-align: center;">
         <button type="button" id="submitExpenses" class="btn btn-primary btn-lg">
-            <iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Expenses
+            <iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Market Expenses
         </button>
     </div>
 </form>
@@ -153,7 +153,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 $(this).closest('tr').remove();
                 recalculate();
             } else {
-                Stand120.showAlert('danger', 'At least one expense row is required.');
+                Stand120.showAlert('danger', 'At least one item row is required.');
             }
         });
         
@@ -233,20 +233,20 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 date: date
             }).then(response => {
                 if (response.success) {
-                    Stand120.showAlert('success', response.data.message || 'Expenses submitted successfully!');
+                    Stand120.showAlert('success', response.data.message || 'Market expenses submitted successfully!');
                     // Reset form
                     $('#expenseBody').empty();
                     rowCounter = 0;
                     addRow();
                     $('#grandTotal').text('₦0');
                 } else {
-                    Stand120.showAlert('danger', response.data?.message || 'Failed to submit expenses.');
+                    Stand120.showAlert('danger', response.data?.message || 'Failed to submit market expenses.');
                 }
             }).catch(() => {
                 Stand120.showAlert('danger', 'An error occurred. Please try again.');
             }).finally(() => {
                 isSubmitting = false;
-                $('#submitExpenses').prop('disabled', false).html('<iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Expenses');
+                $('#submitExpenses').prop('disabled', false).html('<iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Market Expenses');
             });
         });
     });

@@ -1501,3 +1501,133 @@ select.form-control {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+/* ============================================
+   Reconciliation Calendar Styles
+   ============================================ */
+
+.recon-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.recon-calendar-header {
+    text-align: center;
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 12px 4px;
+    font-size: 0.85rem;
+}
+
+.recon-calendar-day {
+    min-height: 80px;
+    padding: 8px;
+    border-radius: var(--border-radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.recon-day-empty {
+    background: transparent;
+    border-color: transparent;
+}
+
+.recon-day-number {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.recon-day-clickable {
+    cursor: pointer;
+}
+
+.recon-day-clickable:hover {
+    background: rgba(139, 0, 0, 0.1);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.recon-day-unchecked {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.recon-day-partial {
+    background: rgba(240, 173, 78, 0.1);
+    border-color: #f0ad4e;
+}
+
+.recon-day-full {
+    background: rgba(40, 167, 69, 0.1);
+    border-color: var(--success-color);
+}
+
+.recon-day-future {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.recon-checks {
+    display: flex;
+    gap: 4px;
+    font-size: 1.2rem;
+}
+
+.recon-legend-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+/* Reconciliation Modal */
+.recon-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.recon-modal {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Responsive calendar */
+@media (max-width: 768px) {
+    .recon-calendar-day {
+        min-height: 60px;
+        padding: 4px;
+    }
+    
+    .recon-day-number {
+        font-size: 0.85rem;
+    }
+    
+    .recon-checks {
+        font-size: 1rem;
+    }
+    
+    .recon-calendar-header {
+        font-size: 0.75rem;
+        padding: 8px 2px;
+    }
+}

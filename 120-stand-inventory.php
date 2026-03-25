@@ -82,6 +82,7 @@ class Stand120_Inventory {
         require_once STAND120_PLUGIN_DIR . 'includes/class-financial-summary.php';
         require_once STAND120_PLUGIN_DIR . 'includes/class-admin-panel.php';
         require_once STAND120_PLUGIN_DIR . 'includes/class-expense.php';
+        require_once STAND120_PLUGIN_DIR . 'includes/class-reconciliation.php';
     }
     
     /**
@@ -145,6 +146,7 @@ class Stand120_Inventory {
         add_rewrite_rule('^120-stand/analytics/?$', 'index.php?stand120_page=analytics', 'top');
         add_rewrite_rule('^120-stand/expense-record/?$', 'index.php?stand120_page=expense-record', 'top');
         add_rewrite_rule('^120-stand/expense-history/?$', 'index.php?stand120_page=expense-history', 'top');
+        add_rewrite_rule('^120-stand/reconciliation/?$', 'index.php?stand120_page=reconciliation', 'top');
     }
     
     /**
@@ -171,8 +173,8 @@ class Stand120_Inventory {
             exit;
         }
         
-        // Check admin access for admin panel
-        if ($page === 'admin-panel' && !Stand120_Auth::is_admin()) {
+        // Check admin access for admin panel and reconciliation
+        if (in_array($page, array('admin-panel', 'reconciliation')) && !Stand120_Auth::is_admin()) {
             wp_redirect(home_url('/120-stand/'));
             exit;
         }

@@ -233,6 +233,23 @@ class Stand120_Database {
             KEY expense_date (expense_date)
         ) $charset_collate;";
         dbDelta($sql_expenses);
+        
+        // Reconciliation table
+        $table_reconciliation = $wpdb->prefix . 'stand120_reconciliation';
+        $sql_reconciliation = "CREATE TABLE $table_reconciliation (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            reconciliation_date date NOT NULL,
+            admin1_staff_id mediumint(9) DEFAULT NULL,
+            admin1_checked_at datetime DEFAULT NULL,
+            admin1_remarks text,
+            admin2_staff_id mediumint(9) DEFAULT NULL,
+            admin2_checked_at datetime DEFAULT NULL,
+            admin2_remarks text,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY reconciliation_date (reconciliation_date)
+        ) $charset_collate;";
+        dbDelta($sql_reconciliation);
     }
     
     /**

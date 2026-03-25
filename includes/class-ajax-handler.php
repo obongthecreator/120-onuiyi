@@ -198,6 +198,14 @@ class Stand120_Ajax_Handler {
                 self::update_financial_field();
                 break;
             
+            // Reconciliation actions
+            case 'save_reconciliation_check':
+                self::save_reconciliation_check();
+                break;
+            case 'get_reconciliation_data':
+                self::get_reconciliation_data();
+                break;
+            
             default:
                 wp_send_json_error(array('message' => 'Invalid action'));
         }
@@ -1557,5 +1565,39 @@ class Stand120_Ajax_Handler {
         } else {
             wp_send_json_error($result);
         }
+    }
+    
+    /**
+     * Save reconciliation check
+     */
+    private static function save_reconciliation_check() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
+            return;
+        }
+        
+        $result = Stand120_Reconciliation::save_check($_POST);
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
+    }
+    
+    /**
+     * Get reconciliation data for a month
+     */
+    private static function get_reconciliation_data() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
+            return;
+        }
+        
+        $year = intval($_POST['year'] ?? date('Y'));
+        $month = intval($_POST['month'] ?? date('n'));
+        
+        $result = Stand120_Reconciliation::get_month_data($year, $month);
+        wp_send_json_success($result);
     }
 }
