@@ -599,18 +599,26 @@ const TakeOrder = {
         $(document).off('input.takeorder change.takeorder keyup.takeorder', '.qty-input');
         $(document).on('input.takeorder change.takeorder keyup.takeorder', '.qty-input', function() {
             self.calculateTotals();
+            self.updatePaymentAmounts();
         });
         
         // Delivery fee input change
         $(document).off('input.takeorder change.takeorder keyup.takeorder', '#deliveryFee');
         $(document).on('input.takeorder change.takeorder keyup.takeorder', '#deliveryFee', function() {
             self.calculateTotals();
+            self.updatePaymentAmounts();
         });
         
-        // Cash and transfer amount change
-        $(document).off('input.takeorder change.takeorder keyup.takeorder', '#cashAmount, #transferAmount');
-        $(document).on('input.takeorder change.takeorder keyup.takeorder', '#cashAmount, #transferAmount', function() {
-            self.calculateTotals();
+        // Cash amount change - for "both" mode, auto-deduct from transfer
+        $(document).off('input.takeorder change.takeorder keyup.takeorder', '#cashAmount');
+        $(document).on('input.takeorder change.takeorder keyup.takeorder', '#cashAmount', function() {
+            const method = $('input[name="payment_method"]:checked').val();
+            if (method === 'both') {
+                const grandTotal = self.getGrandTotal();
+                const cashVal = Stand120.parseNumber($('#cashAmount').val()) || 0;
+                const transferVal = Math.max(0, grandTotal - cashVal);
+                $('#transferAmount').val(transferVal > 0 ? Stand120.formatNumber(transferVal) : '0');
+            }
         });
         
         // Submit button
@@ -671,8 +679,31 @@ const TakeOrder = {
         
     },
     
+    getGrandTotal: function() {
+        const text = $('#grandTotal').text().replace(/[₦,]/g, '');
+        return parseFloat(text) || 0;
+    },
+    
+    updatePaymentAmounts: function() {
+        const method = $('input[name="payment_method"]:checked').val();
+        if (!method) return;
+        
+        const grandTotal = this.getGrandTotal();
+        
+        if (method === 'transfer') {
+            $('#transferAmount').val(grandTotal > 0 ? Stand120.formatNumber(grandTotal) : '0');
+        } else if (method === 'cash') {
+            $('#cashAmount').val(grandTotal > 0 ? Stand120.formatNumber(grandTotal) : '0');
+        } else if (method === 'both') {
+            const cashVal = Stand120.parseNumber($('#cashAmount').val()) || 0;
+            const transferVal = Math.max(0, grandTotal - cashVal);
+            $('#transferAmount').val(transferVal > 0 ? Stand120.formatNumber(transferVal) : '0');
+        }
+    },
+    
     handlePaymentMethodChange: function() {
         const method = $('input[name="payment_method"]:checked').val();
+        const grandTotal = this.getGrandTotal();
     
         // Hide all payment sections first
         $('#cashSection').hide();
@@ -683,21 +714,22 @@ const TakeOrder = {
         
         if (method === 'both') {
             // Both - show both sections and confirmation
+            // Transfer gets the full amount by default; cash input deducts from it
             $('#cashSection').slideDown(200);
             $('#transferSection').slideDown(200);
             $('#confirmationSection').slideDown(200);
-            $('#cashAmount').prop('disabled', false);
-            $('#transferAmount').prop('disabled', false);
+            $('#cashAmount').prop('disabled', false).val('');
+            $('#transferAmount').prop('disabled', true).val(grandTotal > 0 ? Stand120.formatNumber(grandTotal) : '0');
         } else if (method === 'cash') {
-            // Cash only - show cash section
+            // Cash only - show cash section, auto-fill with grand total
             $('#cashSection').slideDown(200);
-            $('#cashAmount').prop('disabled', false);
+            $('#cashAmount').prop('disabled', false).val(grandTotal > 0 ? Stand120.formatNumber(grandTotal) : '0');
         } else if (method === 'transfer') {
-            // Transfer/Card - show confirmation
+            // Transfer/Card - show transfer section with auto-filled amount + confirmation
+            $('#transferSection').slideDown(200);
             $('#confirmationSection').slideDown(200);
+            $('#transferAmount').prop('disabled', true).val(grandTotal > 0 ? Stand120.formatNumber(grandTotal) : '0');
         }
-        
-        this.calculateTotals();
     },
     
     collectOrderData: function() {

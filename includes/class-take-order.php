@@ -193,13 +193,12 @@ class Stand120_Take_Order {
                 'staff_id' => $staff_id
             ), array('id' => $existing->id));
         } else {
-            // Get yesterday's cash left
-            $yesterday = date('Y-m-d', strtotime('-1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT cash_left FROM $table WHERE summary_date = %s",
-                $yesterday
+            // Get most recent previous cash_left as today's old cash
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT cash_left FROM $table WHERE summary_date < %s ORDER BY summary_date DESC LIMIT 1",
+                $today
             ));
-            $old_cash = $yesterday_record ? floatval($yesterday_record->cash_left) : 0;
+            $old_cash = $prev_record ? floatval($prev_record->cash_left) : 0;
             
             // Create new record
             $cash_left = ($cash_amount + $old_cash); // No expenses yet
