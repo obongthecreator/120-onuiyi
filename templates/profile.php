@@ -58,11 +58,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 <span class="profile-stat-label">Orders Today</span>
             </div>
             <div class="profile-stat">
-                <span class="profile-stat-value">₦<?php echo number_format($today_sales, 0); ?></span>
+                <span class="profile-stat-value"><span class="naira">₦</span><?php echo number_format($today_sales, 0); ?></span>
                 <span class="profile-stat-label">Sales Today</span>
             </div>
             <div class="profile-stat">
-                <span class="profile-stat-value">₦<?php echo number_format($month_sales, 0); ?></span>
+                <span class="profile-stat-value"><span class="naira">₦</span><?php echo number_format($month_sales, 0); ?></span>
                 <span class="profile-stat-label">This Month</span>
             </div>
         </div>

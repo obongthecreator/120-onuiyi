@@ -642,11 +642,11 @@ const TakeOrder = {
             const row = `
                 <tr data-product-id="${item.id}">
                     <td>${item.name}</td>
-                    <td class="price-cell formatted-number">₦${Stand120.formatNumber(item.price)}</td>
+                    <td class="price-cell formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(item.price)}</td>
                     <td>
                         <input type="number" class="table-input qty-input" value="0" min="0" data-price="${item.price}">
                     </td>
-                    <td class="total-cell formatted-number">₦0</td>
+                    <td class="total-cell formatted-number"><span class="naira">₦</span>0</td>
                 </tr>
             `;
             $tbody.append(row);
@@ -664,7 +664,7 @@ const TakeOrder = {
             const total = price * qty;
             
             // Update the total cell immediately
-            $row.find('.total-cell').text('₦' + Stand120.formatNumber(total));
+            $row.find('.total-cell').html('<span class="naira">₦</span>' + Stand120.formatNumber(total));
             subtotal += total;
         });
         
@@ -674,8 +674,8 @@ const TakeOrder = {
         const grandTotal = subtotal + deliveryFee;
         
         // Update display immediately
-        $('#subtotal').text('₦' + Stand120.formatNumber(subtotal));
-        $('#grandTotal').text('₦' + Stand120.formatNumber(grandTotal));
+        $('#subtotal').html('<span class="naira">₦</span>' + Stand120.formatNumber(subtotal));
+        $('#grandTotal').html('<span class="naira">₦</span>' + Stand120.formatNumber(grandTotal));
         
     },
     
@@ -800,7 +800,7 @@ const TakeOrder = {
             <div class="order-summary">
                 <p><strong>Total Items:</strong> ${items.length}</p>
                 <p><strong>Payment Method:</strong> ${paymentDisplay}</p>
-                <p><strong>Grand Total:</strong> ₦${Stand120.formatNumber(grandTotal)}</p>
+                <p><strong>Grand Total:</strong> <span class="naira">₦</span>${Stand120.formatNumber(grandTotal)}</p>
             </div>
             <p class="mt-3">Are you sure you want to submit this order?</p>
         `;
@@ -1386,11 +1386,11 @@ const FinancialSummary = {
     renderData: function() {
         const data = this.data;
         
-        $('#totalSales').text('₦' + Stand120.formatNumber(data.total_sales || 0));
-        $('#transferSales').text('₦' + Stand120.formatNumber(data.transfer_sales || 0));
-        $('#cashSales').text('₦' + Stand120.formatNumber(data.cash_sales || 0));
-        $('#deliveryFees').text('₦' + Stand120.formatNumber(data.delivery_fees || 0));
-        $('#oldCash').text('₦' + Stand120.formatNumber(data.old_cash || 0));
+        $('#totalSales').html('<span class="naira">₦</span>' + Stand120.formatNumber(data.total_sales || 0));
+        $('#transferSales').html('<span class="naira">₦</span>' + Stand120.formatNumber(data.transfer_sales || 0));
+        $('#cashSales').html('<span class="naira">₦</span>' + Stand120.formatNumber(data.cash_sales || 0));
+        $('#deliveryFees').html('<span class="naira">₦</span>' + Stand120.formatNumber(data.delivery_fees || 0));
+        $('#oldCash').html('<span class="naira">₦</span>' + Stand120.formatNumber(data.old_cash || 0));
         
         $('#extrasAmount').val(data.extras_amount || '');
         $('#extrasRemark').val(data.extras_remark || '');
@@ -1425,7 +1425,7 @@ const FinancialSummary = {
         const cashLeft = (cashSales + oldCash + extras + marketCardCash) - expenses;
         
         // Update cash left immediately
-        $('#cashLeft').text('₦' + Stand120.formatNumber(cashLeft));
+        $('#cashLeft').html('<span class="naira">₦</span>' + Stand120.formatNumber(cashLeft));
         
         // Log for debugging
     },
@@ -1474,7 +1474,7 @@ const ProductSummary = {
     
     renderSummary: function(summary) {
         $('#totalProductsSold').text(Stand120.formatNumber(summary.total_products_sold));
-        $('#totalRevenue').text('₦' + Stand120.formatNumber(summary.total_revenue));
+        $('#totalRevenue').html('<span class="naira">₦</span>' + Stand120.formatNumber(summary.total_revenue));
         $('#activeStaff').text(summary.active_staff_today);
     },
     
@@ -1490,7 +1490,7 @@ const ProductSummary = {
                     <td>${record.product}</td>
                     <td>${record.staff || '-'}</td>
                     <td class="formatted-number">${record.quantity}</td>
-                    <td class="formatted-number">₦${Stand120.formatNumber(record.amount)}</td>
+                    <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(record.amount)}</td>
                 </tr>
             `;
             $tbody.append(row);
@@ -1995,7 +1995,7 @@ const AdminPanel = {
                 <td>${order.order_date}</td>
                 <td>${order.staff_name || '-'}</td>
                 <td>${order.item_count || 0}</td>
-                <td class="formatted-number">₦${Stand120.formatNumber(order.grand_total)}</td>
+                <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(order.grand_total)}</td>
                 <td>${order.payment_method}</td>
                 <td>
                     <button class="btn btn-sm btn-danger delete-order"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon> Delete</button>

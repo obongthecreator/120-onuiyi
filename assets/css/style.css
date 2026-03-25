@@ -604,8 +604,23 @@ select.form-control {
 /* Number Formatting */
 .formatted-number {
     font-family: 'Courier New', monospace;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1rem;
+}
+
+/* Bold prices, quantities, amounts across all forms */
+.number-input,
+.qty-input,
+.expense-amount,
+.expense-qty,
+.table-input,
+.product-price {
+    font-weight: 800 !important;
+}
+
+/* Naira symbol stays normal weight */
+.naira {
+    font-weight: 400 !important;
 }
 
 /* Payment Section */
@@ -672,7 +687,7 @@ select.form-control {
 
 .grand-total-value {
     font-size: 1.6rem;
-    font-weight: 700;
+    font-weight: 800;
     font-family: 'Courier New', monospace;
 }
 
@@ -1599,7 +1614,7 @@ select.form-control {
 
 .profile-stat-value {
     font-size: 1.8rem;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--primary-color);
 }
 

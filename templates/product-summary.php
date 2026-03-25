@@ -57,7 +57,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:money-bag-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Revenue</span>
-        <span id="totalRevenue" class="summary-card-value">₦0</span>
+        <span id="totalRevenue" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
     
     <div class="summary-card glass-card">

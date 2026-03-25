@@ -87,7 +87,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <span class="grand-total-label">
             <iconify-icon icon="solar:calculator-linear"></iconify-icon> Grand Total
         </span>
-        <span id="grandTotal" class="grand-total-value">₦0</span>
+        <span id="grandTotal" class="grand-total-value"><span class="naira">₦</span>0</span>
     </div>
     
     <!-- Submit Button -->
@@ -116,7 +116,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <td>
                         <input type="text" class="table-input expense-qty" placeholder="0" value="0" style="max-width: 80px;">
                     </td>
-                    <td class="row-total formatted-number">₦0</td>
+                    <td class="row-total formatted-number"><span class="naira">₦</span>0</td>
                     <td>
                         <button type="button" class="btn remove-row-btn" style="background: var(--danger-color); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem;">
                             <iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon>
@@ -135,9 +135,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 const qty = parseInt($(this).find('.expense-qty').val().toString().replace(/,/g, '')) || 0;
                 const total = amount * qty;
                 grandTotal += total;
-                $(this).find('.row-total').text('₦' + Stand120.formatNumber(total));
+                $(this).find('.row-total').html('<span class="naira">₦</span>' + Stand120.formatNumber(total));
             });
-            $('#grandTotal').text('₦' + Stand120.formatNumber(grandTotal));
+            $('#grandTotal').html('<span class="naira">₦</span>' + Stand120.formatNumber(grandTotal));
         }
         
         // Add first row by default
@@ -238,7 +238,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     $('#expenseBody').empty();
                     rowCounter = 0;
                     addRow();
-                    $('#grandTotal').text('₦0');
+                    $('#grandTotal').html('<span class="naira">₦</span>0');
                 } else {
                     Stand120.showAlert('danger', response.data?.message || 'Failed to submit market expenses.');
                 }

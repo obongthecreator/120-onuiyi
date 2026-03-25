@@ -48,7 +48,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:money-bag-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Market Expenses</span>
-        <span id="totalExpenses" class="summary-card-value">₦0</span>
+        <span id="totalExpenses" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
@@ -191,9 +191,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 <td>${expense.expense_date}</td>
                 <td>${expense.staff_name || '-'}</td>
                 <td>${expense.description}</td>
-                <td class="formatted-number">₦${Stand120.formatNumber(amount)}</td>
+                <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(amount)}</td>
                 <td>${qty}</td>
-                <td class="formatted-number" style="font-weight: 600;">₦${Stand120.formatNumber(total)}</td>
+                <td class="formatted-number" style="font-weight: 600;"><span class="naira">₦</span>${Stand120.formatNumber(total)}</td>
                 ${actionCol}
             </tr>`);
         });
@@ -206,7 +206,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             const qty = parseInt(expense.quantity) || 1;
             totalAmount += amount * qty;
         });
-        $('#totalExpenses').text('₦' + Stand120.formatNumber(totalAmount));
+        $('#totalExpenses').html('<span class="naira">₦</span>' + Stand120.formatNumber(totalAmount));
         $('#totalItems').text(records.length);
     }
     

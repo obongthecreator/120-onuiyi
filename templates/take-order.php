@@ -69,11 +69,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <?php foreach ($menu_items as $item): ?>
                     <tr data-product-id="<?php echo $item->id; ?>">
                         <td><?php echo esc_html($item->name); ?></td>
-                        <td class="price-cell formatted-number">₦<?php echo number_format($item->price, 0); ?></td>
+                        <td class="price-cell formatted-number"><span class="naira">₦</span><?php echo number_format($item->price, 0); ?></td>
                         <td>
                             <input type="number" class="table-input qty-input" value="0" min="0" data-price="<?php echo $item->price; ?>">
                         </td>
-                        <td class="total-cell formatted-number">₦0</td>
+                        <td class="total-cell formatted-number"><span class="naira">₦</span>0</td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -82,7 +82,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         
         <div style="text-align: right; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-glass);">
             <span style="font-size: 1.1rem; color: var(--text-secondary);">Subtotal: </span>
-            <span id="subtotal" class="formatted-number" style="font-size: 1.3rem; font-weight: 600;">₦0</span>
+            <span id="subtotal" class="formatted-number" style="font-size: 1.3rem; font-weight: 600;"><span class="naira">₦</span>0</span>
         </div>
     </div>
     
@@ -161,7 +161,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <span class="grand-total-label">
             <iconify-icon icon="solar:document-text-linear"></iconify-icon> Grand Total
         </span>
-        <span id="grandTotal" class="grand-total-value">₦0</span>
+        <span id="grandTotal" class="grand-total-value"><span class="naira">₦</span>0</span>
     </div>
     
     <!-- Submit Button -->

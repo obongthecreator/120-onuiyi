@@ -70,28 +70,28 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         <iconify-icon icon="solar:graph-up-linear" style="color: var(--primary-color);"></iconify-icon>
                         Total Sales
                     </td>
-                    <td id="totalSales" class="formatted-number" style="font-size: 1.2rem; font-weight: 600;">₦0</td>
+                    <td id="totalSales" class="formatted-number" style="font-size: 1.2rem; font-weight: 600;"><span class="naira">₦</span>0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
                         <iconify-icon icon="solar:transfer-horizontal-linear" style="color: var(--info-color);"></iconify-icon>
                         Transfer/Card Sales
                     </td>
-                    <td id="transferSales" class="formatted-number">₦0</td>
+                    <td id="transferSales" class="formatted-number"><span class="naira">₦</span>0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
                         <iconify-icon icon="solar:banknote-2-linear" style="color: var(--success-color);"></iconify-icon>
                         Cash Sales
                     </td>
-                    <td id="cashSales" class="formatted-number">₦0</td>
+                    <td id="cashSales" class="formatted-number"><span class="naira">₦</span>0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
                         <iconify-icon icon="solar:scooter-linear" style="color: var(--warning-color);"></iconify-icon>
                         Delivery Fees
                     </td>
-                    <td id="deliveryFees" class="formatted-number">₦0</td>
+                    <td id="deliveryFees" class="formatted-number"><span class="naira">₦</span>0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
@@ -143,7 +143,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         <iconify-icon icon="solar:clock-circle-linear" style="color: var(--text-muted);"></iconify-icon>
                         Old Cash (Yesterday's Cash Left)
                     </td>
-                    <td id="oldCash" class="formatted-number">₦0</td>
+                    <td id="oldCash" class="formatted-number"><span class="naira">₦</span>0</td>
                 </tr>
             </tbody>
         </table>
@@ -154,7 +154,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <span class="grand-total-label">
             <iconify-icon icon="solar:cash-out-linear"></iconify-icon> Cash Left
         </span>
-        <span id="cashLeft" class="grand-total-value">₦0</span>
+        <span id="cashLeft" class="grand-total-value"><span class="naira">₦</span>0</span>
     </div>
     
     <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.85rem; text-align: center;">

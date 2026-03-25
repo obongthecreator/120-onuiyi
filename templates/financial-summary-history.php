@@ -90,13 +90,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     response.data.records.forEach(r => {
                         $tbody.append(`<tr>
                             <td>${r.summary_date}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.total_sales)}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.cash_sales)}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.transfer_sales)}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.extras_amount)}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.expenses_amount)}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.old_cash)}</td>
-                            <td class="formatted-number" style="font-weight:600;color:var(--primary-color)">₦${Stand120.formatNumber(r.cash_left)}</td>
+                            <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.total_sales)}</td>
+                            <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.cash_sales)}</td>
+                            <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.transfer_sales)}</td>
+                            <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.extras_amount)}</td>
+                            <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.expenses_amount)}</td>
+                            <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(r.old_cash)}</td>
+                            <td class="formatted-number" style="font-weight:600;color:var(--primary-color)"><span class="naira">₦</span>${Stand120.formatNumber(r.cash_left)}</td>
                         </tr>`);
                     });
                 }

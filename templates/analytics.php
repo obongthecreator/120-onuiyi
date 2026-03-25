@@ -119,7 +119,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:graph-up-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Revenue</span>
-        <span id="revenueAnalytics" class="summary-card-value">₦0</span>
+        <span id="revenueAnalytics" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
 
     <div class="summary-card glass-card">
@@ -127,7 +127,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:pie-chart-2-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Profit</span>
-        <span id="profitAnalytics" class="summary-card-value">₦0</span>
+        <span id="profitAnalytics" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
 
     <div class="summary-card glass-card">
@@ -135,7 +135,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:minus-circle-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Expenses</span>
-        <span id="expensesAnalytics" class="summary-card-value">₦0</span>
+        <span id="expensesAnalytics" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
 
     <div class="summary-card glass-card">
@@ -143,7 +143,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:arrow-down-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Loss</span>
-        <span id="lossAnalytics" class="summary-card-value">₦0</span>
+        <span id="lossAnalytics" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
 </div>
 
@@ -153,7 +153,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:money-bag-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Sales</span>
-        <span id="totalSalesAnalytics" class="summary-card-value">₦0</span>
+        <span id="totalSalesAnalytics" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
 
     <div class="summary-card glass-card">
@@ -169,7 +169,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <iconify-icon icon="solar:calculator-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Avg Order Value</span>
-        <span id="avgOrderAnalytics" class="summary-card-value">₦0</span>
+        <span id="avgOrderAnalytics" class="summary-card-value"><span class="naira">₦</span>0</span>
     </div>
 </div>
 
@@ -883,10 +883,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     data.recommendations.forEach(rec => {
                         $tbody.append('<tr>' +
                             '<td>' + rec.product_name + '</td>' +
-                            '<td class="formatted-number">₦' + Stand120.formatNumber(rec.price) + '</td>' +
+                            '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(rec.price) + '</td>' +
                             '<td>' + rec.suggested_qty + '</td>' +
                             '<td>' + rec.avg_daily_sales + '</td>' +
-                            '<td class="formatted-number">₦' + Stand120.formatNumber(rec.projected_revenue) + '</td>' +
+                            '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(rec.projected_revenue) + '</td>' +
                         '</tr>');
                     });
                 } else {
@@ -920,14 +920,14 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 const totalAllExpenses = parseFloat(data.total_all_expenses) || 0;
                 const loss = parseFloat(data.loss) || 0;
 
-                $('#revenueAnalytics').text('₦' + Stand120.formatNumber(revenue));
-                $('#profitAnalytics').text('₦' + Stand120.formatNumber(profit)).css('color', profit >= 0 ? '#4caf50' : '#f44336');
-                $('#expensesAnalytics').text('₦' + Stand120.formatNumber(totalAllExpenses));
-                $('#lossAnalytics').text('₦' + Stand120.formatNumber(loss)).css('color', loss > 0 ? '#f44336' : 'inherit');
+                $('#revenueAnalytics').html('<span class="naira">₦</span>' + Stand120.formatNumber(revenue));
+                $('#profitAnalytics').html('<span class="naira">₦</span>' + Stand120.formatNumber(profit)).css('color', profit >= 0 ? '#4caf50' : '#f44336');
+                $('#expensesAnalytics').html('<span class="naira">₦</span>' + Stand120.formatNumber(totalAllExpenses));
+                $('#lossAnalytics').html('<span class="naira">₦</span>' + Stand120.formatNumber(loss)).css('color', loss > 0 ? '#f44336' : 'inherit');
 
-                $('#totalSalesAnalytics').text('₦' + Stand120.formatNumber(totalSales));
+                $('#totalSalesAnalytics').html('<span class="naira">₦</span>' + Stand120.formatNumber(totalSales));
                 $('#totalOrdersAnalytics').text(Stand120.formatNumber(totalOrders));
-                $('#avgOrderAnalytics').text('₦' + Stand120.formatNumber(avgOrder));
+                $('#avgOrderAnalytics').html('<span class="naira">₦</span>' + Stand120.formatNumber(avgOrder));
 
                 // Destroy existing charts and render new ones
                 destroyCharts();
@@ -945,8 +945,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         $revenueBody.append('<tr>' +
                             '<td>' + product.product_name + '</td>' +
                             '<td>' + Stand120.formatNumber(product.qty_sold) + '</td>' +
-                            '<td class="formatted-number">₦' + Stand120.formatNumber(product.unit_price || 0) + '</td>' +
-                            '<td class="formatted-number">₦' + Stand120.formatNumber(product.revenue) + '</td>' +
+                            '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(product.unit_price || 0) + '</td>' +
+                            '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(product.revenue) + '</td>' +
                         '</tr>');
                     });
                 } else {
@@ -960,7 +960,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         $expBody.append('<tr>' +
                             '<td>' + exp.description + '</td>' +
                             '<td>' + Stand120.formatNumber(exp.total_qty) + '</td>' +
-                            '<td class="formatted-number">₦' + Stand120.formatNumber(exp.total_amount) + '</td>' +
+                            '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(exp.total_amount) + '</td>' +
                         '</tr>');
                     });
                 } else {
@@ -974,7 +974,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         $staffBody.append('<tr>' +
                             '<td>' + staff.full_name + '</td>' +
                             '<td>' + Stand120.formatNumber(staff.order_count || 0) + '</td>' +
-                            '<td class="formatted-number">₦' + Stand120.formatNumber(staff.total_sales || 0) + '</td>' +
+                            '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(staff.total_sales || 0) + '</td>' +
                         '</tr>');
                     });
                 } else {
@@ -1070,12 +1070,12 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 const financials = data.financials || {};
                 const $financialBody = $('#financialAnalyticsTable tbody').empty();
                 $financialBody.append('<tr>' +
-                    '<td class="formatted-number">₦' + Stand120.formatNumber(financials.total_sales || 0) + '</td>' +
-                    '<td class="formatted-number">₦' + Stand120.formatNumber(financials.cash_sales || 0) + '</td>' +
-                    '<td class="formatted-number">₦' + Stand120.formatNumber(financials.transfer_sales || 0) + '</td>' +
-                    '<td class="formatted-number">₦' + Stand120.formatNumber(financials.delivery_fees || 0) + '</td>' +
-                    '<td class="formatted-number">₦' + Stand120.formatNumber(financials.extras_amount || 0) + '</td>' +
-                    '<td class="formatted-number">₦' + Stand120.formatNumber(financials.expenses_amount || 0) + '</td>' +
+                    '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(financials.total_sales || 0) + '</td>' +
+                    '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(financials.cash_sales || 0) + '</td>' +
+                    '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(financials.transfer_sales || 0) + '</td>' +
+                    '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(financials.delivery_fees || 0) + '</td>' +
+                    '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(financials.extras_amount || 0) + '</td>' +
+                    '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(financials.expenses_amount || 0) + '</td>' +
                 '</tr>');
 
                 // Render top products table
@@ -1085,7 +1085,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         $productsBody.append('<tr>' +
                             '<td>' + product.product_name + '</td>' +
                             '<td>' + Stand120.formatNumber(product.qty_sold) + '</td>' +
-                            '<td class="formatted-number">₦' + Stand120.formatNumber(product.revenue) + '</td>' +
+                            '<td class="formatted-number"><span class="naira">₦</span>' + Stand120.formatNumber(product.revenue) + '</td>' +
                         '</tr>');
                     });
                 } else {

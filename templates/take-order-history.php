@@ -178,7 +178,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <td>${order.staff_name || '-'}</td>
                     <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;" title="${items}">${items}</td>
                     <td>${order.payment_method}</td>
-                    <td class="formatted-number">₦${Stand120.formatNumber(order.grand_total)}</td>
+                    <td class="formatted-number"><span class="naira">₦</span>${Stand120.formatNumber(order.grand_total)}</td>
                     ${actionCol}
                 </tr>
             `;
