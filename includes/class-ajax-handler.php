@@ -166,6 +166,9 @@ class Stand120_Ajax_Handler {
             case 'get_target_recommendation':
                 self::get_target_recommendation();
                 break;
+            case 'get_sales_insights':
+                self::get_sales_insights();
+                break;
             case 'export_data':
                 self::export_data();
                 break;
@@ -930,6 +933,17 @@ class Stand120_Ajax_Handler {
                     $date_from, $date_to
                 ));
                 
+                // Day-of-week sales distribution
+                $analytics['dow_sales'] = $wpdb->get_results($wpdb->prepare(
+                    "SELECT DAYOFWEEK(order_date) as dow, DAYNAME(order_date) as day_name,
+                        COUNT(*) as order_count, SUM(grand_total) as total
+                    FROM $orders_table
+                    WHERE order_date BETWEEN %s AND %s
+                    GROUP BY DAYOFWEEK(order_date), DAYNAME(order_date)
+                    ORDER BY dow ASC",
+                    $date_from, $date_to
+                ));
+                
                 // Top products
                 $items_table = $wpdb->prefix . 'stand120_order_items';
                 $analytics['top_products'] = $wpdb->get_results($wpdb->prepare(
@@ -1310,6 +1324,111 @@ class Stand120_Ajax_Handler {
             'recommendations' => $recommendations,
             'total_projected' => $total_projected,
             'achievable' => $total_projected >= $target
+        ));
+    }
+    
+    /**
+     * Get sales insights: hourly patterns, day-of-week patterns, product timing recommendations
+     */
+    private static function get_sales_insights() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized'));
+            return;
+        }
+        
+        global $wpdb;
+        $orders_table = $wpdb->prefix . 'stand120_orders';
+        $items_table = $wpdb->prefix . 'stand120_order_items';
+        
+        // Get hourly sales distribution (last 30 days)
+        $hourly_sales = $wpdb->get_results(
+            "SELECT HOUR(created_at) as hour, COUNT(*) as order_count, SUM(grand_total) as total_sales
+            FROM $orders_table
+            WHERE order_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+            GROUP BY HOUR(created_at)
+            ORDER BY hour ASC"
+        );
+        
+        // Get day-of-week sales distribution (last 90 days)
+        $dow_sales = $wpdb->get_results(
+            "SELECT DAYOFWEEK(order_date) as dow, DAYNAME(order_date) as day_name, 
+                COUNT(*) as order_count, SUM(grand_total) as total_sales
+            FROM $orders_table
+            WHERE order_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
+            GROUP BY DAYOFWEEK(order_date), DAYNAME(order_date)
+            ORDER BY dow ASC"
+        );
+        
+        // Get product-level hourly patterns (which products sell at which times)
+        $product_timing = $wpdb->get_results(
+            "SELECT oi.product_name, 
+                CASE 
+                    WHEN HOUR(o.created_at) BETWEEN 6 AND 11 THEN 'Morning'
+                    WHEN HOUR(o.created_at) BETWEEN 12 AND 16 THEN 'Afternoon'
+                    WHEN HOUR(o.created_at) BETWEEN 17 AND 21 THEN 'Evening'
+                    ELSE 'Night'
+                END as time_period,
+                SUM(oi.quantity) as qty_sold,
+                SUM(oi.total) as revenue
+            FROM $items_table oi
+            JOIN $orders_table o ON oi.order_id = o.id
+            WHERE o.order_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+            GROUP BY oi.product_name, time_period
+            ORDER BY qty_sold DESC"
+        );
+        
+        // Get product-level day-of-week patterns
+        $product_dow = $wpdb->get_results(
+            "SELECT oi.product_name, DAYNAME(o.order_date) as day_name,
+                SUM(oi.quantity) as qty_sold, SUM(oi.total) as revenue
+            FROM $items_table oi
+            JOIN $orders_table o ON oi.order_id = o.id
+            WHERE o.order_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
+            GROUP BY oi.product_name, DAYNAME(o.order_date)
+            ORDER BY oi.product_name, qty_sold DESC"
+        );
+        
+        // Build best time per product
+        $product_best_times = array();
+        foreach ($product_timing as $row) {
+            $name = $row->product_name;
+            if (!isset($product_best_times[$name]) || floatval($row->qty_sold) > floatval($product_best_times[$name]->qty_sold)) {
+                $product_best_times[$name] = $row;
+            }
+        }
+        
+        // Build best day per product
+        $product_best_days = array();
+        foreach ($product_dow as $row) {
+            $name = $row->product_name;
+            if (!isset($product_best_days[$name]) || floatval($row->qty_sold) > floatval($product_best_days[$name]->qty_sold)) {
+                $product_best_days[$name] = $row;
+            }
+        }
+        
+        // Generate recommendations
+        $recommendations = array();
+        foreach ($product_best_times as $name => $time_data) {
+            $day_data = $product_best_days[$name] ?? null;
+            $recommendations[] = array(
+                'product_name' => $name,
+                'best_time' => $time_data->time_period,
+                'best_time_qty' => intval($time_data->qty_sold),
+                'best_day' => $day_data ? $day_data->day_name : 'N/A',
+                'best_day_qty' => $day_data ? intval($day_data->qty_sold) : 0
+            );
+        }
+        
+        // Sort by total qty
+        usort($recommendations, function($a, $b) {
+            return ($b['best_time_qty'] + $b['best_day_qty']) - ($a['best_time_qty'] + $a['best_day_qty']);
+        });
+        
+        wp_send_json_success(array(
+            'hourly_sales' => $hourly_sales,
+            'dow_sales' => $dow_sales,
+            'product_timing' => $product_timing,
+            'recommendations' => $recommendations
         ));
     }
     

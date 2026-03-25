@@ -717,15 +717,14 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
         // Day-of-week trend
         if (dowSales && dowSales.length > 0) {
-            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let bestDay = dowSales[0];
             let worstDay = dowSales[0];
             dowSales.forEach(d => {
                 if ((parseFloat(d.total) || 0) > (parseFloat(bestDay.total) || 0)) bestDay = d;
                 if ((parseFloat(d.total) || 0) < (parseFloat(worstDay.total) || 0)) worstDay = d;
             });
-            const bestDayName = dayNames[parseInt(bestDay.dow)] || 'Day ' + bestDay.dow;
-            const worstDayName = dayNames[parseInt(worstDay.dow)] || 'Day ' + worstDay.dow;
+            const bestDayName = bestDay.day_name || 'Best Day';
+            const worstDayName = worstDay.day_name || 'Worst Day';
             if (bestDay.dow !== worstDay.dow) {
                 insights.push({
                     icon: 'solar:calendar-linear',
@@ -805,17 +804,17 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             $('#availabilityLoading').hide();
 
             if (response.success && response.data) {
-                const items = response.data.insights || response.data || [];
+                const items = response.data.recommendations || [];
                 const $tbody = $('#availabilityTable tbody').empty();
                 const recommendations = [];
 
                 if (Array.isArray(items) && items.length > 0) {
                     items.forEach(function(item) {
                         const productName = item.product_name || 'Unknown';
-                        const bestTime = item.best_time || item.best_time_of_day || '-';
-                        const peakQty = item.peak_qty || item.peak_time_qty || 0;
+                        const bestTime = item.best_time || '-';
+                        const peakQty = item.best_time_qty || 0;
                         const bestDay = item.best_day || '-';
-                        const peakDayQty = item.peak_day_qty || 0;
+                        const peakDayQty = item.best_day_qty || 0;
 
                         $tbody.append(
                             '<tr>' +
