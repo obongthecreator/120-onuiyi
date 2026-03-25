@@ -601,13 +601,18 @@ select.form-control {
     cursor: not-allowed;
 }
 
-/* Number Formatting - uses Inter which supports weight 900, with tabular-nums for alignment */
+/* Number Formatting - BRUTAL bold fix: weight 900 + text-stroke for cross-browser boldness */
 .formatted-number {
-    font-family: 'Inter', 'Noto Sans', sans-serif;
+    font-family: 'Inter', 'Noto Sans', sans-serif !important;
     font-weight: 900 !important;
     font-size: 1.05rem;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
+    -webkit-text-stroke: 0.4px currentColor;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    font-synthesis: weight;
 }
 
 /* Bold prices, quantities, amounts across all forms */
@@ -618,11 +623,14 @@ select.form-control {
 .table-input,
 .product-price {
     font-weight: 900 !important;
+    -webkit-text-stroke: 0.3px currentColor;
+    font-synthesis: weight;
 }
 
-/* Naira symbol stays normal weight */
+/* Naira symbol stays normal weight - undo the bold stroke */
 .naira {
     font-weight: 400 !important;
+    -webkit-text-stroke: 0px;
 }
 
 /* Payment Section */
@@ -690,8 +698,12 @@ select.form-control {
 .grand-total-value {
     font-size: 1.6rem;
     font-weight: 900 !important;
-    font-family: 'Inter', 'Noto Sans', sans-serif;
+    font-family: 'Inter', 'Noto Sans', sans-serif !important;
     font-variant-numeric: tabular-nums;
+    -webkit-text-stroke: 0.5px currentColor;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: auto;
+    font-synthesis: weight;
 }
 
 /* History Button */
@@ -906,8 +918,12 @@ select.form-control {
     font-size: 1.5rem;
     font-weight: 900 !important;
     color: var(--text-primary);
-    font-family: 'Inter', 'Noto Sans', sans-serif;
+    font-family: 'Inter', 'Noto Sans', sans-serif !important;
     font-variant-numeric: tabular-nums;
+    -webkit-text-stroke: 0.5px currentColor;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: auto;
+    font-synthesis: weight;
 }
 
 /* Status Badge */
@@ -1620,6 +1636,10 @@ select.form-control {
     font-size: 1.8rem;
     font-weight: 900 !important;
     color: var(--primary-color);
+    -webkit-text-stroke: 0.5px currentColor;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: auto;
+    font-synthesis: weight;
 }
 
 .profile-stat-label {

@@ -858,7 +858,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     function calculateTarget() {
         const targetAmount = Stand120.parseNumber($('#targetAmount').val());
         if (!targetAmount || targetAmount <= 0) {
-            Stand120.showNotification('Please enter a valid target amount', 'error');
+            Stand120.showAlert('danger', 'Please enter a valid target amount');
             return;
         }
 
@@ -896,10 +896,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     $tbody.append('<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No products available for recommendation</td></tr>');
                 }
             } else {
-                Stand120.showNotification(response.data?.message || 'Failed to calculate target recommendation', 'error');
+                Stand120.showAlert('danger', response.data?.message || 'Failed to calculate target recommendation');
             }
         }).catch(function(error) {
-            Stand120.showNotification('Network error — please try again', 'error');
+            Stand120.showAlert('danger', 'Network error — please try again');
             console.error('Target recommendation error:', error);
         }).finally(function() {
             $btn.prop('disabled', false).html('<iconify-icon icon="solar:calculator-linear"></iconify-icon> Calculate');
