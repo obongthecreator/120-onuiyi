@@ -215,6 +215,23 @@ class Stand120_Database {
             KEY created_at (created_at)
         ) $charset_collate;";
         dbDelta($sql_log);
+        
+        // Expenses table
+        $table_expenses = $wpdb->prefix . 'stand120_expenses';
+        $sql_expenses = "CREATE TABLE $table_expenses (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            staff_id mediumint(9) NOT NULL,
+            expense_date date NOT NULL,
+            description varchar(255) NOT NULL,
+            amount decimal(10,2) NOT NULL DEFAULT 0,
+            quantity int NOT NULL DEFAULT 1,
+            total decimal(10,2) NOT NULL DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY staff_id (staff_id),
+            KEY expense_date (expense_date)
+        ) $charset_collate;";
+        dbDelta($sql_expenses);
     }
     
     /**

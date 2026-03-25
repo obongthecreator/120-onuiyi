@@ -170,6 +170,20 @@ class Stand120_Ajax_Handler {
                 self::clear_all_records();
                 break;
             
+            // Expense actions
+            case 'submit_expenses':
+                self::submit_expenses();
+                break;
+            case 'get_expenses':
+                self::get_expenses();
+                break;
+            case 'get_expense_history':
+                self::get_expense_history();
+                break;
+            case 'delete_expense':
+                self::delete_expense();
+                break;
+            
             default:
                 wp_send_json_error(array('message' => 'Invalid action'));
         }
@@ -1062,6 +1076,67 @@ class Stand120_Ajax_Handler {
     /**
      * Clear all records and histories (admin only)
      */
+    /**
+     * Submit expenses
+     */
+    private static function submit_expenses() {
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'Session expired. Please refresh the page and login again.'));
+            return;
+        }
+        
+        $result = Stand120_Expense::submit_expenses($_POST);
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
+    }
+    
+    /**
+     * Get expenses for a date
+     */
+    private static function get_expenses() {
+        $date = sanitize_text_field($_POST['date'] ?? date('Y-m-d'));
+        $result = Stand120_Expense::get_expenses($date);
+        wp_send_json_success($result);
+    }
+    
+    /**
+     * Get expense history
+     */
+    private static function get_expense_history() {
+        $filters = array(
+            'date_from' => sanitize_text_field($_POST['date_from'] ?? ''),
+            'date_to' => sanitize_text_field($_POST['date_to'] ?? ''),
+            'page' => intval($_POST['page'] ?? 1),
+            'per_page' => intval($_POST['per_page'] ?? 20)
+        );
+        
+        $result = Stand120_Expense::get_expense_history($filters);
+        wp_send_json_success($result);
+    }
+    
+    /**
+     * Delete an expense
+     */
+    private static function delete_expense() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
+            return;
+        }
+        
+        $expense_id = intval($_POST['expense_id'] ?? 0);
+        $result = Stand120_Expense::delete_expense($expense_id);
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
+    }
+    
     private static function clear_all_records() {
         if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));

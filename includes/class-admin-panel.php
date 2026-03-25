@@ -114,7 +114,8 @@ class Stand120_Admin_Panel {
             'stand120_import_records',
             'stand120_financial_summary',
             'stand120_sync_queue',
-            'stand120_activity_log'
+            'stand120_activity_log',
+            'stand120_expenses'
         );
         
         foreach ($tables as $table) {
