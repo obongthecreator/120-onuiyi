@@ -1333,19 +1333,93 @@ select.form-control {
         max-width: 80px;
         padding: 6px 8px;
     }
+    
+    .tabs {
+        flex-wrap: wrap;
+        gap: 2px;
+    }
+    
+    .tab-btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .profile-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    
+    .profile-stat-value {
+        font-size: 1.4rem;
+    }
+    
+    .profile-name {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
+    .stand120-container {
+        padding: 12px;
+        padding-bottom: 120px;
+    }
+    
     .login-card {
         padding: 24px;
     }
     
+    .page-title {
+        font-size: 1.25rem;
+    }
+    
+    .home-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
     .summary-cards {
         grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .summary-card {
+        padding: 12px;
     }
     
     .summary-card-value {
+        font-size: 1.2rem;
+    }
+    
+    .summary-card-label {
+        font-size: 0.75rem;
+    }
+    
+    .profile-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .profile-stat-value {
         font-size: 1.4rem;
+    }
+    
+    .profile-name {
+        font-size: 1.4rem;
+    }
+    
+    .staff-info-bar {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    
+    .glass-card {
+        border-radius: 12px;
+        padding: 14px;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
     }
     
     .bottom-nav-item {
@@ -1355,6 +1429,49 @@ select.form-control {
     
     .bottom-nav-item i {
         font-size: 1.1rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+    }
+    
+    .form-control {
+        font-size: 0.9rem;
+    }
+    
+    .pagination {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .pagination-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .recon-calendar-grid {
+        gap: 2px;
+    }
+    
+    .recon-calendar-day {
+        min-height: 50px;
+        padding: 3px;
+    }
+    
+    .recon-day-number {
+        font-size: 0.75rem;
+    }
+    
+    .recon-checks {
+        font-size: 0.85rem;
+    }
+    
+    .recon-calendar-header {
+        font-size: 0.65rem;
+        padding: 6px 1px;
     }
 }
 
