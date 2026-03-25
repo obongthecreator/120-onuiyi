@@ -1423,6 +1423,8 @@ const ProductSummary = {
  * Admin Panel Module
  */
 const AdminPanel = {
+    orderPage: 1,
+    
     init: function() {
         this.bindEvents();
         this.loadData();
@@ -1441,6 +1443,10 @@ const AdminPanel = {
         $(document).on('click', '#clearAllRecords', this.clearAllRecords.bind(this));
         $(document).on('click', '#clearCache', this.clearCache.bind(this));
         $(document).on('click', '#exportData', this.exportData.bind(this));
+        $(document).on('click', '#loadOrders', this.loadOrders.bind(this));
+        $(document).on('click', '.delete-order', this.deleteOrder.bind(this));
+        $(document).on('click', '#prevOrderPage', () => { this.orderPage--; this.loadOrders(); });
+        $(document).on('click', '#nextOrderPage', () => { this.orderPage++; this.loadOrders(); });
     },
     
     loadData: function() {
@@ -1878,6 +1884,72 @@ const AdminPanel = {
         localStorage.removeItem('stand120_cache');
         localStorage.removeItem('stand120_offline_queue');
         Stand120.showAlert('success', 'Cache cleared successfully');
+    },
+    
+    loadOrders: function() {
+        Stand120.ajax('get_all_orders', {
+            date_from: $('#orderDateFrom').val(),
+            date_to: $('#orderDateTo').val(),
+            page: this.orderPage || 1,
+            per_page: 20
+        }).then(response => {
+            if (response.success) {
+                this.renderOrders(response.data.orders || []);
+                const data = response.data;
+                $('#orderCurrentPage').text(data.page);
+                $('#orderTotalPages').text(data.total_pages);
+                $('#prevOrderPage').prop('disabled', data.page <= 1);
+                $('#nextOrderPage').prop('disabled', data.page >= data.total_pages);
+            }
+        });
+    },
+    
+    renderOrders: function(orders) {
+        const $tbody = $('#adminOrdersTable tbody').empty();
+        if (orders.length === 0) {
+            $tbody.append('<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">No orders found</td></tr>');
+            return;
+        }
+        orders.forEach(order => {
+            $tbody.append(`<tr data-order-id="${order.id}">
+                <td>#${order.id}</td>
+                <td>${order.order_date}</td>
+                <td>${order.staff_name || '-'}</td>
+                <td>${order.item_count || 0}</td>
+                <td class="formatted-number">₦${Stand120.formatNumber(order.grand_total)}</td>
+                <td>${order.payment_method}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger delete-order"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            </tr>`);
+        });
+    },
+    
+    deleteOrder: async function(e) {
+        const $row = $(e.target).closest('tr');
+        const orderId = $row.data('order-id');
+        
+        const confirmed = await Stand120.showModal({
+            title: 'Delete Order',
+            content: '<p>Are you sure you want to delete this order? This will also update the financial summary for that day.</p>',
+            confirmText: 'Delete Order'
+        });
+        
+        if (!confirmed) return;
+        
+        Stand120.showLoading('Deleting order...');
+        Stand120.ajax('delete_order', { order_id: orderId }).then(response => {
+            Stand120.hideLoading();
+            if (response.success) {
+                Stand120.showAlert('success', response.data.message || 'Order deleted successfully');
+                this.loadOrders();
+            } else {
+                Stand120.showAlert('danger', response.data?.message || 'Failed to delete order');
+            }
+        }).catch(() => {
+            Stand120.hideLoading();
+            Stand120.showAlert('danger', 'Failed to delete order');
+        });
     },
     
     exportData: function() {

@@ -64,6 +64,7 @@ $is_admin = Stand120_Auth::is_admin();
             home_url: '<?php echo home_url('/120-stand/'); ?>',
             is_logged_in: <?php echo Stand120_Auth::is_logged_in() ? 'true' : 'false'; ?>,
             is_admin: <?php echo $is_admin ? 'true' : 'false'; ?>,
+            is_super_admin: <?php echo Stand120_Auth::is_super_admin() ? 'true' : 'false'; ?>,
             current_user: <?php echo json_encode($current_user); ?>
         };
     </script>

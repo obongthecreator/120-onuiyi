@@ -187,6 +187,17 @@ class Stand120_Ajax_Handler {
                 self::delete_expense();
                 break;
             
+            // Order management actions
+            case 'delete_order':
+                self::delete_order();
+                break;
+            case 'get_all_orders':
+                self::get_all_orders();
+                break;
+            case 'update_financial_field':
+                self::update_financial_field();
+                break;
+            
             default:
                 wp_send_json_error(array('message' => 'Invalid action'));
         }
@@ -1257,6 +1268,247 @@ class Stand120_Ajax_Handler {
             'recommendations' => $recommendations,
             'total_projected' => $total_projected,
             'achievable' => $total_projected >= $target
+        ));
+    }
+    
+    /**
+     * Delete an order and recalculate financial summary
+     */
+    private static function delete_order() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
+            return;
+        }
+        
+        $order_id = intval($_POST['order_id'] ?? 0);
+        if ($order_id <= 0) {
+            wp_send_json_error(array('message' => 'Invalid order ID'));
+            return;
+        }
+        
+        global $wpdb;
+        $orders_table = $wpdb->prefix . 'stand120_orders';
+        $items_table = $wpdb->prefix . 'stand120_order_items';
+        $summary_table = $wpdb->prefix . 'stand120_financial_summary';
+        $prep_table = $wpdb->prefix . 'stand120_order_preparation';
+        
+        // Get the order data first
+        $order = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $orders_table WHERE id = %d",
+            $order_id
+        ));
+        
+        if (!$order) {
+            wp_send_json_error(array('message' => 'Order not found'));
+            return;
+        }
+        
+        $order_date = $order->order_date;
+        $today = current_time('Y-m-d');
+        
+        // Non-super-admin can only delete orders from today
+        if (!Stand120_Auth::is_super_admin() && $order_date !== $today) {
+            wp_send_json_error(array('message' => 'You can only delete orders from today. Contact a super admin to delete older orders.'));
+            return;
+        }
+        
+        // Get order items before deletion (for recalculating preparation sold values)
+        $order_items = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $items_table WHERE order_id = %d",
+            $order_id
+        ));
+        
+        // Delete order items
+        $wpdb->delete($items_table, array('order_id' => $order_id), array('%d'));
+        
+        // Delete the order
+        $wpdb->delete($orders_table, array('id' => $order_id), array('%d'));
+        
+        // Recalculate order preparation sold values for that date
+        foreach ($order_items as $item) {
+            $total_sold = $wpdb->get_var($wpdb->prepare(
+                "SELECT COALESCE(SUM(oi.quantity), 0) 
+                 FROM $items_table oi 
+                 JOIN $orders_table o ON oi.order_id = o.id 
+                 WHERE oi.product_id = %d AND o.order_date = %s",
+                $item->product_id,
+                $order_date
+            ));
+            
+            $wpdb->update(
+                $prep_table,
+                array('total_sold' => $total_sold),
+                array('product_id' => $item->product_id, 'prep_date' => $order_date),
+                array('%d'),
+                array('%d', '%s')
+            );
+        }
+        
+        // Recalculate financial summary for that date
+        $totals = $wpdb->get_row($wpdb->prepare(
+            "SELECT 
+                COALESCE(SUM(cash_amount), 0) as total_cash,
+                COALESCE(SUM(transfer_amount), 0) as total_transfer,
+                COALESCE(SUM(grand_total), 0) as total_sales,
+                COALESCE(SUM(delivery_fee), 0) as total_delivery,
+                COUNT(*) as order_count
+            FROM $orders_table WHERE order_date = %s",
+            $order_date
+        ));
+        
+        $wpdb->update(
+            $summary_table,
+            array(
+                'cash_sales' => $totals->total_cash,
+                'transfer_sales' => $totals->total_transfer,
+                'total_sales' => $totals->total_sales,
+                'delivery_fees' => $totals->total_delivery
+            ),
+            array('summary_date' => $order_date),
+            array('%f', '%f', '%f', '%f'),
+            array('%s')
+        );
+        
+        // Log activity
+        $activity_table = $wpdb->prefix . 'stand120_activity_log';
+        if ($wpdb->get_var("SHOW TABLES LIKE '$activity_table'") === $activity_table) {
+            $user = wp_get_current_user();
+            $wpdb->insert($activity_table, array(
+                'user_id' => get_current_user_id(),
+                'action' => 'delete_order',
+                'description' => sprintf('Deleted order #%d (₦%s) from %s', $order_id, number_format($order->grand_total, 2), $order_date),
+                'created_at' => current_time('mysql')
+            ));
+        }
+        
+        wp_send_json_success(array(
+            'message' => sprintf('Order #%d deleted successfully. Financial summary for %s has been recalculated.', $order_id, $order_date)
+        ));
+    }
+    
+    /**
+     * Get all orders with pagination and filters
+     */
+    private static function get_all_orders() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
+            return;
+        }
+        
+        global $wpdb;
+        $orders_table = $wpdb->prefix . 'stand120_orders';
+        $items_table = $wpdb->prefix . 'stand120_order_items';
+        
+        $page = max(1, intval($_POST['page'] ?? 1));
+        $per_page = min(100, max(1, intval($_POST['per_page'] ?? 20)));
+        $offset = ($page - 1) * $per_page;
+        
+        $where = "1=1";
+        $params = array();
+        
+        $date_from = sanitize_text_field($_POST['date_from'] ?? '');
+        $date_to = sanitize_text_field($_POST['date_to'] ?? '');
+        
+        if ($date_from) {
+            $where .= " AND o.order_date >= %s";
+            $params[] = $date_from;
+        }
+        if ($date_to) {
+            $where .= " AND o.order_date <= %s";
+            $params[] = $date_to;
+        }
+        
+        // Count total
+        $count_query = "SELECT COUNT(*) FROM $orders_table o WHERE $where";
+        if (!empty($params)) {
+            $total = $wpdb->get_var($wpdb->prepare($count_query, $params));
+        } else {
+            $total = $wpdb->get_var($count_query);
+        }
+        
+        $total_pages = max(1, ceil($total / $per_page));
+        
+        // Get orders
+        $query = "SELECT o.*, 
+                    (SELECT COUNT(*) FROM $items_table WHERE order_id = o.id) as item_count
+                  FROM $orders_table o 
+                  WHERE $where 
+                  ORDER BY o.order_date DESC, o.id DESC 
+                  LIMIT %d OFFSET %d";
+        $params[] = $per_page;
+        $params[] = $offset;
+        
+        $orders = $wpdb->get_results($wpdb->prepare($query, $params));
+        
+        wp_send_json_success(array(
+            'orders' => $orders,
+            'total' => intval($total),
+            'page' => $page,
+            'per_page' => $per_page,
+            'total_pages' => $total_pages
+        ));
+    }
+    
+    /**
+     * Update a financial summary field (super admin only)
+     */
+    private static function update_financial_field() {
+        if (!Stand120_Auth::is_super_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized - Super admin access required'));
+            return;
+        }
+        
+        $field_name = sanitize_text_field($_POST['field_name'] ?? '');
+        $field_value = sanitize_text_field($_POST['field_value'] ?? '');
+        $date = sanitize_text_field($_POST['date'] ?? '');
+        
+        $allowed_fields = array('extras_amount', 'extras_remark', 'expenses_amount', 'expenses_remark', 'old_cash', 'cash_left');
+        
+        if (!in_array($field_name, $allowed_fields)) {
+            wp_send_json_error(array('message' => 'Invalid field name'));
+            return;
+        }
+        
+        if (empty($date)) {
+            wp_send_json_error(array('message' => 'Date is required'));
+            return;
+        }
+        
+        global $wpdb;
+        $summary_table = $wpdb->prefix . 'stand120_financial_summary';
+        
+        // Determine format based on field type
+        $format = in_array($field_name, array('extras_remark', 'expenses_remark')) ? '%s' : '%f';
+        if (!in_array($field_name, array('extras_remark', 'expenses_remark'))) {
+            $field_value = floatval($field_value);
+        }
+        
+        $updated = $wpdb->update(
+            $summary_table,
+            array($field_name => $field_value),
+            array('summary_date' => $date),
+            array($format),
+            array('%s')
+        );
+        
+        if ($updated === false) {
+            wp_send_json_error(array('message' => 'Failed to update field'));
+            return;
+        }
+        
+        // Log activity
+        $activity_table = $wpdb->prefix . 'stand120_activity_log';
+        if ($wpdb->get_var("SHOW TABLES LIKE '$activity_table'") === $activity_table) {
+            $wpdb->insert($activity_table, array(
+                'user_id' => get_current_user_id(),
+                'action' => 'update_financial_field',
+                'description' => sprintf('Updated %s to %s for date %s', $field_name, $field_value, $date),
+                'created_at' => current_time('mysql')
+            ));
+        }
+        
+        wp_send_json_success(array(
+            'message' => sprintf('Field "%s" updated successfully for %s', $field_name, $date)
         ));
     }
     

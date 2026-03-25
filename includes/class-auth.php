@@ -66,6 +66,17 @@ class Stand120_Auth {
     }
     
     /**
+     * Check if user is super admin (WordPress administrator)
+     */
+    public static function is_super_admin() {
+        if (!is_user_logged_in()) {
+            return false;
+        }
+        $user = wp_get_current_user();
+        return in_array('administrator', (array) $user->roles);
+    }
+    
+    /**
      * Get current staff ID
      */
     public static function get_current_staff_id() {

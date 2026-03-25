@@ -220,6 +220,7 @@ class Stand120_Inventory {
             'home_url' => home_url('/120-stand/'),
             'is_logged_in' => Stand120_Auth::is_logged_in(),
             'is_admin' => Stand120_Auth::is_admin(),
+            'is_super_admin' => Stand120_Auth::is_super_admin(),
             'current_user' => Stand120_Auth::get_current_user_data()
         ));
         

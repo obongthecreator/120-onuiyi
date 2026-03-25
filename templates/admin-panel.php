@@ -61,6 +61,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <button class="tab-btn" data-tab="settings-tab">
         <i class="fas fa-sliders-h"></i> Settings
     </button>
+    <button class="tab-btn" data-tab="orders-tab">
+        <i class="fas fa-shopping-cart"></i> Orders
+    </button>
 </div>
 
 <!-- Products Tab -->
@@ -242,6 +245,62 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <i class="fas fa-trash"></i> Clear All Records
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Management Tab -->
+<div id="orders-tab" class="tab-content">
+    <div class="glass-card">
+        <h3 style="margin-bottom: 20px; color: var(--primary-color);">
+            <i class="fas fa-shopping-cart"></i> Order Management
+        </h3>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">
+            <i class="fas fa-info-circle"></i>
+            Delete orders to remove them and their effects on financial summaries. 
+            <?php if (!Stand120_Auth::is_super_admin()): ?>
+            <strong>Note:</strong> You can only delete orders from today.
+            <?php endif; ?>
+        </p>
+        
+        <div class="filter-section" style="margin-bottom: 20px;">
+            <div class="filter-group">
+                <label>From Date</label>
+                <input type="date" id="orderDateFrom" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+            </div>
+            <div class="filter-group">
+                <label>To Date</label>
+                <input type="date" id="orderDateTo" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+            </div>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button id="loadOrders" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Load Orders
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table" id="adminOrdersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Staff</th>
+                        <th>Items</th>
+                        <th>Total (₦)</th>
+                        <th>Payment</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        <div id="orderPagination" class="pagination" style="margin-top: 16px;">
+            <button class="pagination-btn" id="prevOrderPage" disabled>Previous</button>
+            <span class="pagination-info">Page <span id="orderCurrentPage">1</span> of <span id="orderTotalPages">1</span></span>
+            <button class="pagination-btn" id="nextOrderPage">Next</button>
         </div>
     </div>
 </div>
