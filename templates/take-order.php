@@ -27,11 +27,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="datetime-display">
         <div class="date-display">
-            <i class="fas fa-calendar-alt"></i>
+            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
             <span class="date-text"><?php echo date_i18n('l, F j, Y'); ?></span>
         </div>
         <div class="time-display">
-            <i class="fas fa-clock"></i>
+            <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
             <span class="digital-clock">--:--:--</span>
         </div>
     </div>
@@ -39,11 +39,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
-        <i class="fas fa-cart-plus"></i>
+        <iconify-icon icon="solar:cart-plus-linear"></iconify-icon>
         Take Order
     </h1>
     <a href="<?php echo home_url('/120-stand/take-order-history/'); ?>" class="history-btn">
-        <i class="fas fa-history"></i> View Order History
+        <iconify-icon icon="solar:history-linear"></iconify-icon> View Order History
     </a>
 </div>
 
@@ -52,7 +52,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Order Items Table -->
     <div class="glass-card">
         <h3 style="margin-bottom: 16px; color: var(--primary-color);">
-            <i class="fas fa-list"></i> Order Items
+            <iconify-icon icon="solar:list-linear"></iconify-icon> Order Items
         </h3>
         
         <div class="table-responsive">
@@ -89,7 +89,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Payment Section -->
     <div class="glass-card">
         <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-            <i class="fas fa-credit-card"></i> Payment Details
+            <iconify-icon icon="solar:card-linear"></iconify-icon> Payment Details
         </h3>
         
         <!-- Payment Method Selection -->
@@ -98,17 +98,17 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <div class="payment-method-select">
                 <label class="payment-option">
                     <input type="radio" name="payment_method" value="transfer">
-                    <i class="fas fa-credit-card"></i>
+                    <iconify-icon icon="solar:card-linear"></iconify-icon>
                     <span>Transfer/Card</span>
                 </label>
                 <label class="payment-option">
                     <input type="radio" name="payment_method" value="cash">
-                    <i class="fas fa-money-bill-wave"></i>
+                    <iconify-icon icon="solar:banknote-2-linear"></iconify-icon>
                     <span>Cash</span>
                 </label>
                 <label class="payment-option">
                     <input type="radio" name="payment_method" value="both">
-                    <i class="fas fa-coins"></i>
+                    <iconify-icon icon="solar:wallet-money-linear"></iconify-icon>
                     <span>Transfer/Card + Cash</span>
                 </label>
             </div>
@@ -117,7 +117,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <!-- Cash Amount Section (Hidden by default) -->
         <div id="cashSection" class="glass-card" style="display: none; margin-top: 16px; background: rgba(139, 0, 0, 0.03);">
             <h4 style="color: var(--primary-color); margin-bottom: 12px;">
-                <i class="fas fa-money-bill-wave"></i> Cash Payment
+                <iconify-icon icon="solar:banknote-2-linear"></iconify-icon> Cash Payment
             </h4>
             <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label" for="cashAmount">Cash Amount (₦)</label>
@@ -128,7 +128,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <!-- Transfer Amount Section (Hidden by default) -->
         <div id="transferSection" class="glass-card" style="display: none; margin-top: 16px; background: rgba(139, 0, 0, 0.03);">
             <h4 style="color: var(--primary-color); margin-bottom: 12px;">
-                <i class="fas fa-credit-card"></i> Transfer/Card Payment
+                <iconify-icon icon="solar:card-linear"></iconify-icon> Transfer/Card Payment
             </h4>
             <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label" for="transferAmount">Transfer/Card Amount (₦)</label>
@@ -139,7 +139,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <!-- Delivery Fee -->
         <div class="form-group" style="margin-top: 20px;">
             <label class="form-label" for="deliveryFee">
-                <i class="fas fa-motorcycle" style="color: var(--primary-color);"></i> Delivery Fee (₦)
+                <iconify-icon icon="solar:scooter-linear" style="color: var(--primary-color);"></iconify-icon> Delivery Fee (₦)
             </label>
             <input type="text" id="deliveryFee" class="form-control number-input" placeholder="Enter delivery fee (optional)">
         </div>
@@ -149,7 +149,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <label class="form-check">
                 <input type="checkbox" id="paymentConfirmed">
                 <span class="form-check-label">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <iconify-icon icon="solar:danger-triangle-linear"></iconify-icon>
                     I confirm that payment has been received and verified on the POS system before submitting this order.
                 </span>
             </label>
@@ -159,7 +159,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Grand Total -->
     <div class="grand-total-section">
         <span class="grand-total-label">
-            <i class="fas fa-receipt"></i> Grand Total
+            <iconify-icon icon="solar:document-text-linear"></iconify-icon> Grand Total
         </span>
         <span id="grandTotal" class="grand-total-value">₦0</span>
     </div>
@@ -167,7 +167,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Submit Button -->
     <div style="margin-top: 24px; text-align: center;">
         <button type="button" id="submitOrder" class="btn btn-primary btn-lg">
-            <i class="fas fa-check-circle"></i> Submit Order
+            <iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Order
         </button>
     </div>
 </form>

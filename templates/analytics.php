@@ -19,7 +19,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 ?>
 
 <h1 class="page-title">
-    <i class="fas fa-chart-line"></i>
+    <iconify-icon icon="solar:graph-up-linear"></iconify-icon>
     Analytics Dashboard
 </h1>
 
@@ -41,7 +41,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <div class="filter-group">
         <label>&nbsp;</label>
         <button id="loadAnalytics" class="btn btn-primary">
-            <i class="fas fa-sync"></i> Load Analytics
+            <iconify-icon icon="solar:refresh-linear"></iconify-icon> Load Analytics
         </button>
     </div>
 </div>
@@ -50,7 +50,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <div class="summary-cards">
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-chart-line"></i>
+            <iconify-icon icon="solar:graph-up-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Revenue</span>
         <span id="revenueAnalytics" class="summary-card-value">₦0</span>
@@ -58,7 +58,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-chart-pie"></i>
+            <iconify-icon icon="solar:pie-chart-2-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Profit</span>
         <span id="profitAnalytics" class="summary-card-value">₦0</span>
@@ -66,7 +66,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-minus-circle"></i>
+            <iconify-icon icon="solar:minus-circle-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Expenses</span>
         <span id="expensesAnalytics" class="summary-card-value">₦0</span>
@@ -74,7 +74,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-arrow-down"></i>
+            <iconify-icon icon="solar:arrow-down-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Loss</span>
         <span id="lossAnalytics" class="summary-card-value">₦0</span>
@@ -84,7 +84,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <div class="summary-cards">
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-naira-sign"></i>
+            <iconify-icon icon="solar:money-bag-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Sales</span>
         <span id="totalSalesAnalytics" class="summary-card-value">₦0</span>
@@ -92,7 +92,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-shopping-cart"></i>
+            <iconify-icon icon="solar:cart-large-2-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Orders</span>
         <span id="totalOrdersAnalytics" class="summary-card-value">0</span>
@@ -100,7 +100,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-calculator"></i>
+            <iconify-icon icon="solar:calculator-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Avg Order Value</span>
         <span id="avgOrderAnalytics" class="summary-card-value">₦0</span>
@@ -110,7 +110,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Target Setting Section -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-bullseye"></i> Sales Target Recommendation
+        <iconify-icon icon="solar:target-linear"></iconify-icon> Sales Target Recommendation
     </h3>
     <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px;">
         <div class="filter-group">
@@ -120,7 +120,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <div class="filter-group">
             <label>&nbsp;</label>
             <button id="calculateTarget" class="btn btn-primary">
-                <i class="fas fa-calculator"></i> Calculate
+                <iconify-icon icon="solar:calculator-linear"></iconify-icon> Calculate
             </button>
         </div>
     </div>
@@ -146,7 +146,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Product Revenue Attribution -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-chart-line"></i> Product Revenue Attribution
+        <iconify-icon icon="solar:graph-up-linear"></iconify-icon> Product Revenue Attribution
     </h3>
     <div class="table-responsive">
         <table class="table" id="productRevenueTable">
@@ -166,7 +166,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Detailed Expenses Breakdown -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-minus-circle"></i> Detailed Expenses Breakdown
+        <iconify-icon icon="solar:minus-circle-linear"></iconify-icon> Detailed Expenses Breakdown
     </h3>
     <div class="table-responsive">
         <table class="table" id="detailedExpensesTable">
@@ -185,7 +185,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Staff Performance -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-users"></i> Staff Performance
+        <iconify-icon icon="solar:users-group-two-rounded-linear"></iconify-icon> Staff Performance
     </h3>
 
     <div class="table-responsive">
@@ -205,7 +205,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Top Products -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-trophy"></i> Top Selling Products
+        <iconify-icon icon="solar:cup-star-linear"></iconify-icon> Top Selling Products
     </h3>
 
     <div class="table-responsive">
@@ -225,7 +225,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Order Preparation Analytics -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-blender"></i> Order Preparation Analytics
+        <iconify-icon icon="solar:chef-hat-linear"></iconify-icon> Order Preparation Analytics
     </h3>
     <div id="prepSummary" style="color: var(--text-muted); margin-bottom: 12px;"></div>
     <div class="table-responsive">
@@ -246,7 +246,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Stock Inventory Analytics -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-boxes"></i> Stock Inventory Analytics
+        <iconify-icon icon="solar:box-linear"></iconify-icon> Stock Inventory Analytics
     </h3>
     <div id="stockSummary" style="color: var(--text-muted); margin-bottom: 12px;"></div>
     <div class="table-responsive">
@@ -267,7 +267,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Chopping Inventory Analytics -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-cut"></i> Chopping Inventory Analytics
+        <iconify-icon icon="solar:scissors-linear"></iconify-icon> Chopping Inventory Analytics
     </h3>
     <div id="chopSummary" style="color: var(--text-muted); margin-bottom: 12px;"></div>
     <div class="table-responsive">
@@ -288,7 +288,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Import Records Analytics -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-truck-loading"></i> Import Records Analytics
+        <iconify-icon icon="solar:delivery-linear"></iconify-icon> Import Records Analytics
     </h3>
     <div id="importSummary" style="color: var(--text-muted); margin-bottom: 12px;"></div>
     <div class="table-responsive">
@@ -308,7 +308,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Financial Summary Analytics -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-wallet"></i> Financial Summary Analytics
+        <iconify-icon icon="solar:wallet-linear"></iconify-icon> Financial Summary Analytics
     </h3>
     <div class="table-responsive">
         <table class="table" id="financialAnalyticsTable">
@@ -330,7 +330,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Daily Sales Chart (Simple visualization) -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-chart-bar"></i> Daily Sales Trend
+        <iconify-icon icon="solar:chart-2-linear"></iconify-icon> Daily Sales Trend
     </h3>
 
     <div id="dailySalesChart" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; min-height: 200px;">

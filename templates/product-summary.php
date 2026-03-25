@@ -27,18 +27,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="datetime-display">
         <div class="date-display">
-            <i class="fas fa-calendar-alt"></i>
+            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
             <span class="date-text"><?php echo date_i18n('l, F j, Y'); ?></span>
         </div>
         <div class="time-display">
-            <i class="fas fa-clock"></i>
+            <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
             <span class="digital-clock">--:--:--</span>
         </div>
     </div>
 </div>
 
 <h1 class="page-title">
-    <i class="fas fa-chart-bar"></i>
+    <iconify-icon icon="solar:chart-2-linear"></iconify-icon>
     Product Summary
 </h1>
 
@@ -46,7 +46,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <div class="summary-cards">
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-shopping-basket"></i>
+            <iconify-icon icon="solar:bag-4-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Products Sold</span>
         <span id="totalProductsSold" class="summary-card-value">0</span>
@@ -54,7 +54,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-naira-sign"></i>
+            <iconify-icon icon="solar:money-bag-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Total Revenue</span>
         <span id="totalRevenue" class="summary-card-value">₦0</span>
@@ -62,7 +62,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <div class="summary-card glass-card">
         <div class="summary-card-icon">
-            <i class="fas fa-users"></i>
+            <iconify-icon icon="solar:users-group-two-rounded-linear"></iconify-icon>
         </div>
         <span class="summary-card-label">Active Staff Today</span>
         <span id="activeStaff" class="summary-card-value">0</span>
@@ -82,7 +82,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <div class="filter-group">
         <label>&nbsp;</label>
         <button id="filterBtn" class="btn btn-primary">
-            <i class="fas fa-filter"></i> Apply Filter
+            <iconify-icon icon="solar:filter-linear"></iconify-icon> Apply Filter
         </button>
     </div>
 </div>
@@ -90,7 +90,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <!-- Sales Breakdown Table -->
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-table"></i> Sales Breakdown
+        <iconify-icon icon="solar:document-text-linear"></iconify-icon> Sales Breakdown
     </h3>
     
     <div class="table-responsive">
@@ -114,11 +114,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Pagination -->
     <div class="pagination">
         <button class="pagination-btn" id="prevPage" disabled>
-            <i class="fas fa-chevron-left"></i> Previous
+            <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> Previous
         </button>
         <span class="pagination-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
         <button class="pagination-btn" id="nextPage">
-            Next <i class="fas fa-chevron-right"></i>
+            Next <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
         </button>
     </div>
 </div>

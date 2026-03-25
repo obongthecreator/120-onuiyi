@@ -28,11 +28,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="datetime-display">
         <div class="date-display">
-            <i class="fas fa-calendar-alt"></i>
+            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
             <span class="date-text"><?php echo date_i18n('l, F j, Y'); ?></span>
         </div>
         <div class="time-display">
-            <i class="fas fa-clock"></i>
+            <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
             <span class="digital-clock">--:--:--</span>
         </div>
     </div>
@@ -40,24 +40,24 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
-        <i class="fas fa-boxes"></i>
+        <iconify-icon icon="solar:box-linear"></iconify-icon>
         Stock Inventory
     </h1>
     <a href="<?php echo home_url('/120-stand/stock-inventory-history/'); ?>" class="history-btn">
-        <i class="fas fa-history"></i> View History
+        <iconify-icon icon="solar:history-linear"></iconify-icon> View History
     </a>
 </div>
 
 <div class="glass-card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: var(--primary-color);">
-            <i class="fas fa-box-open"></i> Pack Inventory Tracking
+            <iconify-icon icon="solar:box-linear"></iconify-icon> Pack Inventory Tracking
         </h3>
         <input type="date" id="stockDate" class="form-control" value="<?php echo $today; ?>" style="max-width: 200px;">
     </div>
     
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
-        <i class="fas fa-info-circle"></i> 
+        <iconify-icon icon="solar:info-circle-linear"></iconify-icon> 
         Values are auto-saved. Closing = Opening + Added - Used.
         Added packs come from Import Records (non-fruits) or Chopping Inventory packs gotten (fruits).
         <?php if (!$is_admin): ?>

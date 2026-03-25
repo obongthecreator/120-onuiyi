@@ -1075,6 +1075,15 @@ select.form-control {
     margin-top: 12px;
 }
 
+.password-toggle-btn {
+    font-size: 1.1rem;
+    transition: color var(--transition-fast);
+}
+
+.password-toggle-btn:hover {
+    color: var(--primary-color) !important;
+}
+
 /* Alerts */
 .alert {
     padding: 16px 20px;
@@ -1480,4 +1489,13 @@ select.form-control {
 .profile-stat-label {
     font-size: 0.85rem;
     color: var(--text-muted);
+}
+
+/* Iconify spin animation (replaces fa-spin) */
+.icon-spin {
+    animation: iconSpin 1s linear infinite;
+}
+@keyframes iconSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

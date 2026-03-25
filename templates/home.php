@@ -27,18 +27,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="datetime-display">
         <div class="date-display">
-            <i class="fas fa-calendar-alt"></i>
+            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
             <span class="date-text"><?php echo date_i18n('l, F j, Y'); ?></span>
         </div>
         <div class="time-display">
-            <i class="fas fa-clock"></i>
+            <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
             <span class="digital-clock">--:--:--</span>
         </div>
     </div>
 </div>
 
 <h1 class="page-title">
-    <i class="fas fa-th-large"></i>
+    <iconify-icon icon="solar:widget-2-linear"></iconify-icon>
     Dashboard
 </h1>
 
@@ -47,96 +47,96 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Take Order -->
     <a href="<?php echo home_url('/120-stand/take-order/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-cart-plus"></i>
+            <iconify-icon icon="solar:cart-plus-linear"></iconify-icon>
         </div>
         <h3>Take Order</h3>
         <p>Create new customer orders, select items, set quantities, and process payments quickly.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Order Preparation -->
     <a href="<?php echo home_url('/120-stand/order-preparation/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-blender"></i>
+            <iconify-icon icon="solar:chef-hat-linear"></iconify-icon>
         </div>
         <h3>Order Preparation</h3>
         <p>Track daily fruit preparation including opening stock, additions, sales, and closing quantities.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Stock Inventory -->
     <a href="<?php echo home_url('/120-stand/stock-inventory/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-boxes"></i>
+            <iconify-icon icon="solar:box-linear"></iconify-icon>
         </div>
         <h3>Stock Inventory</h3>
         <p>Monitor pack levels for fruits and non-fruit items with real-time opening, added, and closing stock.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Chopping Inventory -->
     <a href="<?php echo home_url('/120-stand/chopping-inventory/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-cut"></i>
+            <iconify-icon icon="solar:scissors-linear"></iconify-icon>
         </div>
         <h3>Chopping Inventory</h3>
         <p>Record whole fruit processing - track opening, imports, prepared quantities, and packs obtained.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Import Record -->
     <a href="<?php echo home_url('/120-stand/import-record/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-truck-loading"></i>
+            <iconify-icon icon="solar:delivery-linear"></iconify-icon>
         </div>
         <h3>Import Record</h3>
         <p>Log daily product imports which automatically update stock and chopping inventory forms.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Product Summary -->
     <a href="<?php echo home_url('/120-stand/product-summary/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-chart-bar"></i>
+            <iconify-icon icon="solar:chart-2-linear"></iconify-icon>
         </div>
         <h3>Product Summary</h3>
         <p>View total products sold, revenue generated, active staff, and detailed sales breakdown.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Expense Record -->
     <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-receipt"></i>
+            <iconify-icon icon="solar:document-text-linear"></iconify-icon>
         </div>
         <h3>Expense Record</h3>
         <p>Record daily expenses with description, amount, and quantity. View expense history and totals.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Financial Summary -->
     <a href="<?php echo home_url('/120-stand/financial-summary/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-wallet"></i>
+            <iconify-icon icon="solar:wallet-linear"></iconify-icon>
         </div>
         <h3>Financial Summary</h3>
         <p>Track daily finances including sales, cash/transfer breakdown, expenses, and cash reconciliation.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
@@ -144,24 +144,24 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Admin Panel -->
     <a href="<?php echo home_url('/120-stand/admin-panel/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-cog"></i>
+            <iconify-icon icon="solar:settings-linear"></iconify-icon>
         </div>
         <h3>Admin Panel</h3>
         <p>Manage products, prices, staff accounts, opening values, and system settings.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     
     <!-- Analytics -->
     <a href="<?php echo home_url('/120-stand/analytics/'); ?>" class="home-card">
         <div class="home-card-icon">
-            <i class="fas fa-chart-line"></i>
+            <iconify-icon icon="solar:graph-up-linear"></iconify-icon>
         </div>
         <h3>Analytics</h3>
         <p>View performance analytics, sales trends, staff performance, and business insights.</p>
         <span class="home-card-btn">
-            <i class="fas fa-arrow-right"></i> Open
+            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon> Open
         </span>
     </a>
     <?php endif; ?>

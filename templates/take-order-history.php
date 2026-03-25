@@ -15,11 +15,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
-        <i class="fas fa-history"></i>
+        <iconify-icon icon="solar:history-linear"></iconify-icon>
         Order History
     </h1>
     <a href="<?php echo home_url('/120-stand/take-order/'); ?>" class="btn btn-primary">
-        <i class="fas fa-plus"></i> New Order
+        <iconify-icon icon="solar:add-circle-linear"></iconify-icon> New Order
     </a>
 </div>
 
@@ -36,7 +36,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <div class="filter-group">
         <label>&nbsp;</label>
         <button id="filterBtn" class="btn btn-primary">
-            <i class="fas fa-filter"></i> Filter
+            <iconify-icon icon="solar:filter-linear"></iconify-icon> Filter
         </button>
     </div>
 </div>
@@ -64,11 +64,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <div class="pagination">
         <button class="pagination-btn" id="prevPage" disabled>
-            <i class="fas fa-chevron-left"></i> Previous
+            <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> Previous
         </button>
         <span class="pagination-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
         <button class="pagination-btn" id="nextPage">
-            Next <i class="fas fa-chevron-right"></i>
+            Next <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
         </button>
     </div>
 </div>

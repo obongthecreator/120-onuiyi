@@ -37,7 +37,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 ?>
 
 <h1 class="page-title">
-    <i class="fas fa-user"></i>
+    <iconify-icon icon="solar:user-linear"></iconify-icon>
     My Profile
 </h1>
 
@@ -48,7 +48,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </div>
         <h2 class="profile-name"><?php echo esc_html($current_user['display_name']); ?></h2>
         <p class="profile-role">
-            <i class="fas fa-<?php echo $is_admin ? 'crown' : 'user'; ?>"></i>
+            <iconify-icon icon="solar:<?php echo $is_admin ? 'crown-linear' : 'user-linear'; ?>"></iconify-icon>
             <?php echo ucfirst($current_user['role']); ?>
         </p>
         
@@ -71,7 +71,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-info-circle"></i> Account Information
+        <iconify-icon icon="solar:info-circle-linear"></iconify-icon> Account Information
     </h3>
     
     <div style="display: grid; gap: 16px;">
@@ -90,7 +90,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <div style="display: flex; justify-content: space-between; padding: 12px 0;">
             <span style="color: var(--text-muted);">Status</span>
             <span class="status-badge status-synced">
-                <i class="fas fa-check"></i> Active
+                <iconify-icon icon="solar:check-read-linear"></iconify-icon> Active
             </span>
         </div>
     </div>
@@ -98,23 +98,23 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-link"></i> Quick Links
+        <iconify-icon icon="solar:link-linear"></iconify-icon> Quick Links
     </h3>
     
     <div style="display: grid; gap: 12px;">
         <a href="<?php echo home_url('/120-stand/take-order-history/'); ?>" class="btn btn-secondary" style="justify-content: flex-start;">
-            <i class="fas fa-history"></i> My Order History
+            <iconify-icon icon="solar:history-linear"></iconify-icon> My Order History
         </a>
         <?php if ($is_admin): ?>
         <a href="<?php echo home_url('/120-stand/admin-panel/'); ?>" class="btn btn-secondary" style="justify-content: flex-start;">
-            <i class="fas fa-cog"></i> Admin Panel
+            <iconify-icon icon="solar:settings-linear"></iconify-icon> Admin Panel
         </a>
         <a href="<?php echo home_url('/120-stand/analytics/'); ?>" class="btn btn-secondary" style="justify-content: flex-start;">
-            <i class="fas fa-chart-line"></i> Analytics Dashboard
+            <iconify-icon icon="solar:graph-up-linear"></iconify-icon> Analytics Dashboard
         </a>
         <?php endif; ?>
         <a href="<?php echo wp_logout_url(home_url('/120-stand/login/')); ?>" class="btn btn-danger" style="justify-content: flex-start;">
-            <i class="fas fa-sign-out-alt"></i> Logout
+            <iconify-icon icon="solar:logout-2-linear"></iconify-icon> Logout
         </a>
     </div>
 </div>

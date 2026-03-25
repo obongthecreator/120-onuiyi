@@ -27,7 +27,7 @@ if (Stand120_Auth::is_logged_in()) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     
     <!-- Plugin Styles -->
     <link rel="stylesheet" href="<?php echo STAND120_PLUGIN_URL; ?>assets/css/style.css?v=<?php echo STAND120_VERSION; ?>">
@@ -52,11 +52,16 @@ if (Stand120_Auth::is_logged_in()) {
                 
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+                    <div class="password-input-wrapper" style="position: relative;">
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password" style="padding-right: 48px;">
+                        <button type="button" id="togglePassword" class="password-toggle-btn" aria-label="Toggle password visibility" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted, #666); padding: 4px; display: flex; align-items: center; justify-content: center;">
+                            <iconify-icon icon="solar:eye-linear" id="togglePasswordIcon"></iconify-icon>
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" id="loginBtn" class="btn btn-primary login-btn">
-                    <i class="fas fa-sign-in-alt"></i> Login
+                    <iconify-icon icon="solar:login-2-linear"></iconify-icon> Login
                 </button>
             </form>
         </div>
@@ -94,6 +99,19 @@ if (Stand120_Auth::is_logged_in()) {
             if (typeof Login !== 'undefined') {
                 Login.init();
             }
+            
+            // Password toggle visibility
+            $('#togglePassword').on('click', function() {
+                var $input = $('#password');
+                var $icon = $('#togglePasswordIcon');
+                if ($input.attr('type') === 'password') {
+                    $input.attr('type', 'text');
+                    $icon.attr('icon', 'solar:eye-closed-linear');
+                } else {
+                    $input.attr('type', 'password');
+                    $icon.attr('icon', 'solar:eye-linear');
+                }
+            });
         });
     </script>
     

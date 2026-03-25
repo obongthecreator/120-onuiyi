@@ -28,11 +28,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="datetime-display">
         <div class="date-display">
-            <i class="fas fa-calendar-alt"></i>
+            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
             <span class="date-text"><?php echo date_i18n('l, F j, Y'); ?></span>
         </div>
         <div class="time-display">
-            <i class="fas fa-clock"></i>
+            <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
             <span class="digital-clock">--:--:--</span>
         </div>
     </div>
@@ -40,24 +40,24 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
-        <i class="fas fa-wallet"></i>
+        <iconify-icon icon="solar:wallet-linear"></iconify-icon>
         Financial Summary
     </h1>
     <div style="display: flex; gap: 12px; align-items: center;">
         <input type="date" id="finDate" class="form-control" value="<?php echo $today; ?>" style="max-width: 200px;">
         <a href="<?php echo home_url('/120-stand/financial-summary-history/'); ?>" class="history-btn">
-            <i class="fas fa-history"></i> View History
+            <iconify-icon icon="solar:history-linear"></iconify-icon> View History
         </a>
     </div>
 </div>
 
 <div class="glass-card">
     <h3 style="margin-bottom: 20px; color: var(--primary-color);">
-        <i class="fas fa-calculator"></i> Daily Financial Report
+        <iconify-icon icon="solar:calculator-linear"></iconify-icon> Daily Financial Report
     </h3>
     
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
-        <i class="fas fa-info-circle"></i> 
+        <iconify-icon icon="solar:info-circle-linear"></iconify-icon> 
         Cash Left = (Cash Sales + Old Cash + Extras) - Expenses. 
         Only Extras and Expenses fields are editable. Values auto-save.
     </p>
@@ -67,35 +67,35 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <tbody>
                 <tr>
                     <td style="font-weight: 600; width: 40%;">
-                        <i class="fas fa-chart-line" style="color: var(--primary-color);"></i>
+                        <iconify-icon icon="solar:graph-up-linear" style="color: var(--primary-color);"></iconify-icon>
                         Total Sales
                     </td>
                     <td id="totalSales" class="formatted-number" style="font-size: 1.2rem; font-weight: 600;">₦0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-exchange-alt" style="color: var(--info-color);"></i>
+                        <iconify-icon icon="solar:transfer-horizontal-linear" style="color: var(--info-color);"></iconify-icon>
                         Transfer/Card Sales
                     </td>
                     <td id="transferSales" class="formatted-number">₦0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-money-bill-wave" style="color: var(--success-color);"></i>
+                        <iconify-icon icon="solar:banknote-2-linear" style="color: var(--success-color);"></iconify-icon>
                         Cash Sales
                     </td>
                     <td id="cashSales" class="formatted-number">₦0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-motorcycle" style="color: var(--warning-color);"></i>
+                        <iconify-icon icon="solar:scooter-linear" style="color: var(--warning-color);"></iconify-icon>
                         Delivery Fees
                     </td>
                     <td id="deliveryFees" class="formatted-number">₦0</td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-plus-circle" style="color: var(--success-color);"></i>
+                        <iconify-icon icon="solar:add-circle-linear" style="color: var(--success-color);"></iconify-icon>
                         Extras Amount (₦)
                     </td>
                     <td>
@@ -104,7 +104,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-comment" style="color: var(--text-muted);"></i>
+                        <iconify-icon icon="solar:chat-dots-linear" style="color: var(--text-muted);"></iconify-icon>
                         Extras Remark
                     </td>
                     <td>
@@ -113,7 +113,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-minus-circle" style="color: var(--danger-color);"></i>
+                        <iconify-icon icon="solar:minus-circle-linear" style="color: var(--danger-color);"></iconify-icon>
                         Expenses Amount (₦)
                     </td>
                     <td>
@@ -122,7 +122,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-comment" style="color: var(--text-muted);"></i>
+                        <iconify-icon icon="solar:chat-dots-linear" style="color: var(--text-muted);"></iconify-icon>
                         Expenses Remark
                     </td>
                     <td>
@@ -131,7 +131,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-clock" style="color: var(--text-muted);"></i>
+                        <iconify-icon icon="solar:clock-circle-linear" style="color: var(--text-muted);"></iconify-icon>
                         Old Cash (Yesterday's Cash Left)
                     </td>
                     <td id="oldCash" class="formatted-number">₦0</td>
@@ -143,13 +143,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Cash Left Highlight -->
     <div class="grand-total-section" style="margin-top: 24px;">
         <span class="grand-total-label">
-            <i class="fas fa-cash-register"></i> Cash Left
+            <iconify-icon icon="solar:cash-out-linear"></iconify-icon> Cash Left
         </span>
         <span id="cashLeft" class="grand-total-value">₦0</span>
     </div>
     
     <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.85rem; text-align: center;">
-        <i class="fas fa-info-circle"></i> 
+        <iconify-icon icon="solar:info-circle-linear"></iconify-icon> 
         Formula: Cash Left = (Cash Sales + Old Cash + Extras) - Expenses
     </p>
 </div>

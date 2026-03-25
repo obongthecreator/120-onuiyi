@@ -30,7 +30,7 @@ $current_page = get_query_var('stand120_page');
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     
     <!-- Plugin Styles -->
     <link rel="stylesheet" href="<?php echo STAND120_PLUGIN_URL; ?>assets/css/style.css?v=<?php echo STAND120_VERSION; ?>">
@@ -47,7 +47,7 @@ $current_page = get_query_var('stand120_page');
 <body class="stand120-app">
     <!-- Offline Banner -->
     <div class="offline-banner">
-        <i class="fas fa-wifi-slash"></i> You are offline. Changes will sync when you reconnect.
+        <iconify-icon icon="solar:wi-fi-router-linear"></iconify-icon> You are offline. Changes will sync when you reconnect.
     </div>
     
     <!-- Header -->
@@ -59,21 +59,21 @@ $current_page = get_query_var('stand120_page');
         
         <nav class="stand120-nav">
             <a href="<?php echo home_url('/120-stand/'); ?>" class="stand120-nav-link <?php echo $current_page === 'home' ? 'active' : ''; ?>">
-                <i class="fas fa-home"></i> Home
+                <iconify-icon icon="solar:home-2-linear"></iconify-icon> Home
             </a>
             <a href="<?php echo home_url('/120-stand/take-order/'); ?>" class="stand120-nav-link <?php echo $current_page === 'take-order' ? 'active' : ''; ?>">
-                <i class="fas fa-cart-plus"></i> Take Order
+                <iconify-icon icon="solar:cart-plus-linear"></iconify-icon> Take Order
             </a>
             <a href="<?php echo home_url('/120-stand/product-summary/'); ?>" class="stand120-nav-link <?php echo $current_page === 'product-summary' ? 'active' : ''; ?>">
-                <i class="fas fa-chart-bar"></i> Summary
+                <iconify-icon icon="solar:chart-2-linear"></iconify-icon> Summary
             </a>
             <?php if ($is_admin): ?>
             <a href="<?php echo home_url('/120-stand/admin-panel/'); ?>" class="stand120-nav-link <?php echo $current_page === 'admin-panel' ? 'active' : ''; ?>">
-                <i class="fas fa-cog"></i> Admin
+                <iconify-icon icon="solar:settings-linear"></iconify-icon> Admin
             </a>
             <?php endif; ?>
             <a href="<?php echo wp_logout_url(home_url('/120-stand/login/')); ?>" class="stand120-nav-link">
-                <i class="fas fa-sign-out-alt"></i> Logout
+                <iconify-icon icon="solar:logout-2-linear"></iconify-icon> Logout
             </a>
         </nav>
         
@@ -96,45 +96,45 @@ $current_page = get_query_var('stand120_page');
         
         <div class="mobile-nav-links">
             <a href="<?php echo home_url('/120-stand/'); ?>" class="mobile-nav-link <?php echo $current_page === 'home' ? 'active' : ''; ?>">
-                <i class="fas fa-home"></i> Home
+                <iconify-icon icon="solar:home-2-linear"></iconify-icon> Home
             </a>
             <a href="<?php echo home_url('/120-stand/take-order/'); ?>" class="mobile-nav-link <?php echo $current_page === 'take-order' ? 'active' : ''; ?>">
-                <i class="fas fa-cart-plus"></i> Take Order
+                <iconify-icon icon="solar:cart-plus-linear"></iconify-icon> Take Order
             </a>
             <a href="<?php echo home_url('/120-stand/order-preparation/'); ?>" class="mobile-nav-link <?php echo $current_page === 'order-preparation' ? 'active' : ''; ?>">
-                <i class="fas fa-blender"></i> Order Preparation
+                <iconify-icon icon="solar:chef-hat-linear"></iconify-icon> Order Preparation
             </a>
             <a href="<?php echo home_url('/120-stand/stock-inventory/'); ?>" class="mobile-nav-link <?php echo $current_page === 'stock-inventory' ? 'active' : ''; ?>">
-                <i class="fas fa-boxes"></i> Stock Inventory
+                <iconify-icon icon="solar:box-linear"></iconify-icon> Stock Inventory
             </a>
             <a href="<?php echo home_url('/120-stand/chopping-inventory/'); ?>" class="mobile-nav-link <?php echo $current_page === 'chopping-inventory' ? 'active' : ''; ?>">
-                <i class="fas fa-cut"></i> Chopping Inventory
+                <iconify-icon icon="solar:scissors-linear"></iconify-icon> Chopping Inventory
             </a>
             <a href="<?php echo home_url('/120-stand/import-record/'); ?>" class="mobile-nav-link <?php echo $current_page === 'import-record' ? 'active' : ''; ?>">
-                <i class="fas fa-truck-loading"></i> Import Record
+                <iconify-icon icon="solar:delivery-linear"></iconify-icon> Import Record
             </a>
             <a href="<?php echo home_url('/120-stand/product-summary/'); ?>" class="mobile-nav-link <?php echo $current_page === 'product-summary' ? 'active' : ''; ?>">
-                <i class="fas fa-chart-bar"></i> Product Summary
+                <iconify-icon icon="solar:chart-2-linear"></iconify-icon> Product Summary
             </a>
             <a href="<?php echo home_url('/120-stand/financial-summary/'); ?>" class="mobile-nav-link <?php echo $current_page === 'financial-summary' ? 'active' : ''; ?>">
-                <i class="fas fa-wallet"></i> Financial Summary
+                <iconify-icon icon="solar:wallet-linear"></iconify-icon> Financial Summary
             </a>
             <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" class="mobile-nav-link <?php echo $current_page === 'expense-record' ? 'active' : ''; ?>">
-                <i class="fas fa-receipt"></i> Expense Record
+                <iconify-icon icon="solar:document-text-linear"></iconify-icon> Expense Record
             </a>
             <a href="<?php echo home_url('/120-stand/profile/'); ?>" class="mobile-nav-link <?php echo $current_page === 'profile' ? 'active' : ''; ?>">
-                <i class="fas fa-user"></i> Profile
+                <iconify-icon icon="solar:user-linear"></iconify-icon> Profile
             </a>
             <?php if ($is_admin): ?>
             <a href="<?php echo home_url('/120-stand/admin-panel/'); ?>" class="mobile-nav-link <?php echo $current_page === 'admin-panel' ? 'active' : ''; ?>">
-                <i class="fas fa-cog"></i> Admin Panel
+                <iconify-icon icon="solar:settings-linear"></iconify-icon> Admin Panel
             </a>
             <a href="<?php echo home_url('/120-stand/analytics/'); ?>" class="mobile-nav-link <?php echo $current_page === 'analytics' ? 'active' : ''; ?>">
-                <i class="fas fa-chart-line"></i> Analytics
+                <iconify-icon icon="solar:graph-up-linear"></iconify-icon> Analytics
             </a>
             <?php endif; ?>
             <a href="<?php echo wp_logout_url(home_url('/120-stand/login/')); ?>" class="mobile-nav-link">
-                <i class="fas fa-sign-out-alt"></i> Logout
+                <iconify-icon icon="solar:logout-2-linear"></iconify-icon> Logout
             </a>
         </div>
     </aside>

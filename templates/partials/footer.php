@@ -20,29 +20,29 @@ $is_admin = Stand120_Auth::is_admin();
             <circle class="bg" cx="28" cy="28" r="25"></circle>
             <circle class="progress" cx="28" cy="28" r="25"></circle>
         </svg>
-        <i class="fas fa-arrow-up"></i>
+        <iconify-icon icon="solar:arrow-up-linear"></iconify-icon>
     </button>
     
     <!-- Bottom Navigation (Mobile) -->
     <nav class="bottom-nav">
         <a href="<?php echo home_url('/120-stand/'); ?>" class="bottom-nav-item <?php echo $current_page === 'home' ? 'active' : ''; ?>">
-            <i class="fas fa-home"></i>
+            <iconify-icon icon="solar:home-2-linear"></iconify-icon>
             <span>Home</span>
         </a>
         <a href="<?php echo home_url('/120-stand/take-order/'); ?>" class="bottom-nav-item <?php echo $current_page === 'take-order' ? 'active' : ''; ?>">
-            <i class="fas fa-cart-plus"></i>
+            <iconify-icon icon="solar:cart-plus-linear"></iconify-icon>
             <span>Order</span>
         </a>
         <a href="<?php echo home_url('/120-stand/financial-summary/'); ?>" class="bottom-nav-item <?php echo $current_page === 'financial-summary' ? 'active' : ''; ?>">
-            <i class="fas fa-wallet"></i>
+            <iconify-icon icon="solar:wallet-linear"></iconify-icon>
             <span>Finance</span>
         </a>
         <a href="<?php echo home_url('/120-stand/product-summary/'); ?>" class="bottom-nav-item <?php echo $current_page === 'product-summary' ? 'active' : ''; ?>">
-            <i class="fas fa-chart-bar"></i>
+            <iconify-icon icon="solar:chart-2-linear"></iconify-icon>
             <span>Summary</span>
         </a>
         <a href="<?php echo home_url('/120-stand/profile/'); ?>" class="bottom-nav-item <?php echo $current_page === 'profile' ? 'active' : ''; ?>">
-            <i class="fas fa-user"></i>
+            <iconify-icon icon="solar:user-linear"></iconify-icon>
             <span>Profile</span>
         </a>
     </nav>

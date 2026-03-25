@@ -332,7 +332,7 @@
                             justify-content: center;
                             margin: 0 auto 16px;
                         ">
-                            <i class="fas fa-${type === 'success' ? 'check' : type === 'danger' ? 'times' : type === 'warning' ? 'exclamation' : 'info'}" style="color: white; font-size: 28px;"></i>
+                            <iconify-icon icon="solar:${type === 'success' ? 'check-read-linear' : type === 'danger' ? 'close-circle-linear' : type === 'warning' ? 'danger-triangle-linear' : 'info-circle-linear'}" style="color: white; font-size: 28px;"></iconify-icon>
                         </div>
                         <h3 style="margin: 0 0 12px; color: #1a1a1a; font-size: 1.3rem;">${type === 'success' ? 'Success!' : type === 'danger' ? 'Error!' : type === 'warning' ? 'Warning!' : 'Info'}</h3>
                         <p style="margin: 0 0 20px; color: #666; font-size: 1rem;">${message}</p>
@@ -391,7 +391,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h3 class="modal-title">${options.title || 'Confirm'}</h3>
-                            <button class="modal-close"><i class="fas fa-times"></i></button>
+                            <button class="modal-close"><iconify-icon icon="solar:close-circle-linear"></iconify-icon></button>
                         </div>
                         <div class="modal-body">
                             ${options.content || ''}
@@ -791,7 +791,7 @@ const TakeOrder = {
             Stand120.showAlert('info', 'Order saved offline. It will sync when you\'re back online.');
             this.resetForm();
             this.isSubmitting = false;
-            $('#submitOrder').prop('disabled', false).html('<i class="fas fa-check-circle"></i> Submit Order');
+            $('#submitOrder').prop('disabled', false).html('<iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Order');
             return;
         }
         
@@ -810,7 +810,7 @@ const TakeOrder = {
             Stand120.showAlert('danger', 'An error occurred. Please try again.');
         }).finally(() => {
             this.isSubmitting = false;
-            $('#submitOrder').prop('disabled', false).html('<i class="fas fa-check-circle"></i> Submit Order');
+            $('#submitOrder').prop('disabled', false).html('<iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Order');
         });
     },
     
@@ -1220,7 +1220,7 @@ const ImportRecord = {
                     </td>
                     <td>
                         <span class="status-badge ${statusClass}">
-                            <i class="fas fa-${item.sync_status === 'synced' ? 'check' : 'sync'}"></i>
+                            <iconify-icon icon="solar:${item.sync_status === 'synced' ? 'check-read-linear' : 'refresh-linear'}"></iconify-icon>
                             ${item.sync_status}
                         </span>
                     </td>
@@ -1238,7 +1238,7 @@ const ImportRecord = {
         $row.find('.status-badge')
             .removeClass('status-synced status-pending')
             .addClass('status-syncing')
-            .html('<i class="fas fa-sync fa-spin"></i> syncing');
+            .html('<iconify-icon icon="solar:refresh-linear" class="icon-spin"></iconify-icon> syncing');
         
         // Auto-save
         this.saveRow($row);
@@ -1258,7 +1258,7 @@ const ImportRecord = {
                 $row.find('.status-badge')
                     .removeClass('status-syncing status-pending')
                     .addClass('status-synced')
-                    .html('<i class="fas fa-check"></i> synced');
+                    .html('<iconify-icon icon="solar:check-read-linear"></iconify-icon> synced');
             }
         });
     }
@@ -1480,7 +1480,7 @@ const AdminPanel = {
                         </select>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-danger delete-product"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-danger delete-product"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon></button>
                     </td>
                 </tr>
             `;
@@ -1501,7 +1501,7 @@ const AdminPanel = {
                     </select>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-danger delete-product"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-danger delete-product"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon></button>
                 </td>
             </tr>
         `;
@@ -1584,8 +1584,8 @@ const AdminPanel = {
                     <td>${s.role}</td>
                     <td>${s.status}</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary edit-staff"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger delete-staff"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-secondary edit-staff"><iconify-icon icon="solar:pen-linear"></iconify-icon></button>
+                        <button class="btn btn-sm btn-danger delete-staff"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon></button>
                     </td>
                 </tr>
             `;
@@ -1845,7 +1845,7 @@ const AdminPanel = {
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 class="modal-title">Final Confirmation</h3>
-                        <button class="modal-close"><i class="fas fa-times"></i></button>
+                        <button class="modal-close"><iconify-icon icon="solar:close-circle-linear"></iconify-icon></button>
                     </div>
                     <div class="modal-body">
                         <p>Type <strong>CLEAR</strong> to confirm you want to delete all records.</p>
@@ -1919,7 +1919,7 @@ const AdminPanel = {
                 <td class="formatted-number">₦${Stand120.formatNumber(order.grand_total)}</td>
                 <td>${order.payment_method}</td>
                 <td>
-                    <button class="btn btn-sm btn-danger delete-order"><i class="fas fa-trash"></i> Delete</button>
+                    <button class="btn btn-sm btn-danger delete-order"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon> Delete</button>
                 </td>
             </tr>`);
         });
@@ -2070,7 +2070,7 @@ const Login = {
                 const fallbackDelay = this.fallbackDelay;
                 const handleLoginFailure = () => {
                     Stand120.showAlert('danger', response.data?.message || 'Login failed');
-                    $('#loginBtn').prop('disabled', false).html('<i class="fas fa-sign-in-alt"></i> Login');
+                    $('#loginBtn').prop('disabled', false).html('<iconify-icon icon="solar:login-2-linear"></iconify-icon> Login');
                 };
                 
                 setTimeout(() => {
@@ -2087,7 +2087,7 @@ const Login = {
             }
         }).catch(() => {
             Stand120.showAlert('danger', 'An error occurred. Please try again.');
-            $('#loginBtn').prop('disabled', false).html('<i class="fas fa-sign-in-alt"></i> Login');
+            $('#loginBtn').prop('disabled', false).html('<iconify-icon icon="solar:login-2-linear"></iconify-icon> Login');
         });
     }
 };

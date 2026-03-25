@@ -28,11 +28,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="datetime-display">
         <div class="date-display">
-            <i class="fas fa-calendar-alt"></i>
+            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
             <span class="date-text"><?php echo date_i18n('l, F j, Y'); ?></span>
         </div>
         <div class="time-display">
-            <i class="fas fa-clock"></i>
+            <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
             <span class="digital-clock">--:--:--</span>
         </div>
     </div>
@@ -40,13 +40,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
-        <i class="fas fa-receipt"></i>
+        <iconify-icon icon="solar:document-text-linear"></iconify-icon>
         Expense Record
     </h1>
     <div style="display: flex; gap: 12px; align-items: center;">
         <input type="date" id="expenseDate" class="form-control" value="<?php echo $today; ?>" style="max-width: 200px;">
         <a href="<?php echo home_url('/120-stand/expense-history/'); ?>" class="history-btn">
-            <i class="fas fa-history"></i> View History
+            <iconify-icon icon="solar:history-linear"></iconify-icon> View History
         </a>
     </div>
 </div>
@@ -55,7 +55,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <form id="expenseForm">
     <div class="glass-card">
         <h3 style="margin-bottom: 16px; color: var(--primary-color);">
-            <i class="fas fa-list"></i> Expense Items
+            <iconify-icon icon="solar:list-linear"></iconify-icon> Expense Items
         </h3>
         
         <div class="table-responsive">
@@ -77,7 +77,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         
         <div style="margin-top: 16px;">
             <button type="button" id="addExpenseRow" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add Expense
+                <iconify-icon icon="solar:add-circle-linear"></iconify-icon> Add Expense
             </button>
         </div>
     </div>
@@ -85,7 +85,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Grand Total -->
     <div class="grand-total-section">
         <span class="grand-total-label">
-            <i class="fas fa-calculator"></i> Grand Total
+            <iconify-icon icon="solar:calculator-linear"></iconify-icon> Grand Total
         </span>
         <span id="grandTotal" class="grand-total-value">₦0</span>
     </div>
@@ -93,7 +93,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <!-- Submit Button -->
     <div style="margin-top: 24px; text-align: center;">
         <button type="button" id="submitExpenses" class="btn btn-primary btn-lg">
-            <i class="fas fa-check-circle"></i> Submit Expenses
+            <iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Expenses
         </button>
     </div>
 </form>
@@ -118,7 +118,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <td class="row-total formatted-number">₦0</td>
                     <td>
                         <button type="button" class="btn remove-row-btn" style="background: var(--danger-color); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem;">
-                            <i class="fas fa-trash"></i>
+                            <iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon>
                         </button>
                     </td>
                 </tr>
