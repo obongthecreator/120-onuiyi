@@ -192,11 +192,11 @@ jQuery(document).ready(function($) {
                 statusClass = 'recon-day-future';
             }
             
-            const clickAttr = isClickable ? `onclick="openReconModal('${dateStr}')"` : '';
+            const dataAttr = isClickable ? `data-date="${dateStr}"` : '';
             const cursorClass = isClickable ? 'recon-day-clickable' : '';
             
             $body.append(`
-                <div class="recon-calendar-day ${statusClass} ${cursorClass}" ${clickAttr}>
+                <div class="recon-calendar-day ${statusClass} ${cursorClass}" ${dataAttr}>
                     <span class="recon-day-number">${day}</span>
                     ${checkmarks}
                 </div>
@@ -204,8 +204,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // Make openReconModal global for onclick
-    window.openReconModal = function(dateStr) {
+    function openReconModal(dateStr) {
         selectedDate = dateStr;
         const record = reconData[dateStr];
         
@@ -241,7 +240,15 @@ jQuery(document).ready(function($) {
         
         $('#reconStatus').html(statusHtml);
         $('#reconModal').fadeIn(200);
-    };
+    }
+    
+    // Event delegation for clickable calendar days
+    $('#calendarBody').on('click', '.recon-day-clickable[data-date]', function() {
+        const dateStr = $(this).data('date');
+        if (dateStr) {
+            openReconModal(dateStr);
+        }
+    });
     
     // Close modal
     $('#closeReconModal').on('click', function() {

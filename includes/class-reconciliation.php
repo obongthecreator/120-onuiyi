@@ -58,6 +58,8 @@ class Stand120_Reconciliation {
                 'admin2_checked_at' => current_time('mysql'),
                 'admin2_remarks' => $remarks
             ), array('id' => $existing->id));
+            
+            $record_id = $existing->id;
         } else {
             // Create new record - first admin to check
             $wpdb->insert($table, array(
@@ -66,9 +68,11 @@ class Stand120_Reconciliation {
                 'admin1_checked_at' => current_time('mysql'),
                 'admin1_remarks' => $remarks
             ));
+            
+            $record_id = $wpdb->insert_id;
         }
         
-        Stand120_Database::log_activity('reconciliation_check', 'stand120_reconciliation', null, null, array(
+        Stand120_Database::log_activity('reconciliation_check', 'stand120_reconciliation', $record_id, null, array(
             'date' => $date,
             'remarks' => $remarks
         ));
