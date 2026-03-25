@@ -115,7 +115,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px;">
         <div class="filter-group">
             <label>Target Amount (₦)</label>
-            <input type="number" id="targetAmount" class="form-control" placeholder="Enter target amount" min="1" step="100">
+            <input type="text" id="targetAmount" class="form-control number-input" placeholder="Enter target amount">
         </div>
         <div class="filter-group">
             <label>&nbsp;</label>
@@ -348,7 +348,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     });
 
     function calculateTarget() {
-        const targetAmount = parseFloat($('#targetAmount').val());
+        const targetAmount = Stand120.parseNumber($('#targetAmount').val());
         if (!targetAmount || targetAmount <= 0) {
             Stand120.showNotification('Please enter a valid target amount', 'error');
             return;

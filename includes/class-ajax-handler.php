@@ -1191,6 +1191,23 @@ class Stand120_Ajax_Handler {
         }
         
         $expense_id = intval($_POST['expense_id'] ?? 0);
+        if ($expense_id <= 0) {
+            wp_send_json_error(array('message' => 'Invalid expense ID'));
+            return;
+        }
+        
+        // Check date-based permission: admin can only delete today's expenses, super admin can delete any
+        if (!Stand120_Auth::is_super_admin()) {
+            global $wpdb;
+            $table = $wpdb->prefix . 'stand120_expenses';
+            $expense = $wpdb->get_row($wpdb->prepare("SELECT expense_date FROM $table WHERE id = %d", $expense_id));
+            
+            if ($expense && $expense->expense_date !== date('Y-m-d')) {
+                wp_send_json_error(array('message' => 'You can only delete expenses from today. Contact a super admin for older records.'));
+                return;
+            }
+        }
+        
         $result = Stand120_Expense::delete_expense($expense_id);
         
         if ($result['success']) {

@@ -101,6 +101,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <script>
     jQuery(document).ready(function($) {
         let rowCounter = 0;
+        let isSubmitting = false;
         
         function addRow() {
             rowCounter++;
@@ -110,10 +111,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         <input type="text" class="table-input expense-desc" placeholder="Enter description" required>
                     </td>
                     <td>
-                        <input type="number" class="table-input expense-amount" placeholder="0" min="0" step="any" value="">
+                        <input type="text" class="table-input expense-amount number-input" placeholder="0" value="0">
                     </td>
                     <td>
-                        <input type="number" class="table-input expense-qty" placeholder="1" min="1" value="1" style="max-width: 80px;">
+                        <input type="text" class="table-input expense-qty" placeholder="0" value="0" style="max-width: 80px;">
                     </td>
                     <td class="row-total formatted-number">₦0</td>
                     <td>
@@ -130,8 +131,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         function recalculate() {
             let grandTotal = 0;
             $('#expenseBody tr').each(function() {
-                const amount = parseFloat($(this).find('.expense-amount').val()) || 0;
-                const qty = parseInt($(this).find('.expense-qty').val()) || 1;
+                const amount = Stand120.parseNumber($(this).find('.expense-amount').val());
+                const qty = parseInt($(this).find('.expense-qty').val().toString().replace(/,/g, '')) || 0;
                 const total = amount * qty;
                 grandTotal += total;
                 $(this).find('.row-total').text('₦' + Stand120.formatNumber(total));
@@ -161,15 +162,31 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             recalculate();
         });
         
+        // Smart field behavior for expense qty fields (clear 0 on focus, restore on blur)
+        $('#expenseBody').on('focus', '.expense-qty', function() {
+            const val = $(this).val().toString().replace(/,/g, '');
+            if (val === '0') {
+                $(this).val('');
+            }
+        });
+        $('#expenseBody').on('blur', '.expense-qty', function() {
+            const val = $(this).val().toString().replace(/,/g, '').trim();
+            if (val === '') {
+                $(this).val('0');
+            }
+        });
+        
         // Submit expenses
-        $('#submitExpenses').on('click', function() {
+        $('#submitExpenses').on('click', async function() {
+            if (isSubmitting) return;
+            
             const items = [];
             let valid = true;
             
             $('#expenseBody tr').each(function() {
                 const desc = $(this).find('.expense-desc').val().trim();
-                const amount = parseFloat($(this).find('.expense-amount').val()) || 0;
-                const qty = parseInt($(this).find('.expense-qty').val()) || 1;
+                const amount = Stand120.parseNumber($(this).find('.expense-amount').val());
+                const qty = parseInt($(this).find('.expense-qty').val().toString().replace(/,/g, '')) || 0;
                 
                 if (desc === '' && amount === 0) {
                     return; // skip empty rows
@@ -208,6 +225,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 return;
             }
             
+            isSubmitting = true;
+            $('#submitExpenses').prop('disabled', true).html('<span class="loading-spinner"></span> Submitting...');
+            
             Stand120.ajax('submit_expenses', {
                 expenses: JSON.stringify(items),
                 date: date
@@ -220,10 +240,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     addRow();
                     $('#grandTotal').text('₦0');
                 } else {
-                    Stand120.showAlert('danger', response.data || 'Failed to submit expenses.');
+                    Stand120.showAlert('danger', response.data?.message || 'Failed to submit expenses.');
                 }
             }).catch(() => {
                 Stand120.showAlert('danger', 'An error occurred. Please try again.');
+            }).finally(() => {
+                isSubmitting = false;
+                $('#submitExpenses').prop('disabled', false).html('<iconify-icon icon="solar:check-circle-linear"></iconify-icon> Submit Expenses');
             });
         });
     });

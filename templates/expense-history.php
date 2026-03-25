@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
 }
 
 $page_title = 'Expense History - 120 Stand Inventory';
+$is_admin = Stand120_Auth::is_admin();
+$is_super_admin = Stand120_Auth::is_super_admin();
 include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 ?>
 
@@ -69,6 +71,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <th>Amount (₦)</th>
                     <th>Qty</th>
                     <th>Total (₦)</th>
+                    <?php if ($is_admin): ?>
+                    <th>Action</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody id="historyBody">
@@ -91,6 +96,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <script>
     let currentPage = 1;
     const perPage = 20;
+    const isAdmin = <?php echo $is_admin ? 'true' : 'false'; ?>;
+    const isSuperAdmin = <?php echo $is_super_admin ? 'true' : 'false'; ?>;
+    const todayStr = '<?php echo date('Y-m-d'); ?>';
     
     $(document).ready(function() {
         loadExpenses();
@@ -111,6 +119,33 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             currentPage++;
             loadExpenses();
         });
+        
+        // Delete expense
+        $(document).on('click', '.delete-expense', async function() {
+            const expenseId = $(this).data('id');
+            const expenseDate = $(this).data('date');
+            
+            const confirmed = await Stand120.showModal({
+                title: 'Delete Expense',
+                content: '<p>Are you sure you want to delete this expense?</p>',
+                confirmText: 'Delete'
+            });
+            
+            if (!confirmed) return;
+            
+            Stand120.ajax('delete_expense', {
+                expense_id: expenseId
+            }).then(response => {
+                if (response.success) {
+                    Stand120.showAlert('success', response.data?.message || 'Expense deleted successfully');
+                    loadExpenses();
+                } else {
+                    Stand120.showAlert('danger', response.data?.message || 'Failed to delete expense.');
+                }
+            }).catch(() => {
+                Stand120.showAlert('danger', 'An error occurred. Please try again.');
+            });
+        });
     });
     
     function loadExpenses() {
@@ -130,9 +165,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     function renderExpenses(records) {
         const $tbody = $('#historyBody').empty();
+        const colSpan = isAdmin ? 7 : 6;
         
         if (records.length === 0) {
-            $tbody.append('<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No expenses found</td></tr>');
+            $tbody.append(`<tr><td colspan="${colSpan}" style="text-align: center; color: var(--text-muted);">No expenses found</td></tr>`);
             return;
         }
         
@@ -140,6 +176,17 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             const amount = parseFloat(expense.amount) || 0;
             const qty = parseInt(expense.quantity) || 1;
             const total = amount * qty;
+            const canDelete = isSuperAdmin || (isAdmin && expense.expense_date === todayStr);
+            
+            let actionCol = '';
+            if (isAdmin) {
+                if (canDelete) {
+                    actionCol = `<td><button class="btn delete-expense" data-id="${expense.id}" data-date="${expense.expense_date}" style="background: var(--danger-color); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem;"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon></button></td>`;
+                } else {
+                    actionCol = `<td><span style="color: var(--text-muted); font-size: 0.75rem;">—</span></td>`;
+                }
+            }
+            
             $tbody.append(`<tr>
                 <td>${expense.expense_date}</td>
                 <td>${expense.staff_name || '-'}</td>
@@ -147,6 +194,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 <td class="formatted-number">₦${Stand120.formatNumber(amount)}</td>
                 <td>${qty}</td>
                 <td class="formatted-number" style="font-weight: 600;">₦${Stand120.formatNumber(total)}</td>
+                ${actionCol}
             </tr>`);
         });
     }

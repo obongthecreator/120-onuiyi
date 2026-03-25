@@ -46,18 +46,18 @@
             $(document).on('focus', '.number-input', this.clearNumberFormat);
             $(document).on('blur', '.number-input', this.applyNumberFormat);
             
-            // Smart input behavior - clear 0 on focus for quantity inputs
-            $(document).on('focus', '.qty-input, .table-input[type="number"]', function() {
-                const val = $(this).val();
-                if (val === '0' || val === 0) {
+            // Smart input behavior - clear 0 on focus for quantity and number inputs
+            $(document).on('focus', '.qty-input, .table-input[type="number"], .number-input', function() {
+                const val = $(this).val().toString().replace(/,/g, '');
+                if (val === '0') {
                     $(this).val('');
                 }
             });
             
-            // Restore 0 on blur if empty for quantity inputs
-            $(document).on('blur', '.qty-input, .table-input[type="number"]', function() {
-                const val = $(this).val();
-                if (val === '' || val === null || val === undefined) {
+            // Restore 0 on blur if empty for quantity and number inputs
+            $(document).on('blur', '.qty-input, .table-input[type="number"], .number-input', function() {
+                const val = $(this).val().toString().replace(/,/g, '').trim();
+                if (val === '') {
                     $(this).val('0');
                 }
             });
@@ -473,7 +473,7 @@
          */
         applyNumberFormat: function() {
             const $input = $(this);
-            const value = $input.val();
+            const value = $input.val().replace(/,/g, '');
             if (value && !isNaN(value)) {
                 $input.val(Stand120.formatNumber(value));
             }
@@ -1471,7 +1471,7 @@ const AdminPanel = {
             const row = `
                 <tr data-id="${product.id}">
                     <td><input type="text" class="table-input product-name" value="${product.name}"></td>
-                    <td><input type="number" class="table-input product-price" value="${product.price}"></td>
+                    <td><input type="text" class="table-input product-price number-input" value="${Stand120.formatNumber(product.price)}"></td>
                     <td>
                         <select class="table-input product-type">
                             <option value="menu" ${product.type === 'menu' ? 'selected' : ''}>Menu Item</option>
@@ -1492,7 +1492,7 @@ const AdminPanel = {
         const row = `
             <tr data-id="new">
                 <td><input type="text" class="table-input product-name" placeholder="Product name"></td>
-                <td><input type="number" class="table-input product-price" placeholder="0"></td>
+                <td><input type="text" class="table-input product-price number-input" placeholder="0"></td>
                 <td>
                     <select class="table-input product-type">
                         <option value="menu">Menu Item</option>
@@ -1541,7 +1541,7 @@ const AdminPanel = {
             products.push({
                 id: $row.data('id') === 'new' ? null : $row.data('id'),
                 name: $row.find('.product-name').val(),
-                price: $row.find('.product-price').val(),
+                price: Stand120.parseNumber($row.find('.product-price').val()),
                 type: $row.find('.product-type').val()
             });
         });
