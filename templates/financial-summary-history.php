@@ -48,7 +48,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <th>Cash</th>
                     <th>Transfer</th>
                     <th>Extras</th>
-                    <th>Expenses</th>
+                    <th>Market Card Expense</th>
                     <th>Old Cash</th>
                     <th>Cash Left</th>
                 </tr>

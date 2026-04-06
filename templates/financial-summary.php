@@ -58,8 +58,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
         <i class="fas fa-info-circle"></i> 
-        Cash Left = (Cash Sales + Old Cash + Extras) - Expenses. 
-        Only Extras and Expenses fields are editable. Values auto-save.
+        Cash Left = (Cash Sales + Old Cash + Extras) - Market Card Expense. 
+        Only Extras field is editable. Market Card Expense is managed from the Market Expense page. Values auto-save.
     </p>
     
     <div class="table-responsive">
@@ -114,7 +114,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 <tr>
                     <td style="font-weight: 600;">
                         <i class="fas fa-minus-circle" style="color: var(--danger-color);"></i>
-                        Expenses Amount (₦)
+                        Market Card Expense (₦)
                     </td>
                     <td>
                         <span id="expensesAmount" class="formatted-number">₦0</span>
@@ -153,7 +153,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.85rem; text-align: center;">
         <i class="fas fa-info-circle"></i> 
-        Formula: Cash Left = (Cash Sales + Old Cash + Extras) - Expenses
+        Formula: Cash Left = (Cash Sales + Old Cash + Extras) - Market Card Expense
     </p>
 </div>
 
