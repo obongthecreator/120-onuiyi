@@ -53,7 +53,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <th>Cash</th>
                     <th>Transfer</th>
                     <th>Extras</th>
+                    <th>Extras Remark</th>
                     <th>Expense</th>
+                    <th>Expense Remark</th>
                     <th>Mkt Card Exp Left</th>
                     <th>Old Cash</th>
                     <th>Cash Left</th>
@@ -113,16 +115,20 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             if (response.success) {
                 const $tbody = $('#historyBody').empty();
                 if (response.data.records.length === 0) {
-                    $tbody.append('<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">No records found</td></tr>');
+                    $tbody.append('<tr><td colspan="11" style="text-align:center;color:var(--text-muted)">No records found</td></tr>');
                 } else {
                     response.data.records.forEach(r => {
+                        const extrasRemark = $('<span>').text(r.extras_remark || '-').html();
+                        const expensesRemark = $('<span>').text(r.expenses_remark || '-').html();
                         $tbody.append(`<tr>
                             <td>${r.summary_date}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.total_sales)}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.cash_sales)}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.transfer_sales)}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.extras_amount)}</td>
+                            <td>${extrasRemark}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.expenses_amount)}</td>
+                            <td>${expensesRemark}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.market_card_expense)}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.old_cash)}</td>
                             <td class="formatted-number" style="font-weight:600;color:var(--primary-color)">₦${Stand120.formatNumber(r.cash_left)}</td>

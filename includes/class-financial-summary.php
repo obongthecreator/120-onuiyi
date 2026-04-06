@@ -252,17 +252,25 @@ class Stand120_Financial_Summary {
         foreach ($records as $record) {
             $correct_cash_left = (floatval($record->cash_sales) + floatval($record->old_cash) + floatval($record->extras_amount)) - floatval($record->expenses_amount);
             
-            // Also refresh market_card_expense from expenses table
-            $market_card_expense = Stand120_Expense_Record::get_total_for_date($record->summary_date);
-            
-            $stored_cash_left = floatval($record->cash_left);
+            // Refresh market_card_expense from expenses table only if there are actual expense records
+            $live_mce = Stand120_Expense_Record::get_total_for_date($record->summary_date);
             $stored_mce = floatval($record->market_card_expense ?? 0);
             
-            // Fix if cash_left is wrong or market_card_expense is stale
-            if (abs($stored_cash_left - $correct_cash_left) > 0.01 || abs($stored_mce - $market_card_expense) > 0.01) {
+            // Only overwrite market_card_expense if the live value is > 0,
+            // or if the stored value is 0 (nothing to lose). This preserves old stored values
+            // when expense records have been deleted from the expenses table.
+            $final_mce = ($live_mce > 0) ? $live_mce : $stored_mce;
+            
+            $stored_cash_left = floatval($record->cash_left);
+            
+            // Fix if cash_left is wrong or market_card_expense needs updating
+            $needs_fix = abs($stored_cash_left - $correct_cash_left) > 0.01;
+            $mce_changed = abs($stored_mce - $final_mce) > 0.01;
+            
+            if ($needs_fix || $mce_changed) {
                 $wpdb->update($table, array(
                     'cash_left' => $correct_cash_left,
-                    'market_card_expense' => $market_card_expense
+                    'market_card_expense' => $final_mce
                 ), array('id' => $record->id));
                 $fixed++;
             }
