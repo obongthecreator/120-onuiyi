@@ -1435,9 +1435,9 @@ const FinancialSummary = {
     bindEvents: function() {
         const self = this;
         
-        // Real-time calculation on extras input
-        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount');
-        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount', function() {
+        // Real-time calculation on extras and expenses input
+        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount');
+        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount', function() {
             self.calculateCashLeft();
             self.debouncedSave();
         });
@@ -1476,9 +1476,10 @@ const FinancialSummary = {
         
         $('#extrasAmount').val(data.extras_amount || '');
         $('#extrasRemark').val(data.extras_remark || '');
-        // Expenses amount is now read-only (managed via Market Expense page)
-        $('#expensesAmount').text('₦' + Stand120.formatNumber(data.expenses_amount || 0));
+        $('#expensesAmount').val(data.expenses_amount || '');
         $('#expensesRemark').val(data.expenses_remark || '');
+        // Market Card Expense Left is read-only (managed via Market Expense page)
+        $('#marketCardExpense').text('₦' + Stand120.formatNumber(data.market_card_expense || 0));
         
         this.calculateCashLeft();
     },
@@ -1498,9 +1499,9 @@ const FinancialSummary = {
         const extrasVal = $('#extrasAmount').val() || '0';
         const extras = parseFloat(extrasVal.toString().replace(/,/g, '')) || 0;
         
-        // Expenses amount is now a text display (managed via Market Expense page)
-        const expensesText = $('#expensesAmount').text().replace(/[₦,]/g, '');
-        const expenses = parseFloat(expensesText) || 0;
+        // Expenses amount is an editable input
+        const expensesVal = $('#expensesAmount').val() || '0';
+        const expenses = parseFloat(expensesVal.toString().replace(/,/g, '')) || 0;
         
         const cashLeft = (cashSales + oldCash + extras) - expenses;
         
@@ -1517,6 +1518,7 @@ const FinancialSummary = {
             date: date,
             extras_amount: Stand120.parseNumber($('#extrasAmount').val()),
             extras_remark: $('#extrasRemark').val(),
+            expenses_amount: Stand120.parseNumber($('#expensesAmount').val()),
             expenses_remark: $('#expensesRemark').val()
         });
     }

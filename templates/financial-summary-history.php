@@ -49,6 +49,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <th>Transfer</th>
                     <th>Extras</th>
                     <th>Expense</th>
+                    <th>Mkt Card Exp Left</th>
                     <th>Old Cash</th>
                     <th>Cash Left</th>
                 </tr>
@@ -85,7 +86,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             if (response.success) {
                 const $tbody = $('#historyBody').empty();
                 if (response.data.records.length === 0) {
-                    $tbody.append('<tr><td colspan="8" style="text-align:center;color:var(--text-muted)">No records found</td></tr>');
+                    $tbody.append('<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">No records found</td></tr>');
                 } else {
                     response.data.records.forEach(r => {
                         $tbody.append(`<tr>
@@ -95,6 +96,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             <td class="formatted-number">₦${Stand120.formatNumber(r.transfer_sales)}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.extras_amount)}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.expenses_amount)}</td>
+                            <td class="formatted-number">₦${Stand120.formatNumber(r.market_card_expense)}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.old_cash)}</td>
                             <td class="formatted-number" style="font-weight:600;color:var(--primary-color)">₦${Stand120.formatNumber(r.cash_left)}</td>
                         </tr>`);
