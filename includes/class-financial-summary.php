@@ -218,12 +218,72 @@ class Stand120_Financial_Summary {
     }
     
     /**
+     * Self-heal financial summary records with wrong calculations.
+     * Recalculates cash_left for all records in the given date range
+     * and updates any that don't match the formula:
+     * Cash Left = (Cash Sales + Old Cash + Extras) - Expense
+     */
+    public static function recalculate_records($date_from = null, $date_to = null) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_financial_summary';
+        
+        $sql = "SELECT * FROM $table WHERE 1=1";
+        $params = array();
+        
+        if (!empty($date_from)) {
+            $sql .= " AND summary_date >= %s";
+            $params[] = $date_from;
+        }
+        if (!empty($date_to)) {
+            $sql .= " AND summary_date <= %s";
+            $params[] = $date_to;
+        }
+        
+        $sql .= " ORDER BY summary_date ASC";
+        
+        if (!empty($params)) {
+            $records = $wpdb->get_results($wpdb->prepare($sql, $params));
+        } else {
+            $records = $wpdb->get_results($sql);
+        }
+        
+        $fixed = 0;
+        
+        foreach ($records as $record) {
+            $correct_cash_left = (floatval($record->cash_sales) + floatval($record->old_cash) + floatval($record->extras_amount)) - floatval($record->expenses_amount);
+            
+            // Also refresh market_card_expense from expenses table
+            $market_card_expense = Stand120_Expense_Record::get_total_for_date($record->summary_date);
+            
+            $stored_cash_left = floatval($record->cash_left);
+            $stored_mce = floatval($record->market_card_expense ?? 0);
+            
+            // Fix if cash_left is wrong or market_card_expense is stale
+            if (abs($stored_cash_left - $correct_cash_left) > 0.01 || abs($stored_mce - $market_card_expense) > 0.01) {
+                $wpdb->update($table, array(
+                    'cash_left' => $correct_cash_left,
+                    'market_card_expense' => $market_card_expense
+                ), array('id' => $record->id));
+                $fixed++;
+            }
+        }
+        
+        return $fixed;
+    }
+    
+    /**
      * Get financial summary history
      */
     public static function get_history($filters = array()) {
         global $wpdb;
         $table = $wpdb->prefix . 'stand120_financial_summary';
         $staff_table = $wpdb->prefix . 'stand120_staff';
+        
+        // Self-heal: recalculate any records with wrong cash_left before returning
+        self::recalculate_records(
+            $filters['date_from'] ?? null,
+            $filters['date_to'] ?? null
+        );
         
         $sql = "SELECT fs.*, s.full_name as staff_name
                 FROM $table fs

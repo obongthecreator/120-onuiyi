@@ -32,9 +32,14 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="filter-group">
         <label>&nbsp;</label>
-        <button id="filterBtn" class="btn btn-primary">
-            <i class="fas fa-filter"></i> Filter
-        </button>
+        <div style="display: flex; gap: 8px;">
+            <button id="filterBtn" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+            <button id="recalcBtn" class="btn btn-primary" style="background: var(--warning-color); border-color: var(--warning-color);">
+                <i class="fas fa-sync-alt"></i> Recalculate
+            </button>
+        </div>
     </div>
 </div>
 
@@ -74,6 +79,28 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         $('#filterBtn').on('click', () => { currentPage = 1; loadHistory(); });
         $('#prevPage').on('click', () => { if (currentPage > 1) { currentPage--; loadHistory(); }});
         $('#nextPage').on('click', () => { currentPage++; loadHistory(); });
+        
+        // Manual recalculate button
+        $('#recalcBtn').on('click', function() {
+            const $btn = $(this);
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Recalculating...');
+            
+            Stand120.ajax('recalculate_financial_history', {
+                date_from: $('#dateFrom').val(),
+                date_to: $('#dateTo').val()
+            }).then(response => {
+                if (response.success) {
+                    Stand120.showAlert('success', response.data.message);
+                    loadHistory();
+                } else {
+                    Stand120.showAlert('danger', response.data?.message || 'Recalculation failed');
+                }
+            }).catch(() => {
+                Stand120.showAlert('danger', 'Recalculation failed');
+            }).finally(() => {
+                $btn.prop('disabled', false).html('<i class="fas fa-sync-alt"></i> Recalculate');
+            });
+        });
     });
     
     function loadHistory() {

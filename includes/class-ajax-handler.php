@@ -134,6 +134,9 @@ class Stand120_Ajax_Handler {
             case 'get_financial_summary_history':
                 self::get_financial_summary_history();
                 break;
+            case 'recalculate_financial_history':
+                self::recalculate_financial_history();
+                break;
             
             // Market Expense actions
             case 'submit_expenses':
@@ -652,6 +655,29 @@ class Stand120_Ajax_Handler {
         
         $result = Stand120_Financial_Summary::get_history($filters);
         wp_send_json_success($result);
+    }
+    
+    /**
+     * Recalculate financial summary history (manual trigger)
+     */
+    private static function recalculate_financial_history() {
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'Please login to continue'));
+            return;
+        }
+        
+        $date_from = sanitize_text_field($_POST['date_from'] ?? '');
+        $date_to = sanitize_text_field($_POST['date_to'] ?? '');
+        
+        $fixed = Stand120_Financial_Summary::recalculate_records(
+            !empty($date_from) ? $date_from : null,
+            !empty($date_to) ? $date_to : null
+        );
+        
+        wp_send_json_success(array(
+            'fixed' => $fixed,
+            'message' => $fixed > 0 ? $fixed . ' record(s) corrected' : 'All records are correct'
+        ));
     }
     
     /**
