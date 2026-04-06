@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
 }
 
 $page_title = 'Financial Summary History - 120 Stand Inventory';
+$is_admin = Stand120_Auth::is_admin();
 include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 ?>
 
@@ -32,14 +33,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
     <div class="filter-group">
         <label>&nbsp;</label>
-        <div style="display: flex; gap: 8px;">
-            <button id="filterBtn" class="btn btn-primary">
-                <i class="fas fa-filter"></i> Filter
-            </button>
-            <button id="recalcBtn" class="btn btn-primary" style="background: var(--warning-color); border-color: var(--warning-color);">
-                <i class="fas fa-sync-alt"></i> Recalculate
-            </button>
-        </div>
+        <button id="filterBtn" class="btn btn-primary">
+            <i class="fas fa-filter"></i> Filter
+        </button>
     </div>
 </div>
 
@@ -74,6 +70,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 
 <script>
     let currentPage = 1;
+    const isAdmin = <?php echo $is_admin ? 'true' : 'false'; ?>;
     
     $(document).ready(function() {
         loadHistory();
@@ -82,28 +79,53 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         $('#prevPage').on('click', () => { if (currentPage > 1) { currentPage--; loadHistory(); }});
         $('#nextPage').on('click', () => { currentPage++; loadHistory(); });
         
-        // Manual recalculate button
-        $('#recalcBtn').on('click', function() {
-            const $btn = $(this);
-            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Recalculating...');
-            
-            Stand120.ajax('recalculate_financial_history', {
-                date_from: $('#dateFrom').val(),
-                date_to: $('#dateTo').val()
-            }).then(response => {
-                if (response.success) {
-                    Stand120.showAlert('success', response.data.message);
-                    loadHistory();
-                } else {
-                    Stand120.showAlert('danger', response.data?.message || 'Recalculation failed');
-                }
-            }).catch(() => {
-                Stand120.showAlert('danger', 'Recalculation failed');
-            }).finally(() => {
-                $btn.prop('disabled', false).html('<i class="fas fa-sync-alt"></i> Recalculate');
+        // Admin inline editing for old_cash and cash_left
+        if (isAdmin) {
+            $(document).on('dblclick', '.editable-cell', function() {
+                const $cell = $(this);
+                if ($cell.find('input').length) return; // Already editing
+                
+                const currentVal = $cell.data('raw-value') || 0;
+                const field = $cell.data('field');
+                const recordId = $cell.data('record-id');
+                
+                $cell.html(`<input type="text" class="table-input number-input inline-edit-input" value="${currentVal}" style="width:100px;padding:4px 8px;font-size:0.9rem;">`);
+                const $input = $cell.find('input').focus().select();
+                
+                $input.on('blur', function() {
+                    saveInlineEdit($cell, recordId, field, $(this).val());
+                });
+                $input.on('keydown', function(e) {
+                    if (e.key === 'Enter') { $(this).blur(); }
+                    if (e.key === 'Escape') {
+                        $cell.html('₦' + Stand120.formatNumber(currentVal));
+                        $cell.data('raw-value', currentVal);
+                    }
+                });
             });
-        });
+        }
     });
+    
+    function saveInlineEdit($cell, recordId, field, newVal) {
+        const parsed = parseFloat(String(newVal).replace(/[₦,]/g, '')) || 0;
+        
+        const data = { record_id: recordId };
+        data[field] = parsed;
+        
+        Stand120.ajax('update_financial_summary_record', data).then(response => {
+            if (response.success) {
+                $cell.html('₦' + Stand120.formatNumber(parsed));
+                $cell.data('raw-value', parsed);
+                Stand120.showAlert('success', 'Updated successfully');
+            } else {
+                Stand120.showAlert('danger', response.data?.message || 'Update failed');
+                $cell.html('₦' + Stand120.formatNumber($cell.data('raw-value') || 0));
+            }
+        }).catch(() => {
+            Stand120.showAlert('danger', 'Update failed');
+            $cell.html('₦' + Stand120.formatNumber($cell.data('raw-value') || 0));
+        });
+    }
     
     function loadHistory() {
         Stand120.ajax('get_financial_summary_history', {
@@ -120,6 +142,16 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     response.data.records.forEach(r => {
                         const extrasRemark = $('<span>').text(r.extras_remark || '-').html();
                         const expensesRemark = $('<span>').text(r.expenses_remark || '-').html();
+                        
+                        // Old Cash and Cash Left cells: editable by admin (double-click)
+                        const oldCashCell = isAdmin
+                            ? `<td class="formatted-number editable-cell" data-field="old_cash" data-record-id="${r.id}" data-raw-value="${r.old_cash}" style="cursor:pointer;" title="Double-click to edit">₦${Stand120.formatNumber(r.old_cash)}</td>`
+                            : `<td class="formatted-number">₦${Stand120.formatNumber(r.old_cash)}</td>`;
+                        
+                        const cashLeftCell = isAdmin
+                            ? `<td class="formatted-number editable-cell" data-field="cash_left" data-record-id="${r.id}" data-raw-value="${r.cash_left}" style="cursor:pointer;font-weight:600;color:var(--primary-color);" title="Double-click to edit">₦${Stand120.formatNumber(r.cash_left)}</td>`
+                            : `<td class="formatted-number" style="font-weight:600;color:var(--primary-color)">₦${Stand120.formatNumber(r.cash_left)}</td>`;
+                        
                         $tbody.append(`<tr>
                             <td>${r.summary_date}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.total_sales)}</td>
@@ -130,8 +162,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             <td class="formatted-number">₦${Stand120.formatNumber(r.expenses_amount)}</td>
                             <td>${expensesRemark}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.market_card_expense)}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.old_cash)}</td>
-                            <td class="formatted-number" style="font-weight:600;color:var(--primary-color)">₦${Stand120.formatNumber(r.cash_left)}</td>
+                            ${oldCashCell}
+                            ${cashLeftCell}
                         </tr>`);
                     });
                 }

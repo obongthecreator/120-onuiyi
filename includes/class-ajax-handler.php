@@ -134,8 +134,8 @@ class Stand120_Ajax_Handler {
             case 'get_financial_summary_history':
                 self::get_financial_summary_history();
                 break;
-            case 'recalculate_financial_history':
-                self::recalculate_financial_history();
+            case 'update_financial_summary_record':
+                self::update_financial_summary_record();
                 break;
             
             // Market Expense actions
@@ -658,26 +658,26 @@ class Stand120_Ajax_Handler {
     }
     
     /**
-     * Recalculate financial summary history (manual trigger)
+     * Update a financial summary record (admin-only, for editing old_cash/cash_left)
      */
-    private static function recalculate_financial_history() {
+    private static function update_financial_summary_record() {
         if (!is_user_logged_in()) {
             wp_send_json_error(array('message' => 'Please login to continue'));
             return;
         }
         
-        $date_from = sanitize_text_field($_POST['date_from'] ?? '');
-        $date_to = sanitize_text_field($_POST['date_to'] ?? '');
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Admin access required'));
+            return;
+        }
         
-        $fixed = Stand120_Financial_Summary::recalculate_records(
-            !empty($date_from) ? $date_from : null,
-            !empty($date_to) ? $date_to : null
-        );
+        $result = Stand120_Financial_Summary::update_record($_POST);
         
-        wp_send_json_success(array(
-            'fixed' => $fixed,
-            'message' => $fixed > 0 ? $fixed . ' record(s) corrected' : 'All records are correct'
-        ));
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
     }
     
     /**

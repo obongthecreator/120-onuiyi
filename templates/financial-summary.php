@@ -146,7 +146,13 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         <i class="fas fa-clock" style="color: var(--text-muted);"></i>
                         Old Cash (Yesterday's Cash Left)
                     </td>
+                    <?php if ($is_admin): ?>
+                    <td>
+                        <input type="text" id="oldCash" class="table-input number-input" placeholder="0" style="max-width: 150px;">
+                    </td>
+                    <?php else: ?>
                     <td id="oldCash" class="formatted-number">₦0</td>
+                    <?php endif; ?>
                 </tr>
             </tbody>
         </table>

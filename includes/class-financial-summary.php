@@ -24,8 +24,12 @@ class Stand120_Financial_Summary {
         $expenses_remark = sanitize_textarea_field($data['expenses_remark'] ?? '');
         $staff_id = Stand120_Auth::get_current_staff_id();
         
+        // Admin can override old_cash
+        $admin_old_cash = isset($data['old_cash']) && Stand120_Auth::is_admin() ? floatval($data['old_cash']) : null;
+        
         // Market Card Expense Left comes from stand120_expenses table (not in formula)
-        $market_card_expense = Stand120_Expense_Record::get_total_for_date($date);
+        // Only overwrite if live value is > 0, otherwise preserve stored value
+        $live_mce = Stand120_Expense_Record::get_total_for_date($date);
         
         // Get existing record
         $existing = $wpdb->get_row($wpdb->prepare(
@@ -34,11 +38,15 @@ class Stand120_Financial_Summary {
         ));
         
         if ($existing) {
-            // Recalculate cash left: only Expense is subtracted (NOT market_card_expense)
-            $cash_left = ($existing->cash_sales + $existing->old_cash + $extras_amount) - $expenses_amount;
+            $old_cash = ($admin_old_cash !== null) ? $admin_old_cash : floatval($existing->old_cash);
             
-            // Update existing
-            $wpdb->update($table, array(
+            // Recalculate cash left: only Expense is subtracted (NOT market_card_expense)
+            $cash_left = ($existing->cash_sales + $old_cash + $extras_amount) - $expenses_amount;
+            
+            // Preserve stored market_card_expense if live is 0
+            $market_card_expense = ($live_mce > 0) ? $live_mce : floatval($existing->market_card_expense ?? 0);
+            
+            $update_data = array(
                 'extras_amount' => $extras_amount,
                 'extras_remark' => $extras_remark,
                 'expenses_amount' => $expenses_amount,
@@ -46,7 +54,15 @@ class Stand120_Financial_Summary {
                 'market_card_expense' => $market_card_expense,
                 'cash_left' => $cash_left,
                 'staff_id' => $staff_id
-            ), array('id' => $existing->id));
+            );
+            
+            // Only update old_cash if admin changed it
+            if ($admin_old_cash !== null) {
+                $update_data['old_cash'] = $admin_old_cash;
+            }
+            
+            // Update existing
+            $wpdb->update($table, $update_data, array('id' => $existing->id));
             
             return array(
                 'success' => true,
@@ -60,7 +76,7 @@ class Stand120_Financial_Summary {
                 "SELECT cash_left FROM $table WHERE summary_date = %s",
                 $yesterday
             ));
-            $old_cash = $yesterday_record ? floatval($yesterday_record->cash_left) : 0;
+            $old_cash = ($admin_old_cash !== null) ? $admin_old_cash : ($yesterday_record ? floatval($yesterday_record->cash_left) : 0);
             
             // Get today's totals from orders
             $orders_table = $wpdb->prefix . 'stand120_orders';
@@ -79,6 +95,8 @@ class Stand120_Financial_Summary {
             $transfer_sales = floatval($totals->transfer_sales ?? 0);
             $cash_sales = floatval($totals->cash_sales ?? 0);
             $delivery_fees = floatval($totals->delivery_fees ?? 0);
+            
+            $market_card_expense = ($live_mce > 0) ? $live_mce : 0;
             
             $cash_left = ($cash_sales + $old_cash + $extras_amount) - $expenses_amount;
             
@@ -287,12 +305,6 @@ class Stand120_Financial_Summary {
         $table = $wpdb->prefix . 'stand120_financial_summary';
         $staff_table = $wpdb->prefix . 'stand120_staff';
         
-        // Self-heal: recalculate any records with wrong cash_left before returning
-        self::recalculate_records(
-            $filters['date_from'] ?? null,
-            $filters['date_to'] ?? null
-        );
-        
         $sql = "SELECT fs.*, s.full_name as staff_name
                 FROM $table fs
                 LEFT JOIN $staff_table s ON fs.staff_id = s.id
@@ -340,6 +352,50 @@ class Stand120_Financial_Summary {
             'page' => $page,
             'per_page' => $per_page,
             'total_pages' => ceil($total / $per_page)
+        );
+    }
+    
+    /**
+     * Update a specific financial summary record (admin-only)
+     * Allows editing old_cash and cash_left for any date
+     */
+    public static function update_record($data) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_financial_summary';
+        
+        $record_id = intval($data['record_id'] ?? 0);
+        if (!$record_id) {
+            return array('success' => false, 'message' => 'Invalid record ID');
+        }
+        
+        $existing = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table WHERE id = %d",
+            $record_id
+        ));
+        
+        if (!$existing) {
+            return array('success' => false, 'message' => 'Record not found');
+        }
+        
+        $update_data = array();
+        
+        if (isset($data['old_cash'])) {
+            $update_data['old_cash'] = floatval($data['old_cash']);
+        }
+        
+        if (isset($data['cash_left'])) {
+            $update_data['cash_left'] = floatval($data['cash_left']);
+        }
+        
+        if (empty($update_data)) {
+            return array('success' => false, 'message' => 'No fields to update');
+        }
+        
+        $wpdb->update($table, $update_data, array('id' => $record_id));
+        
+        return array(
+            'success' => true,
+            'message' => 'Record updated successfully'
         );
     }
 }

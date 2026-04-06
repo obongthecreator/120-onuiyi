@@ -1447,6 +1447,15 @@ const FinancialSummary = {
         $(document).on('input.finsummary change.finsummary', '#extrasRemark, #expensesRemark', function() {
             self.debouncedSave();
         });
+        
+        // Admin can edit old cash - recalculate and save when changed
+        if ($('#oldCash').is('input')) {
+            $(document).off('input.finsummary change.finsummary keyup.finsummary', '#oldCash');
+            $(document).on('input.finsummary change.finsummary keyup.finsummary', '#oldCash', function() {
+                self.calculateCashLeft();
+                self.debouncedSave();
+            });
+        }
     },
     
     debouncedSave: function() {
@@ -1472,7 +1481,13 @@ const FinancialSummary = {
         $('#transferSales').text('₦' + Stand120.formatNumber(data.transfer_sales || 0));
         $('#cashSales').text('₦' + Stand120.formatNumber(data.cash_sales || 0));
         $('#deliveryFees').text('₦' + Stand120.formatNumber(data.delivery_fees || 0));
-        $('#oldCash').text('₦' + Stand120.formatNumber(data.old_cash || 0));
+        
+        // Old Cash: if it's an input (admin), set value; otherwise set text
+        if ($('#oldCash').is('input')) {
+            $('#oldCash').val(data.old_cash || '');
+        } else {
+            $('#oldCash').text('₦' + Stand120.formatNumber(data.old_cash || 0));
+        }
         
         $('#extrasAmount').val(data.extras_amount || '');
         $('#extrasRemark').val(data.extras_remark || '');
@@ -1493,8 +1508,15 @@ const FinancialSummary = {
         const cashSalesText = $('#cashSales').text().replace(/[₦,]/g, '');
         const cashSales = parseFloat(cashSalesText) || 0;
         
-        const oldCashText = $('#oldCash').text().replace(/[₦,]/g, '');
-        const oldCash = parseFloat(oldCashText) || 0;
+        // Old Cash: read from input if admin, or from text
+        let oldCash = 0;
+        if ($('#oldCash').is('input')) {
+            const oldCashVal = $('#oldCash').val() || '0';
+            oldCash = parseFloat(oldCashVal.toString().replace(/,/g, '')) || 0;
+        } else {
+            const oldCashText = $('#oldCash').text().replace(/[₦,]/g, '');
+            oldCash = parseFloat(oldCashText) || 0;
+        }
         
         const extrasVal = $('#extrasAmount').val() || '0';
         const extras = parseFloat(extrasVal.toString().replace(/,/g, '')) || 0;
@@ -1514,13 +1536,20 @@ const FinancialSummary = {
     saveData: function() {
         const date = $('#finDate').val() || new Date().toISOString().split('T')[0];
         
-        Stand120.ajax('save_financial_summary', {
+        const data = {
             date: date,
             extras_amount: Stand120.parseNumber($('#extrasAmount').val()),
             extras_remark: $('#extrasRemark').val(),
             expenses_amount: Stand120.parseNumber($('#expensesAmount').val()),
             expenses_remark: $('#expensesRemark').val()
-        });
+        };
+        
+        // If admin is editing old_cash, include it
+        if ($('#oldCash').is('input')) {
+            data.old_cash = Stand120.parseNumber($('#oldCash').val());
+        }
+        
+        Stand120.ajax('save_financial_summary', data);
     }
 };
 
