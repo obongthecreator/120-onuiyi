@@ -119,6 +119,9 @@ $current_page = get_query_var('stand120_page');
             <a href="<?php echo home_url('/120-stand/financial-summary/'); ?>" class="mobile-nav-link <?php echo $current_page === 'financial-summary' ? 'active' : ''; ?>">
                 <i class="fas fa-wallet"></i> Financial Summary
             </a>
+            <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" class="mobile-nav-link <?php echo $current_page === 'expense-record' ? 'active' : ''; ?>">
+                <i class="fas fa-receipt"></i> Market Expense
+            </a>
             <a href="<?php echo home_url('/120-stand/profile/'); ?>" class="mobile-nav-link <?php echo $current_page === 'profile' ? 'active' : ''; ?>">
                 <i class="fas fa-user"></i> Profile
             </a>

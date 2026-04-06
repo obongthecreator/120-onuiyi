@@ -81,10 +81,8 @@ class Stand120_Chopping_Inventory {
             ));
         }
         
-        // Update stock inventory with packs gotten
-        if ($packs_gotten > 0) {
-            Stand120_Stock_Inventory::update_added_from_import($product_id, $packs_gotten, $date);
-        }
+        // Always update stock inventory with packs gotten (even if 0, to keep in sync)
+        Stand120_Stock_Inventory::update_added_from_import($product_id, $packs_gotten, $date);
         
         return array(
             'success' => true,

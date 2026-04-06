@@ -112,6 +112,7 @@ class Stand120_Admin_Panel {
             'stand120_stock_inventory',
             'stand120_chopping_inventory',
             'stand120_import_records',
+            'stand120_expenses',
             'stand120_financial_summary',
             'stand120_sync_queue',
             'stand120_activity_log'

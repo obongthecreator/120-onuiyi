@@ -80,6 +80,7 @@ class Stand120_Inventory {
         require_once STAND120_PLUGIN_DIR . 'includes/class-import-record.php';
         require_once STAND120_PLUGIN_DIR . 'includes/class-product-summary.php';
         require_once STAND120_PLUGIN_DIR . 'includes/class-financial-summary.php';
+        require_once STAND120_PLUGIN_DIR . 'includes/class-expense-record.php';
         require_once STAND120_PLUGIN_DIR . 'includes/class-admin-panel.php';
     }
     
@@ -139,6 +140,8 @@ class Stand120_Inventory {
         add_rewrite_rule('^120-stand/product-summary/?$', 'index.php?stand120_page=product-summary', 'top');
         add_rewrite_rule('^120-stand/financial-summary/?$', 'index.php?stand120_page=financial-summary', 'top');
         add_rewrite_rule('^120-stand/financial-summary-history/?$', 'index.php?stand120_page=financial-summary-history', 'top');
+        add_rewrite_rule('^120-stand/expense-record/?$', 'index.php?stand120_page=expense-record', 'top');
+        add_rewrite_rule('^120-stand/expense-history/?$', 'index.php?stand120_page=expense-history', 'top');
         add_rewrite_rule('^120-stand/admin-panel/?$', 'index.php?stand120_page=admin-panel', 'top');
         add_rewrite_rule('^120-stand/profile/?$', 'index.php?stand120_page=profile', 'top');
         add_rewrite_rule('^120-stand/analytics/?$', 'index.php?stand120_page=analytics', 'top');

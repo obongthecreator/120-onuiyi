@@ -128,6 +128,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </span>
     </a>
     
+    <!-- Market Expense -->
+    <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" class="home-card">
+        <div class="home-card-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <h3>Market Expense</h3>
+        <p>Record daily market expenses with description and amount. Auto-syncs to Financial Summary.</p>
+        <span class="home-card-btn">
+            <i class="fas fa-arrow-right"></i> Open
+        </span>
+    </a>
+    
     <?php if ($is_admin): ?>
     <!-- Admin Panel -->
     <a href="<?php echo home_url('/120-stand/admin-panel/'); ?>" class="home-card">

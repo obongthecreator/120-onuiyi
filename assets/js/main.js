@@ -1265,6 +1265,162 @@ const ImportRecord = {
 };
 
 /**
+ * Market Expense Module
+ */
+const MarketExpense = {
+    items: [],
+    
+    init: function() {
+        this.bindEvents();
+        this.loadData();
+    },
+    
+    bindEvents: function() {
+        const self = this;
+        
+        $(document).on('click', '#addExpenseRow', function() {
+            self.addRow();
+        });
+        
+        $(document).on('click', '.remove-expense-row', function() {
+            $(this).closest('tr').remove();
+            self.calculateTotal();
+        });
+        
+        $(document).on('input change', '.expense-amount', function() {
+            self.calculateTotal();
+        });
+        
+        $(document).on('click', '#saveExpenses', function() {
+            self.saveData();
+        });
+    },
+    
+    loadData: function() {
+        const date = $('#expenseDate').val() || new Date().toISOString().split('T')[0];
+        
+        Stand120.ajax('get_expenses', { date: date }).then(response => {
+            if (response.success) {
+                this.items = response.data.items || [];
+                this.renderTable();
+                this.calculateTotal();
+            }
+        });
+    },
+    
+    renderTable: function() {
+        const $tbody = $('#expenseBody');
+        $tbody.empty();
+        
+        if (this.items.length === 0) {
+            // Add one empty row by default
+            this.addRow();
+            return;
+        }
+        
+        this.items.forEach(item => {
+            const amount = parseFloat(item.amount) || 0;
+            const row = `
+                <tr data-id="${item.id || ''}">
+                    <td>
+                        <input type="text" class="table-input expense-description" 
+                            value="${this.escapeHtml(item.description || '')}" 
+                            placeholder="Enter description...">
+                    </td>
+                    <td>
+                        <input type="text" class="table-input number-input expense-amount" 
+                            value="${amount > 0 ? amount : ''}" 
+                            placeholder="0">
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-danger remove-expense-row" title="Remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            $tbody.append(row);
+        });
+    },
+    
+    addRow: function() {
+        const row = `
+            <tr data-id="">
+                <td>
+                    <input type="text" class="table-input expense-description" 
+                        value="" 
+                        placeholder="Enter description...">
+                </td>
+                <td>
+                    <input type="text" class="table-input number-input expense-amount" 
+                        value="" 
+                        placeholder="0">
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-danger remove-expense-row" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $('#expenseBody').append(row);
+    },
+    
+    calculateTotal: function() {
+        let total = 0;
+        $('.expense-amount').each(function() {
+            const val = $(this).val() || '0';
+            total += parseFloat(val.toString().replace(/,/g, '')) || 0;
+        });
+        $('#expenseTotal').html('<span class="naira">\u20A6</span>' + Stand120.formatNumber(total));
+        return total;
+    },
+    
+    saveData: function() {
+        const date = $('#expenseDate').val() || new Date().toISOString().split('T')[0];
+        const items = [];
+        
+        $('#expenseBody tr').each(function() {
+            const description = $(this).find('.expense-description').val() || '';
+            const amountVal = $(this).find('.expense-amount').val() || '0';
+            const amount = parseFloat(amountVal.toString().replace(/,/g, '')) || 0;
+            
+            if (description.trim() || amount > 0) {
+                items.push({
+                    description: description.trim(),
+                    amount: amount
+                });
+            }
+        });
+        
+        Stand120.showLoading('Saving expenses...');
+        
+        Stand120.ajax('submit_expenses', {
+            date: date,
+            items: JSON.stringify(items)
+        }).then(response => {
+            Stand120.hideLoading();
+            if (response.success) {
+                Stand120.showAlert('success', 'Market expenses saved successfully');
+                // Refresh data to get IDs
+                this.loadData();
+            } else {
+                Stand120.showAlert('danger', response.data?.message || 'Failed to save expenses');
+            }
+        }).catch(() => {
+            Stand120.hideLoading();
+            Stand120.showAlert('danger', 'Failed to save expenses');
+        });
+    },
+    
+    escapeHtml: function(str) {
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+};
+
+/**
  * Financial Summary Module
  */
 const FinancialSummary = {
@@ -1279,9 +1435,9 @@ const FinancialSummary = {
     bindEvents: function() {
         const self = this;
         
-        // Real-time calculation on extras and expenses input
-        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount');
-        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount', function() {
+        // Real-time calculation on extras input
+        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount');
+        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount', function() {
             self.calculateCashLeft();
             self.debouncedSave();
         });
@@ -1320,7 +1476,8 @@ const FinancialSummary = {
         
         $('#extrasAmount').val(data.extras_amount || '');
         $('#extrasRemark').val(data.extras_remark || '');
-        $('#expensesAmount').val(data.expenses_amount || '');
+        // Expenses amount is now read-only (managed via Market Expense page)
+        $('#expensesAmount').text('₦' + Stand120.formatNumber(data.expenses_amount || 0));
         $('#expensesRemark').val(data.expenses_remark || '');
         
         this.calculateCashLeft();
@@ -1341,8 +1498,9 @@ const FinancialSummary = {
         const extrasVal = $('#extrasAmount').val() || '0';
         const extras = parseFloat(extrasVal.toString().replace(/,/g, '')) || 0;
         
-        const expensesVal = $('#expensesAmount').val() || '0';
-        const expenses = parseFloat(expensesVal.toString().replace(/,/g, '')) || 0;
+        // Expenses amount is now a text display (managed via Market Expense page)
+        const expensesText = $('#expensesAmount').text().replace(/[₦,]/g, '');
+        const expenses = parseFloat(expensesText) || 0;
         
         const cashLeft = (cashSales + oldCash + extras) - expenses;
         
@@ -1359,7 +1517,6 @@ const FinancialSummary = {
             date: date,
             extras_amount: Stand120.parseNumber($('#extrasAmount').val()),
             extras_remark: $('#extrasRemark').val(),
-            expenses_amount: Stand120.parseNumber($('#expensesAmount').val()),
             expenses_remark: $('#expensesRemark').val()
         });
     }

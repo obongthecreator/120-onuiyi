@@ -117,7 +117,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         Expenses Amount (₦)
                     </td>
                     <td>
-                        <input type="text" id="expensesAmount" class="table-input number-input" placeholder="0" style="max-width: 150px;">
+                        <span id="expensesAmount" class="formatted-number">₦0</span>
+                        <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" style="margin-left: 8px; font-size: 0.85rem; color: var(--primary-color);">
+                            <i class="fas fa-external-link-alt"></i> Manage
+                        </a>
                     </td>
                 </tr>
                 <tr>

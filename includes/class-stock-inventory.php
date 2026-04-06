@@ -38,7 +38,15 @@ class Stand120_Stock_Inventory {
         
         if ($existing) {
             $opening = $existing->opening_packs;
-            $added = $existing->added_packs;
+            // Always re-read added_packs from source to stay in sync
+            $product = Stand120_Database::get_product($product_id);
+            if ($product && $product->type === 'fruit') {
+                $added = self::get_packs_from_chopping($product_id, $date);
+            } elseif ($product && $product->type === 'non_fruit') {
+                $added = self::get_imported_packs($product_id, $date);
+            } else {
+                $added = $existing->added_packs;
+            }
         } else {
             // Get yesterday's closing as today's opening
             $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
@@ -62,8 +70,9 @@ class Stand120_Stock_Inventory {
         $closing = $opening + $added - $used_packs;
         
         if ($existing) {
-            // Update existing
+            // Update existing - include added_packs since it may have been refreshed from source
             $wpdb->update($table, array(
+                'added_packs' => $added,
                 'used_packs' => $used_packs,
                 'closing_packs' => $closing,
                 'staff_id' => $staff_id

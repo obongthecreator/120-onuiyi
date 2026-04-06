@@ -135,6 +135,20 @@ class Stand120_Ajax_Handler {
                 self::get_financial_summary_history();
                 break;
             
+            // Market Expense actions
+            case 'submit_expenses':
+                self::submit_expenses();
+                break;
+            case 'get_expenses':
+                self::get_expenses();
+                break;
+            case 'delete_expense':
+                self::delete_expense_item();
+                break;
+            case 'get_expense_history':
+                self::get_expense_history();
+                break;
+            
             // Product Summary actions
             case 'get_product_summary':
                 self::get_product_summary();
@@ -1075,5 +1089,71 @@ class Stand120_Ajax_Handler {
         } else {
             wp_send_json_error($result);
         }
+    }
+    
+    /**
+     * Submit/save market expenses
+     */
+    private static function submit_expenses() {
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'Please login to continue'));
+            return;
+        }
+        
+        $result = Stand120_Expense_Record::save($_POST);
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
+    }
+    
+    /**
+     * Get expenses for a date
+     */
+    private static function get_expenses() {
+        $date = sanitize_text_field($_POST['date'] ?? date('Y-m-d'));
+        $result = Stand120_Expense_Record::get_for_date($date);
+        wp_send_json_success($result);
+    }
+    
+    /**
+     * Delete a single expense item
+     */
+    private static function delete_expense_item() {
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'Please login to continue'));
+            return;
+        }
+        
+        $id = intval($_POST['id'] ?? 0);
+        if (!$id) {
+            wp_send_json_error(array('message' => 'Expense ID required'));
+            return;
+        }
+        
+        $result = Stand120_Expense_Record::delete($id);
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
+    }
+    
+    /**
+     * Get expense history
+     */
+    private static function get_expense_history() {
+        $filters = array(
+            'date_from' => sanitize_text_field($_POST['date_from'] ?? ''),
+            'date_to' => sanitize_text_field($_POST['date_to'] ?? ''),
+            'page' => intval($_POST['page'] ?? 1),
+            'per_page' => intval($_POST['per_page'] ?? 50)
+        );
+        
+        $result = Stand120_Expense_Record::get_history($filters);
+        wp_send_json_success($result);
     }
 }

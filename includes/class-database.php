@@ -161,6 +161,20 @@ class Stand120_Database {
         ) $charset_collate;";
         dbDelta($sql_import);
         
+        // Expenses table (individual expense line items)
+        $table_expenses = $wpdb->prefix . 'stand120_expenses';
+        $sql_expenses = "CREATE TABLE $table_expenses (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            expense_date date NOT NULL,
+            description varchar(255) NOT NULL,
+            amount decimal(10,2) NOT NULL DEFAULT 0,
+            staff_id mediumint(9),
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY expense_date (expense_date)
+        ) $charset_collate;";
+        dbDelta($sql_expenses);
+        
         // Financial Summary table
         $table_financial = $wpdb->prefix . 'stand120_financial_summary';
         $sql_financial = "CREATE TABLE $table_financial (

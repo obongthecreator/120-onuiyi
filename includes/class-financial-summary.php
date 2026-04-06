@@ -20,9 +20,11 @@ class Stand120_Financial_Summary {
         $date = sanitize_text_field($data['date'] ?? date('Y-m-d'));
         $extras_amount = floatval($data['extras_amount'] ?? 0);
         $extras_remark = sanitize_textarea_field($data['extras_remark'] ?? '');
-        $expenses_amount = floatval($data['expenses_amount'] ?? 0);
         $expenses_remark = sanitize_textarea_field($data['expenses_remark'] ?? '');
         $staff_id = Stand120_Auth::get_current_staff_id();
+        
+        // Get expenses total from expenses table (managed via Market Expense page)
+        $expenses_amount = Stand120_Expense_Record::get_total_for_date($date);
         
         // Get existing record
         $existing = $wpdb->get_row($wpdb->prepare(
@@ -154,6 +156,9 @@ class Stand120_Financial_Summary {
         ));
         
         if ($record) {
+            // Also get the latest expenses total from expenses table
+            $expenses_from_table = Stand120_Expense_Record::get_total_for_date($date);
+            
             return array(
                 'date' => $date,
                 'total_sales' => floatval($record->total_sales),
@@ -162,7 +167,7 @@ class Stand120_Financial_Summary {
                 'delivery_fees' => floatval($record->delivery_fees),
                 'extras_amount' => floatval($record->extras_amount),
                 'extras_remark' => $record->extras_remark,
-                'expenses_amount' => floatval($record->expenses_amount),
+                'expenses_amount' => $expenses_from_table > 0 ? $expenses_from_table : floatval($record->expenses_amount),
                 'expenses_remark' => $record->expenses_remark,
                 'old_cash' => floatval($record->old_cash),
                 'cash_left' => floatval($record->cash_left)
@@ -190,6 +195,7 @@ class Stand120_Financial_Summary {
         $old_cash = $yesterday_record ? floatval($yesterday_record->cash_left) : 0;
         
         $cash_sales = floatval($totals->cash_sales ?? 0);
+        $expenses_total = Stand120_Expense_Record::get_total_for_date($date);
         
         return array(
             'date' => $date,
@@ -199,10 +205,10 @@ class Stand120_Financial_Summary {
             'delivery_fees' => floatval($totals->delivery_fees ?? 0),
             'extras_amount' => 0,
             'extras_remark' => '',
-            'expenses_amount' => 0,
+            'expenses_amount' => $expenses_total,
             'expenses_remark' => '',
             'old_cash' => $old_cash,
-            'cash_left' => $cash_sales + $old_cash
+            'cash_left' => ($cash_sales + $old_cash) - $expenses_total
         );
     }
     
