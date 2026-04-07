@@ -11,6 +11,22 @@ if (!defined('ABSPATH')) {
 class Stand120_Chopping_Inventory {
     
     /**
+     * Get the most recent previous day's closing value for a product.
+     * Looks back up to 60 days to find the last record, not just yesterday.
+     */
+    private static function get_previous_closing($product_id, $date) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_chopping_inventory';
+        
+        $record = $wpdb->get_row($wpdb->prepare(
+            "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date < %s ORDER BY chop_date DESC LIMIT 1",
+            $product_id, $date
+        ));
+        
+        return $record ? floatval($record->closing_whole) : 0;
+    }
+    
+    /**
      * Save chopping inventory data
      */
     public static function save($data) {
@@ -42,13 +58,8 @@ class Stand120_Chopping_Inventory {
             $opening = $existing->opening_whole;
             $import_whole = $existing->import_whole;
         } else {
-            // Get yesterday's closing as today's opening
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date = %s",
-                $product_id, $yesterday
-            ));
-            $opening = $yesterday_record ? $yesterday_record->closing_whole : 0;
+            // Get most recent previous day's closing as today's opening
+            $opening = self::get_previous_closing($product_id, $date);
             
             // Get import from import records
             $import_whole = self::get_import_whole($product_id, $date);
@@ -131,13 +142,8 @@ class Stand120_Chopping_Inventory {
                 'closing_whole' => $closing
             ), array('id' => $existing->id));
         } else {
-            // Get yesterday's closing
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date = %s",
-                $product_id, $yesterday
-            ));
-            $opening = $yesterday_record ? $yesterday_record->closing_whole : 0;
+            // Get most recent previous day's closing
+            $opening = self::get_previous_closing($product_id, $date);
             
             $wpdb->insert($table, array(
                 'product_id' => $product_id,
@@ -216,13 +222,8 @@ class Stand120_Chopping_Inventory {
                     'remarks' => $record->remarks
                 );
             } else {
-                // Get yesterday's closing
-                $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-                $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                    "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date = %s",
-                    $fruit->id, $yesterday
-                ));
-                $opening = $yesterday_record ? floatval($yesterday_record->closing_whole) : 0;
+                // Get most recent previous day's closing as opening
+                $opening = self::get_previous_closing($fruit->id, $date);
                 
                 // Get import from import records
                 $import = self::get_import_whole($fruit->id, $date);
@@ -244,9 +245,75 @@ class Stand120_Chopping_Inventory {
     }
     
     /**
+     * Self-heal chopping inventory records.
+     * Ensures each record's opening_whole matches the previous day's closing_whole,
+     * and recalculates closing_whole = opening + import - prepared.
+     */
+    public static function recalculate_records($date_from = null, $date_to = null) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_chopping_inventory';
+        
+        $sql = "SELECT * FROM $table WHERE 1=1";
+        $params = array();
+        
+        if (!empty($date_from)) {
+            $sql .= " AND chop_date >= %s";
+            $params[] = $date_from;
+        }
+        if (!empty($date_to)) {
+            $sql .= " AND chop_date <= %s";
+            $params[] = $date_to;
+        }
+        
+        $sql .= " ORDER BY chop_date ASC, product_id ASC";
+        
+        if (!empty($params)) {
+            $records = $wpdb->get_results($wpdb->prepare($sql, $params));
+        } else {
+            $records = $wpdb->get_results($sql);
+        }
+        
+        $fixed = 0;
+        
+        foreach ($records as $record) {
+            // Find the most recent previous closing for this product
+            $prev = $wpdb->get_row($wpdb->prepare(
+                "SELECT closing_whole FROM $table WHERE product_id = %d AND chop_date < %s ORDER BY chop_date DESC LIMIT 1",
+                $record->product_id, $record->chop_date
+            ));
+            $correct_opening = $prev ? floatval($prev->closing_whole) : 0;
+            
+            $current_opening = floatval($record->opening_whole);
+            $import = floatval($record->import_whole);
+            $prepared = floatval($record->prepared_whole);
+            $correct_closing = $correct_opening + $import - $prepared;
+            $current_closing = floatval($record->closing_whole);
+            
+            $opening_wrong = abs($current_opening - $correct_opening) > 0.01;
+            $closing_wrong = abs($current_closing - $correct_closing) > 0.01;
+            
+            if ($opening_wrong || $closing_wrong) {
+                $wpdb->update($table, array(
+                    'opening_whole' => $correct_opening,
+                    'closing_whole' => $correct_closing
+                ), array('id' => $record->id));
+                $fixed++;
+            }
+        }
+        
+        return $fixed;
+    }
+    
+    /**
      * Get chopping inventory history
      */
     public static function get_history($filters = array()) {
+        // Self-heal: fix opening/closing mismatches before fetching
+        self::recalculate_records(
+            $filters['date_from'] ?? null,
+            $filters['date_to'] ?? null
+        );
+        
         global $wpdb;
         $table = $wpdb->prefix . 'stand120_chopping_inventory';
         $products_table = $wpdb->prefix . 'stand120_products';

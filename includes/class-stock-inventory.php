@@ -11,6 +11,22 @@ if (!defined('ABSPATH')) {
 class Stand120_Stock_Inventory {
     
     /**
+     * Get the most recent previous day's closing value for a product.
+     * Looks back to find the last record, not just yesterday.
+     */
+    private static function get_previous_closing($product_id, $date) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_stock_inventory';
+        
+        $record = $wpdb->get_row($wpdb->prepare(
+            "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date < %s ORDER BY stock_date DESC LIMIT 1",
+            $product_id, $date
+        ));
+        
+        return $record ? floatval($record->closing_packs) : 0;
+    }
+    
+    /**
      * Save stock inventory data
      */
     public static function save($data) {
@@ -48,13 +64,8 @@ class Stand120_Stock_Inventory {
                 $added = $existing->added_packs;
             }
         } else {
-            // Get yesterday's closing as today's opening
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date = %s",
-                $product_id, $yesterday
-            ));
-            $opening = $yesterday_record ? $yesterday_record->closing_packs : 0;
+            // Get most recent previous day's closing as today's opening
+            $opening = self::get_previous_closing($product_id, $date);
             
             // Get added packs from import records (for non-fruits)
             $product = Stand120_Database::get_product($product_id);
@@ -151,13 +162,8 @@ class Stand120_Stock_Inventory {
                 'closing_packs' => $closing
             ), array('id' => $existing->id));
         } else {
-            // Get yesterday's closing
-            $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-            $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date = %s",
-                $product_id, $yesterday
-            ));
-            $opening = $yesterday_record ? $yesterday_record->closing_packs : 0;
+            // Get most recent previous day's closing
+            $opening = self::get_previous_closing($product_id, $date);
             
             $wpdb->insert($table, array(
                 'product_id' => $product_id,
@@ -233,13 +239,8 @@ class Stand120_Stock_Inventory {
                     'closing' => floatval($record->closing_packs)
                 );
             } else {
-                // Get yesterday's closing
-                $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
-                $yesterday_record = $wpdb->get_row($wpdb->prepare(
-                    "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date = %s",
-                    $product->id, $yesterday
-                ));
-                $opening = $yesterday_record ? floatval($yesterday_record->closing_packs) : 0;
+                // Get most recent previous day's closing as opening
+                $opening = self::get_previous_closing($product->id, $date);
                 
                 // Get added from import or chopping
                 $added = 0;
@@ -265,9 +266,75 @@ class Stand120_Stock_Inventory {
     }
     
     /**
+     * Self-heal stock inventory records.
+     * Ensures each record's opening_packs matches the previous day's closing_packs,
+     * and recalculates closing_packs = opening + added - used.
+     */
+    public static function recalculate_records($date_from = null, $date_to = null) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'stand120_stock_inventory';
+        
+        $sql = "SELECT * FROM $table WHERE 1=1";
+        $params = array();
+        
+        if (!empty($date_from)) {
+            $sql .= " AND stock_date >= %s";
+            $params[] = $date_from;
+        }
+        if (!empty($date_to)) {
+            $sql .= " AND stock_date <= %s";
+            $params[] = $date_to;
+        }
+        
+        $sql .= " ORDER BY stock_date ASC, product_id ASC";
+        
+        if (!empty($params)) {
+            $records = $wpdb->get_results($wpdb->prepare($sql, $params));
+        } else {
+            $records = $wpdb->get_results($sql);
+        }
+        
+        $fixed = 0;
+        
+        foreach ($records as $record) {
+            // Find the most recent previous closing for this product
+            $prev = $wpdb->get_row($wpdb->prepare(
+                "SELECT closing_packs FROM $table WHERE product_id = %d AND stock_date < %s ORDER BY stock_date DESC LIMIT 1",
+                $record->product_id, $record->stock_date
+            ));
+            $correct_opening = $prev ? floatval($prev->closing_packs) : 0;
+            
+            $current_opening = floatval($record->opening_packs);
+            $added = floatval($record->added_packs);
+            $used = floatval($record->used_packs);
+            $correct_closing = $correct_opening + $added - $used;
+            $current_closing = floatval($record->closing_packs);
+            
+            $opening_wrong = abs($current_opening - $correct_opening) > 0.01;
+            $closing_wrong = abs($current_closing - $correct_closing) > 0.01;
+            
+            if ($opening_wrong || $closing_wrong) {
+                $wpdb->update($table, array(
+                    'opening_packs' => $correct_opening,
+                    'closing_packs' => $correct_closing
+                ), array('id' => $record->id));
+                $fixed++;
+            }
+        }
+        
+        return $fixed;
+    }
+    
+    /**
      * Get stock inventory history
      */
     public static function get_history($filters = array()) {
+        // Self-heal: fix opening/closing mismatches before fetching
+        self::recalculate_records(
+            $filters['date_from'] ?? null,
+            $filters['date_to'] ?? null
+        );
+        
         global $wpdb;
         $table = $wpdb->prefix . 'stand120_stock_inventory';
         $products_table = $wpdb->prefix . 'stand120_products';
