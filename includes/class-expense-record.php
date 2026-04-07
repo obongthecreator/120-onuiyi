@@ -51,9 +51,6 @@ class Stand120_Expense_Record {
             }
         }
         
-        // Sync total to financial summary
-        self::sync_to_financial_summary($date, $total);
-        
         Stand120_Database::log_activity('save_expenses', 'stand120_expenses');
         
         return array(
@@ -123,8 +120,6 @@ class Stand120_Expense_Record {
         foreach ($items as $remaining) {
             $total += floatval($remaining->amount);
         }
-        self::sync_to_financial_summary($date, $total);
-        
         Stand120_Database::log_activity('delete_expense', 'stand120_expenses', $id);
         
         return array(
@@ -218,31 +213,7 @@ class Stand120_Expense_Record {
     }
     
     /**
-     * Sync expense total to financial summary
-     */
-    private static function sync_to_financial_summary($date, $total) {
-        global $wpdb;
-        $table = $wpdb->prefix . 'stand120_financial_summary';
-        
-        $existing = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $table WHERE summary_date = %s",
-            $date
-        ));
-        
-        if ($existing) {
-            // Recalculate cash_left with new expense total
-            $cash_left = ($existing->cash_sales + $existing->old_cash + $existing->extras_amount) - $total;
-            
-            $wpdb->update($table, array(
-                'expenses_amount' => $total,
-                'cash_left' => $cash_left
-            ), array('id' => $existing->id));
-        }
-        // If no financial summary record yet, it will pick up the expense total when created
-    }
-    
-    /**
-     * Get total expenses for a date (used by financial summary)
+     * Get total expenses for a date
      */
     public static function get_total_for_date($date) {
         global $wpdb;

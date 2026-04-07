@@ -62,7 +62,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
         <i class="fas fa-info-circle"></i> 
-        Enter each expense item with description and amount. Total is auto-calculated and synced to Financial Summary.
+        Enter each expense item with description and amount. Total is auto-calculated and stored in Market Card Expense history.
     </p>
     
     <div class="table-responsive">

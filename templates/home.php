@@ -134,7 +134,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <i class="fas fa-receipt"></i>
         </div>
         <h3>Market Expense</h3>
-        <p>Record daily market expenses with description and amount. Auto-syncs to Financial Summary.</p>
+        <p>Record daily market expenses with description and amount. Stores in Market Card Expense history.</p>
         <span class="home-card-btn">
             <i class="fas fa-arrow-right"></i> Open
         </span>
