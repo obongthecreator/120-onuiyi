@@ -129,6 +129,17 @@ class Stand120_Financial_Summary {
                 'staff_id' => $staff_id
             ));
             
+            // If admin changed old_cash, also update yesterday's cash_left to match
+            if ($admin_old_cash !== null) {
+                $yesterday_id_record = $wpdb->get_row($wpdb->prepare(
+                    "SELECT id FROM $table WHERE summary_date = %s",
+                    $yesterday
+                ));
+                if ($yesterday_id_record) {
+                    $wpdb->update($table, array('cash_left' => $admin_old_cash), array('id' => $yesterday_id_record->id));
+                }
+            }
+            
             return array(
                 'success' => true,
                 'message' => 'Financial summary created',
