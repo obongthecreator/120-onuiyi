@@ -1436,8 +1436,8 @@ const FinancialSummary = {
         const self = this;
         
         // Real-time calculation on extras and expenses input
-        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount');
-        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount', function() {
+        $(document).off('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount, #marketCardExpense');
+        $(document).on('input.finsummary change.finsummary keyup.finsummary', '#extrasAmount, #expensesAmount, #marketCardExpense', function() {
             self.calculateCashLeft();
             self.debouncedSave();
         });
@@ -1493,8 +1493,8 @@ const FinancialSummary = {
         $('#extrasRemark').val(data.extras_remark || '');
         $('#expensesAmount').val(data.expenses_amount || '');
         $('#expensesRemark').val(data.expenses_remark || '');
-        // Market Card Expense Left is read-only (managed via Market Expense page)
-        $('#marketCardExpense').text('₦' + Stand120.formatNumber(data.market_card_expense || 0));
+        // Market Card Expense Left is manually editable
+        $('#marketCardExpense').val(data.market_card_expense || '');
         
         this.calculateCashLeft();
     },
@@ -1541,7 +1541,8 @@ const FinancialSummary = {
             extras_amount: Stand120.parseNumber($('#extrasAmount').val()),
             extras_remark: $('#extrasRemark').val(),
             expenses_amount: Stand120.parseNumber($('#expensesAmount').val()),
-            expenses_remark: $('#expensesRemark').val()
+            expenses_remark: $('#expensesRemark').val(),
+            market_card_expense: Stand120.parseNumber($('#marketCardExpense').val())
         };
         
         // If admin is editing old_cash, include it

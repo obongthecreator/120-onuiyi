@@ -22,14 +22,11 @@ class Stand120_Financial_Summary {
         $extras_remark = sanitize_textarea_field($data['extras_remark'] ?? '');
         $expenses_amount = floatval($data['expenses_amount'] ?? 0);
         $expenses_remark = sanitize_textarea_field($data['expenses_remark'] ?? '');
+        $market_card_expense_input = isset($data['market_card_expense']) ? floatval($data['market_card_expense']) : null;
         $staff_id = Stand120_Auth::get_current_staff_id();
         
         // Admin can override old_cash
         $admin_old_cash = isset($data['old_cash']) && Stand120_Auth::is_admin() ? floatval($data['old_cash']) : null;
-        
-        // Market Card Expense Left comes from stand120_expenses table (not in formula)
-        // Only overwrite if live value is > 0, otherwise preserve stored value
-        $live_mce = Stand120_Expense_Record::get_total_for_date($date);
         
         // Get existing record
         $existing = $wpdb->get_row($wpdb->prepare(
@@ -43,8 +40,8 @@ class Stand120_Financial_Summary {
             // Recalculate cash left: only Expense is subtracted (NOT market_card_expense)
             $cash_left = ($existing->cash_sales + $old_cash + $extras_amount) - $expenses_amount;
             
-            // Preserve stored market_card_expense if live is 0
-            $market_card_expense = ($live_mce > 0) ? $live_mce : floatval($existing->market_card_expense ?? 0);
+            // Market Card Expense Left is manually inputted (not from expenses table)
+            $market_card_expense = ($market_card_expense_input !== null) ? $market_card_expense_input : floatval($existing->market_card_expense ?? 0);
             
             $update_data = array(
                 'extras_amount' => $extras_amount,
@@ -108,7 +105,7 @@ class Stand120_Financial_Summary {
             $cash_sales = floatval($totals->cash_sales ?? 0);
             $delivery_fees = floatval($totals->delivery_fees ?? 0);
             
-            $market_card_expense = ($live_mce > 0) ? $live_mce : 0;
+            $market_card_expense = ($market_card_expense_input !== null) ? $market_card_expense_input : 0;
             
             $cash_left = ($cash_sales + $old_cash + $extras_amount) - $expenses_amount;
             
@@ -200,9 +197,6 @@ class Stand120_Financial_Summary {
         ));
         
         if ($record) {
-            // Also get the latest market card expense from expenses table
-            $market_card_expense_from_table = Stand120_Expense_Record::get_total_for_date($date);
-            
             return array(
                 'date' => $date,
                 'total_sales' => floatval($record->total_sales),
@@ -213,7 +207,7 @@ class Stand120_Financial_Summary {
                 'extras_remark' => $record->extras_remark,
                 'expenses_amount' => floatval($record->expenses_amount),
                 'expenses_remark' => $record->expenses_remark,
-                'market_card_expense' => $market_card_expense_from_table > 0 ? $market_card_expense_from_table : floatval($record->market_card_expense ?? 0),
+                'market_card_expense' => floatval($record->market_card_expense ?? 0),
                 'old_cash' => floatval($record->old_cash),
                 'cash_left' => floatval($record->cash_left)
             );
@@ -240,7 +234,6 @@ class Stand120_Financial_Summary {
         $old_cash = $yesterday_record ? floatval($yesterday_record->cash_left) : 0;
         
         $cash_sales = floatval($totals->cash_sales ?? 0);
-        $market_card_expense = Stand120_Expense_Record::get_total_for_date($date);
         
         return array(
             'date' => $date,
@@ -252,7 +245,7 @@ class Stand120_Financial_Summary {
             'extras_remark' => '',
             'expenses_amount' => 0,
             'expenses_remark' => '',
-            'market_card_expense' => $market_card_expense,
+            'market_card_expense' => 0,
             'old_cash' => $old_cash,
             'cash_left' => $cash_sales + $old_cash
         );
@@ -293,25 +286,12 @@ class Stand120_Financial_Summary {
         foreach ($records as $record) {
             $correct_cash_left = (floatval($record->cash_sales) + floatval($record->old_cash) + floatval($record->extras_amount)) - floatval($record->expenses_amount);
             
-            // Refresh market_card_expense from expenses table only if there are actual expense records
-            $live_mce = Stand120_Expense_Record::get_total_for_date($record->summary_date);
-            $stored_mce = floatval($record->market_card_expense ?? 0);
-            
-            // Only overwrite market_card_expense if the live value is > 0,
-            // or if the stored value is 0 (nothing to lose). This preserves old stored values
-            // when expense records have been deleted from the expenses table.
-            $final_mce = ($live_mce > 0) ? $live_mce : $stored_mce;
-            
             $stored_cash_left = floatval($record->cash_left);
             
-            // Fix if cash_left is wrong or market_card_expense needs updating
-            $needs_fix = abs($stored_cash_left - $correct_cash_left) > 0.01;
-            $mce_changed = abs($stored_mce - $final_mce) > 0.01;
-            
-            if ($needs_fix || $mce_changed) {
+            // Fix if cash_left is wrong
+            if (abs($stored_cash_left - $correct_cash_left) > 0.01) {
                 $wpdb->update($table, array(
-                    'cash_left' => $correct_cash_left,
-                    'market_card_expense' => $final_mce
+                    'cash_left' => $correct_cash_left
                 ), array('id' => $record->id));
                 $fixed++;
             }
