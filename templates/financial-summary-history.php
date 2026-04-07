@@ -39,6 +39,33 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     </div>
 </div>
 
+<?php if ($is_admin): ?>
+<div style="background: rgba(var(--primary-rgb, 99,102,241), 0.1); border: 1px solid rgba(var(--primary-rgb, 99,102,241), 0.3); border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; font-size: 0.9rem; color: var(--text-color);">
+    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i>
+    <strong>Admin:</strong> Double-click on <strong>Old Cash</strong> or <strong>Cash Left</strong> cells to edit them. Changes will automatically propagate to linked days.
+</div>
+<?php endif; ?>
+
+<style>
+    .editable-cell {
+        cursor: pointer;
+        position: relative;
+        border-bottom: 2px dashed rgba(var(--primary-rgb, 99,102,241), 0.4) !important;
+    }
+    .editable-cell:hover {
+        background: rgba(var(--primary-rgb, 99,102,241), 0.08) !important;
+    }
+    .editable-cell .edit-icon {
+        font-size: 0.65rem;
+        opacity: 0.4;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+    .editable-cell:hover .edit-icon {
+        opacity: 0.8;
+    }
+</style>
+
 <div class="glass-card">
     <div class="table-responsive">
         <table class="table" id="historyTable">
@@ -98,7 +125,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 $input.on('keydown', function(e) {
                     if (e.key === 'Enter') { $(this).blur(); }
                     if (e.key === 'Escape') {
-                        $cell.html('₦' + Stand120.formatNumber(currentVal));
+                        $cell.html('<span class="editable-value">₦' + Stand120.formatNumber(currentVal) + ' <i class="fas fa-pencil-alt edit-icon"></i></span>');
                         $cell.data('raw-value', currentVal);
                     }
                 });
@@ -121,11 +148,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 loadHistory();
             } else {
                 Stand120.showAlert('danger', response.data?.message || 'Update failed');
-                $cell.html('₦' + Stand120.formatNumber($cell.data('raw-value') || 0));
+                $cell.html('<span class="editable-value">₦' + Stand120.formatNumber($cell.data('raw-value') || 0) + ' <i class="fas fa-pencil-alt edit-icon"></i></span>');
             }
         }).catch(() => {
             Stand120.showAlert('danger', 'Update failed');
-            $cell.html('₦' + Stand120.formatNumber($cell.data('raw-value') || 0));
+            $cell.html('<span class="editable-value">₦' + Stand120.formatNumber($cell.data('raw-value') || 0) + ' <i class="fas fa-pencil-alt edit-icon"></i></span>');
         });
     }
     
@@ -147,11 +174,11 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                         
                         // Old Cash and Cash Left cells: editable by admin (double-click)
                         const oldCashCell = isAdmin
-                            ? `<td class="formatted-number editable-cell" data-field="old_cash" data-record-id="${r.id}" data-raw-value="${r.old_cash}" style="cursor:pointer;" title="Double-click to edit">₦${Stand120.formatNumber(r.old_cash)}</td>`
+                            ? `<td class="formatted-number editable-cell" data-field="old_cash" data-record-id="${r.id}" data-raw-value="${r.old_cash}" title="Double-click to edit"><span class="editable-value">₦${Stand120.formatNumber(r.old_cash)} <i class="fas fa-pencil-alt edit-icon"></i></span></td>`
                             : `<td class="formatted-number">₦${Stand120.formatNumber(r.old_cash)}</td>`;
                         
                         const cashLeftCell = isAdmin
-                            ? `<td class="formatted-number editable-cell" data-field="cash_left" data-record-id="${r.id}" data-raw-value="${r.cash_left}" style="cursor:pointer;font-weight:600;color:var(--primary-color);" title="Double-click to edit">₦${Stand120.formatNumber(r.cash_left)}</td>`
+                            ? `<td class="formatted-number editable-cell" data-field="cash_left" data-record-id="${r.id}" data-raw-value="${r.cash_left}" style="font-weight:600;color:var(--primary-color);" title="Double-click to edit"><span class="editable-value">₦${Stand120.formatNumber(r.cash_left)} <i class="fas fa-pencil-alt edit-icon"></i></span></td>`
                             : `<td class="formatted-number" style="font-weight:600;color:var(--primary-color)">₦${Stand120.formatNumber(r.cash_left)}</td>`;
                         
                         $tbody.append(`<tr>
