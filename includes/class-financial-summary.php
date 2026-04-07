@@ -64,6 +64,18 @@ class Stand120_Financial_Summary {
             // Update existing
             $wpdb->update($table, $update_data, array('id' => $existing->id));
             
+            // If admin changed old_cash, also update yesterday's cash_left to match
+            if ($admin_old_cash !== null) {
+                $yesterday = date('Y-m-d', strtotime($date . ' -1 day'));
+                $yesterday_record = $wpdb->get_row($wpdb->prepare(
+                    "SELECT id FROM $table WHERE summary_date = %s",
+                    $yesterday
+                ));
+                if ($yesterday_record) {
+                    $wpdb->update($table, array('cash_left' => $admin_old_cash), array('id' => $yesterday_record->id));
+                }
+            }
+            
             return array(
                 'success' => true,
                 'message' => 'Financial summary updated',
@@ -392,6 +404,33 @@ class Stand120_Financial_Summary {
         }
         
         $wpdb->update($table, $update_data, array('id' => $record_id));
+        
+        // Propagate linked changes between days
+        $record_date = $existing->summary_date;
+        
+        // If old_cash was changed, update previous day's cash_left to match
+        if (isset($data['old_cash'])) {
+            $prev_date = date('Y-m-d', strtotime($record_date . ' -1 day'));
+            $prev_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT id FROM $table WHERE summary_date = %s",
+                $prev_date
+            ));
+            if ($prev_record) {
+                $wpdb->update($table, array('cash_left' => floatval($data['old_cash'])), array('id' => $prev_record->id));
+            }
+        }
+        
+        // If cash_left was changed, update next day's old_cash to match
+        if (isset($data['cash_left'])) {
+            $next_date = date('Y-m-d', strtotime($record_date . ' +1 day'));
+            $next_record = $wpdb->get_row($wpdb->prepare(
+                "SELECT id FROM $table WHERE summary_date = %s",
+                $next_date
+            ));
+            if ($next_record) {
+                $wpdb->update($table, array('old_cash' => floatval($data['cash_left'])), array('id' => $next_record->id));
+            }
+        }
         
         return array(
             'success' => true,

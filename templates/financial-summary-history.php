@@ -117,6 +117,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 $cell.html('₦' + Stand120.formatNumber(parsed));
                 $cell.data('raw-value', parsed);
                 Stand120.showAlert('success', 'Updated successfully');
+                // Reload table to show propagated changes to linked days
+                loadHistory();
             } else {
                 Stand120.showAlert('danger', response.data?.message || 'Update failed');
                 $cell.html('₦' + Stand120.formatNumber($cell.data('raw-value') || 0));
