@@ -1525,7 +1525,11 @@ const FinancialSummary = {
         const expensesVal = $('#expensesAmount').val() || '0';
         const expenses = parseFloat(expensesVal.toString().replace(/,/g, '')) || 0;
         
-        const cashLeft = (cashSales + oldCash + extras) - expenses;
+        // Card Expense Cash Left is manually editable
+        const mceVal = $('#marketCardExpense').val() || '0';
+        const marketCardExpense = parseFloat(mceVal.toString().replace(/,/g, '')) || 0;
+        
+        const cashLeft = (cashSales + oldCash + marketCardExpense + extras) - expenses;
         
         // Update cash left immediately
         $('#cashLeft').text('₦' + Stand120.formatNumber(cashLeft));

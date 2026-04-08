@@ -58,7 +58,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
         <i class="fas fa-info-circle"></i> 
-        Cash Left = (Cash Sales + Old Cash + Extras) - Cash Expense. 
+        Cash Left = (Cash Sales + Old Cash + Card Expense Cash Left + Extras) - Cash Expense. 
         Only Extras, Cash Expense, and Card Expense Cash Left fields are editable. Values auto-save.
     </p>
     
@@ -165,7 +165,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.85rem; text-align: center;">
         <i class="fas fa-info-circle"></i> 
-        Formula: Cash Left = (Cash Sales + Old Cash + Extras) - Cash Expense
+        Formula: Cash Left = (Cash Sales + Old Cash + Card Expense Cash Left + Extras) - Cash Expense
     </p>
 </div>
 

@@ -37,11 +37,11 @@ class Stand120_Financial_Summary {
         if ($existing) {
             $old_cash = ($admin_old_cash !== null) ? $admin_old_cash : floatval($existing->old_cash);
             
-            // Recalculate cash left: only Expense is subtracted (NOT market_card_expense)
-            $cash_left = ($existing->cash_sales + $old_cash + $extras_amount) - $expenses_amount;
-            
             // Market Card Expense Left is manually inputted (not from expenses table)
             $market_card_expense = ($market_card_expense_input !== null) ? $market_card_expense_input : floatval($existing->market_card_expense ?? 0);
+            
+            // Recalculate cash left: Cash Left = (Cash Sales + Old Cash + Card Expense Cash Left + Extras) - Cash Expense
+            $cash_left = ($existing->cash_sales + $old_cash + $market_card_expense + $extras_amount) - $expenses_amount;
             
             $update_data = array(
                 'extras_amount' => $extras_amount,
@@ -107,7 +107,7 @@ class Stand120_Financial_Summary {
             
             $market_card_expense = ($market_card_expense_input !== null) ? $market_card_expense_input : 0;
             
-            $cash_left = ($cash_sales + $old_cash + $extras_amount) - $expenses_amount;
+            $cash_left = ($cash_sales + $old_cash + $market_card_expense + $extras_amount) - $expenses_amount;
             
             // Insert new
             $wpdb->insert($table, array(
@@ -171,7 +171,7 @@ class Stand120_Financial_Summary {
         ));
         
         if ($existing) {
-            $cash_left = (floatval($totals->cash_sales ?? 0) + $existing->old_cash + $existing->extras_amount) - $existing->expenses_amount;
+            $cash_left = (floatval($totals->cash_sales ?? 0) + $existing->old_cash + floatval($existing->market_card_expense ?? 0) + $existing->extras_amount) - $existing->expenses_amount;
             
             $wpdb->update($table, array(
                 'total_sales' => floatval($totals->total_sales ?? 0),
@@ -255,7 +255,7 @@ class Stand120_Financial_Summary {
      * Self-heal financial summary records with wrong calculations.
      * Recalculates cash_left for all records in the given date range
      * and updates any that don't match the formula:
-     * Cash Left = (Cash Sales + Old Cash + Extras) - Expense
+     * Cash Left = (Cash Sales + Old Cash + Card Expense Cash Left + Extras) - Cash Expense
      */
     public static function recalculate_records($date_from = null, $date_to = null) {
         global $wpdb;
@@ -284,7 +284,7 @@ class Stand120_Financial_Summary {
         $fixed = 0;
         
         foreach ($records as $record) {
-            $correct_cash_left = (floatval($record->cash_sales) + floatval($record->old_cash) + floatval($record->extras_amount)) - floatval($record->expenses_amount);
+            $correct_cash_left = (floatval($record->cash_sales) + floatval($record->old_cash) + floatval($record->market_card_expense ?? 0) + floatval($record->extras_amount)) - floatval($record->expenses_amount);
             
             $stored_cash_left = floatval($record->cash_left);
             
