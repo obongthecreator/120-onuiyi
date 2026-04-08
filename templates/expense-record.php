@@ -1,13 +1,13 @@
 <?php
 /**
- * Market Expense Page Template
+ * Card Expense Page Template
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-$page_title = 'Market Expense - 120 Stand Inventory';
+$page_title = 'Card Expense - 120 Stand Inventory';
 $current_user = Stand120_Auth::get_current_user_data();
 $today = date('Y-m-d');
 
@@ -40,7 +40,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
         <i class="fas fa-receipt"></i>
-        Market Expense
+        Card Expense
     </h1>
     <div style="display: flex; gap: 12px; align-items: center;">
         <input type="date" id="expenseDate" class="form-control" value="<?php echo $today; ?>" style="max-width: 200px;">
@@ -53,7 +53,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <div class="glass-card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: var(--primary-color);">
-            <i class="fas fa-file-invoice-dollar"></i> Daily Market Expenses
+            <i class="fas fa-file-invoice-dollar"></i> Daily Card Expenses
         </h3>
         <button id="addExpenseRow" class="btn btn-primary btn-sm">
             <i class="fas fa-plus"></i> Add Item
@@ -62,7 +62,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
         <i class="fas fa-info-circle"></i> 
-        Enter each expense item with description and amount. Total is auto-calculated and stored in Market Card Expense history.
+        Enter each expense item with description and amount. Total is auto-calculated and stored in Card Expense history.
     </p>
     
     <div class="table-responsive">

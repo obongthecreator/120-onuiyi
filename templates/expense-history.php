@@ -1,20 +1,20 @@
 <?php
 /**
- * Market Expense History Page Template
+ * Card Expense History Page Template
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-$page_title = 'Market Expense History - 120 Stand Inventory';
+$page_title = 'Card Expense History - 120 Stand Inventory';
 include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 ?>
 
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
     <h1 class="page-title" style="margin-bottom: 0;">
         <i class="fas fa-history"></i>
-        Market Expense History
+        Card Expense History
     </h1>
     <a href="<?php echo home_url('/120-stand/expense-record/'); ?>" class="btn btn-primary">
         <i class="fas fa-arrow-left"></i> Back

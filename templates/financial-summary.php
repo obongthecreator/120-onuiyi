@@ -58,8 +58,8 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
         <i class="fas fa-info-circle"></i> 
-        Cash Left = (Cash Sales + Old Cash + Extras) - Expense. 
-        Only Extras, Expense, and Market Card Expense Left fields are editable. Values auto-save.
+        Cash Left = (Cash Sales + Old Cash + Extras) - Cash Expense. 
+        Only Extras, Cash Expense, and Card Expense Cash Left fields are editable. Values auto-save.
     </p>
     
     <div class="table-responsive">
@@ -114,7 +114,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 <tr>
                     <td style="font-weight: 600;">
                         <i class="fas fa-minus-circle" style="color: var(--danger-color);"></i>
-                        Expense (₦)
+                        Cash Expense (₦)
                     </td>
                     <td>
                         <input type="text" id="expensesAmount" class="table-input number-input" placeholder="0" style="max-width: 150px;">
@@ -122,20 +122,20 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-credit-card" style="color: var(--info-color);"></i>
-                        Market Card Expense Left (₦)
+                        <i class="fas fa-comment" style="color: var(--text-muted);"></i>
+                        Cash Expense Remark
                     </td>
                     <td>
-                        <input type="text" id="marketCardExpense" class="table-input number-input" placeholder="0" style="max-width: 150px;">
+                        <input type="text" id="expensesRemark" class="table-input" placeholder="Enter cash expense description..." style="max-width: 300px;">
                     </td>
                 </tr>
                 <tr>
                     <td style="font-weight: 600;">
-                        <i class="fas fa-comment" style="color: var(--text-muted);"></i>
-                        Expenses Remark
+                        <i class="fas fa-credit-card" style="color: var(--info-color);"></i>
+                        Card Expense Cash Left (₦)
                     </td>
                     <td>
-                        <input type="text" id="expensesRemark" class="table-input" placeholder="Enter expenses description..." style="max-width: 300px;">
+                        <input type="text" id="marketCardExpense" class="table-input number-input" placeholder="0" style="max-width: 150px;">
                     </td>
                 </tr>
                 <tr>
@@ -165,7 +165,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
     
     <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.85rem; text-align: center;">
         <i class="fas fa-info-circle"></i> 
-        Formula: Cash Left = (Cash Sales + Old Cash + Extras) - Expense
+        Formula: Cash Left = (Cash Sales + Old Cash + Extras) - Cash Expense
     </p>
 </div>
 

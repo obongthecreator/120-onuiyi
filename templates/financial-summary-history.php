@@ -77,9 +77,9 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                     <th>Transfer</th>
                     <th>Extras</th>
                     <th>Extras Remark</th>
-                    <th>Expense</th>
-                    <th>Expense Remark</th>
-                    <th>Mkt Card Exp Left</th>
+                    <th>Cash Expense</th>
+                    <th>Cash Expense Remark</th>
+                    <th>Card Exp Cash Left</th>
                     <th>Old Cash</th>
                     <th>Cash Left</th>
                 </tr>
