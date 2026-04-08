@@ -1725,13 +1725,24 @@ const AdminPanel = {
         
         $('#productsTable tbody tr').each(function() {
             const $row = $(this);
-            products.push({
-                id: $row.data('id') === 'new' ? null : $row.data('id'),
+            const rowId = $row.data('id');
+            const product = {
                 name: $row.find('.product-name').val(),
                 price: $row.find('.product-price').val(),
                 type: $row.find('.product-type').val()
-            });
+            };
+            if (rowId !== 'new' && rowId) {
+                product.id = rowId;
+            }
+            products.push(product);
         });
+        
+        // Validate: ensure all products have names
+        const emptyNames = products.filter(p => !p.name || !p.name.trim());
+        if (emptyNames.length) {
+            Stand120.showAlert('danger', 'All products must have a name');
+            return;
+        }
         
         Stand120.showLoading('Saving products...');
         

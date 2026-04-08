@@ -242,8 +242,7 @@ class Stand120_Ajax_Handler {
      * Add product
      */
     private static function add_product() {
-        // Check admin using WordPress directly to avoid any issues
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
@@ -252,7 +251,6 @@ class Stand120_Ajax_Handler {
             'name' => sanitize_text_field($_POST['name'] ?? ''),
             'price' => floatval($_POST['price'] ?? 0),
             'type' => sanitize_text_field($_POST['type'] ?? 'menu'),
-            'unit' => sanitize_text_field($_POST['unit'] ?? 'piece'),
             'status' => 'active'
         );
         
@@ -278,8 +276,7 @@ class Stand120_Ajax_Handler {
      * Update product
      */
     private static function update_product() {
-        // Check admin using WordPress directly
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
@@ -308,8 +305,7 @@ class Stand120_Ajax_Handler {
      * Delete product
      */
     private static function delete_product() {
-        // Check admin using WordPress directly
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
@@ -426,8 +422,7 @@ class Stand120_Ajax_Handler {
      * Update opening values (admin only)
      */
     private static function update_opening_values() {
-        // Check admin using WordPress directly
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
@@ -758,8 +753,7 @@ class Stand120_Ajax_Handler {
      * Get staff
      */
     private static function get_staff() {
-        // Check admin using WordPress directly
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
@@ -772,8 +766,7 @@ class Stand120_Ajax_Handler {
      * Create staff
      */
     private static function create_staff() {
-        // Check admin using WordPress directly
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
@@ -799,8 +792,7 @@ class Stand120_Ajax_Handler {
      * Update staff
      */
     private static function update_staff_action() {
-        // Check admin using WordPress directly
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
@@ -826,8 +818,7 @@ class Stand120_Ajax_Handler {
      * Delete staff
      */
     private static function delete_staff() {
-        // Check admin using WordPress directly
-        if (!current_user_can('administrator')) {
+        if (!Stand120_Auth::is_admin()) {
             wp_send_json_error(array('message' => 'Unauthorized - Admin access required'));
             return;
         }
