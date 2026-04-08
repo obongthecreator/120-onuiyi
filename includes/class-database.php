@@ -230,6 +230,21 @@ class Stand120_Database {
             KEY created_at (created_at)
         ) $charset_collate;";
         dbDelta($sql_log);
+        
+        // Reconciliation table
+        $table_reconciliation = $wpdb->prefix . 'stand120_reconciliation';
+        $sql_reconciliation = "CREATE TABLE $table_reconciliation (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            reconcile_date date NOT NULL,
+            staff_id mediumint(9) NOT NULL,
+            remark text,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY date_staff (reconcile_date, staff_id),
+            KEY reconcile_date (reconcile_date)
+        ) $charset_collate;";
+        dbDelta($sql_reconciliation);
     }
     
     /**

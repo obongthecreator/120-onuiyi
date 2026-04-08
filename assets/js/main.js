@@ -2223,3 +2223,219 @@ const Login = {
         });
     }
 };
+
+/**
+ * Reconciliation Calendar Module
+ */
+const ReconciliationCalendar = {
+    currentYear: new Date().getFullYear(),
+    currentMonth: new Date().getMonth(),
+    statusData: {},
+    selectedDate: null,
+    
+    init: function() {
+        this.bindEvents();
+        this.renderCalendar();
+        this.loadStatus();
+    },
+    
+    bindEvents: function() {
+        $(document).on('click', '#prevMonth', () => {
+            this.currentMonth--;
+            if (this.currentMonth < 0) {
+                this.currentMonth = 11;
+                this.currentYear--;
+            }
+            this.renderCalendar();
+            this.loadStatus();
+        });
+        
+        $(document).on('click', '#nextMonth', () => {
+            this.currentMonth++;
+            if (this.currentMonth > 11) {
+                this.currentMonth = 0;
+                this.currentYear++;
+            }
+            this.renderCalendar();
+            this.loadStatus();
+        });
+        
+        $(document).on('click', '.cal-day:not(.empty):not(.future)', (e) => {
+            const date = $(e.currentTarget).data('date');
+            if (date) {
+                this.openReconcileModal(date);
+            }
+        });
+        
+        $(document).on('click', '#submitReconcile', () => {
+            this.submitReconciliation();
+        });
+        
+        $(document).on('click', '#cancelReconcile, #closeReconcileComplete', () => {
+            this.closeModal();
+        });
+        
+        // Close modal on overlay click
+        $(document).on('click', '#reconcileModal', (e) => {
+            if (e.target.id === 'reconcileModal') {
+                this.closeModal();
+            }
+        });
+    },
+    
+    renderCalendar: function() {
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        $('#calendarMonth').text(monthNames[this.currentMonth] + ' ' + this.currentYear);
+        
+        const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
+        const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+        const today = new Date();
+        const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        
+        let html = '<div class="cal-header">';
+        dayNames.forEach(d => { html += '<div>' + d + '</div>'; });
+        html += '</div><div class="cal-grid">';
+        
+        // Empty cells before first day
+        for (let i = 0; i < firstDay; i++) {
+            html += '<div class="cal-day empty"></div>';
+        }
+        
+        // Day cells
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = this.currentYear + '-' + String(this.currentMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+            const isFuture = dateStr > todayStr;
+            const isToday = dateStr === todayStr;
+            
+            let statusClass = '';
+            let statusText = '';
+            
+            if (this.statusData[dateStr]) {
+                const info = this.statusData[dateStr];
+                if (info.is_complete) {
+                    statusClass = 'complete';
+                    statusText = '<i class="fas fa-lock" style="font-size: 0.7rem;"></i>';
+                } else {
+                    statusClass = 'partial';
+                    statusText = '1/2';
+                }
+            }
+            
+            if (isFuture) statusClass += ' future';
+            if (isToday) statusClass += ' today';
+            
+            html += '<div class="cal-day ' + statusClass + '" data-date="' + dateStr + '">';
+            html += '<span class="day-num">' + day + '</span>';
+            if (statusText) {
+                html += '<span class="day-status">' + statusText + '</span>';
+            }
+            html += '</div>';
+        }
+        
+        html += '</div>';
+        $('#reconciliationCalendar').html(html);
+    },
+    
+    loadStatus: function() {
+        const startDate = this.currentYear + '-' + String(this.currentMonth + 1).padStart(2, '0') + '-01';
+        const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+        const endDate = this.currentYear + '-' + String(this.currentMonth + 1).padStart(2, '0') + '-' + String(daysInMonth).padStart(2, '0');
+        
+        Stand120.ajax('get_reconciliation_status', {
+            start_date: startDate,
+            end_date: endDate
+        }).then(response => {
+            if (response.success) {
+                this.statusData = response.data.dates || {};
+                this.renderCalendar();
+            }
+        });
+    },
+    
+    openReconcileModal: function(date) {
+        this.selectedDate = date;
+        const dateObj = new Date(date + 'T00:00:00');
+        const formatted = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        
+        $('#reconcileDate').text(formatted);
+        $('#reconcileRemark').val('');
+        
+        // Load details for this date
+        Stand120.ajax('get_reconciliation_for_date', { date: date }).then(response => {
+            if (response.success) {
+                const data = response.data;
+                
+                // Show previous submissions
+                if (data.reconciliations && data.reconciliations.length > 0) {
+                    let listHtml = '';
+                    data.reconciliations.forEach(r => {
+                        const time = new Date(r.created_at).toLocaleString();
+                        listHtml += '<div class="reconciliation-item">';
+                        listHtml += '<div class="staff-name"><i class="fas fa-user-check"></i> ' + (r.staff_name || 'Admin') + '</div>';
+                        listHtml += '<div class="reconcile-time">' + time + '</div>';
+                        if (r.remark) {
+                            listHtml += '<div class="reconcile-remark"><i class="fas fa-comment"></i> ' + r.remark + '</div>';
+                        }
+                        listHtml += '</div>';
+                    });
+                    $('#reconciliationList').html(listHtml);
+                    $('#previousReconciliations').show();
+                } else {
+                    $('#previousReconciliations').hide();
+                }
+                
+                // Show form or complete message
+                if (data.is_complete) {
+                    $('#reconcileForm').hide();
+                    $('#reconcileComplete').show();
+                } else {
+                    $('#reconcileForm').show();
+                    $('#reconcileComplete').hide();
+                    
+                    if (data.has_submitted) {
+                        $('#submitReconcile').html('<i class="fas fa-edit"></i> Update Reconciliation');
+                    } else {
+                        $('#submitReconcile').html('<i class="fas fa-check"></i> Submit Reconciliation');
+                    }
+                }
+                
+                $('#reconcileModal').css('display', 'flex');
+            }
+        });
+    },
+    
+    submitReconciliation: function() {
+        if (!this.selectedDate) return;
+        
+        const remark = $('#reconcileRemark').val().trim();
+        
+        $('#submitReconcile').prop('disabled', true).html('<span class="loading-spinner"></span> Submitting...');
+        
+        Stand120.ajax('submit_reconciliation', {
+            date: this.selectedDate,
+            remark: remark
+        }).then(response => {
+            $('#submitReconcile').prop('disabled', false);
+            
+            if (response.success) {
+                Stand120.showAlert('success', response.data.message);
+                this.closeModal();
+                this.loadStatus();
+            } else {
+                Stand120.showAlert('danger', response.data?.message || 'Failed to submit reconciliation');
+                $('#submitReconcile').html('<i class="fas fa-check"></i> Submit Reconciliation');
+            }
+        }).catch(() => {
+            $('#submitReconcile').prop('disabled', false).html('<i class="fas fa-check"></i> Submit Reconciliation');
+            Stand120.showAlert('danger', 'Failed to submit reconciliation');
+        });
+    },
+    
+    closeModal: function() {
+        $('#reconcileModal').hide();
+        this.selectedDate = null;
+    }
+};

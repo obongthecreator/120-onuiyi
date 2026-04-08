@@ -132,6 +132,9 @@ $current_page = get_query_var('stand120_page');
             <a href="<?php echo home_url('/120-stand/analytics/'); ?>" class="mobile-nav-link <?php echo $current_page === 'analytics' ? 'active' : ''; ?>">
                 <i class="fas fa-chart-line"></i> Analytics
             </a>
+            <a href="<?php echo home_url('/120-stand/reconciliation/'); ?>" class="mobile-nav-link <?php echo $current_page === 'reconciliation' ? 'active' : ''; ?>">
+                <i class="fas fa-calendar-check"></i> Reconciliation
+            </a>
             <?php endif; ?>
             <a href="<?php echo wp_logout_url(home_url('/120-stand/login/')); ?>" class="mobile-nav-link">
                 <i class="fas fa-sign-out-alt"></i> Logout

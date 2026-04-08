@@ -164,6 +164,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
             <i class="fas fa-arrow-right"></i> Open
         </span>
     </a>
+    
+    <!-- Reconciliation -->
+    <a href="<?php echo home_url('/120-stand/reconciliation/'); ?>" class="home-card">
+        <div class="home-card-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <h3>Reconciliation</h3>
+        <p>Daily record reconciliation calendar. Two admins must verify each date's records.</p>
+        <span class="home-card-btn">
+            <i class="fas fa-arrow-right"></i> Open
+        </span>
+    </a>
     <?php endif; ?>
 </div>
 

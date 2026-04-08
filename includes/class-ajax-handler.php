@@ -187,6 +187,17 @@ class Stand120_Ajax_Handler {
                 self::clear_all_records();
                 break;
             
+            // Reconciliation actions
+            case 'submit_reconciliation':
+                self::submit_reconciliation();
+                break;
+            case 'get_reconciliation_status':
+                self::get_reconciliation_status();
+                break;
+            case 'get_reconciliation_for_date':
+                self::get_reconciliation_for_date();
+                break;
+            
             default:
                 wp_send_json_error(array('message' => 'Invalid action'));
         }
@@ -1171,6 +1182,67 @@ class Stand120_Ajax_Handler {
         );
         
         $result = Stand120_Expense_Record::get_history($filters);
+        wp_send_json_success($result);
+    }
+    
+    /**
+     * Submit reconciliation
+     */
+    private static function submit_reconciliation() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Only admins can reconcile records'));
+            return;
+        }
+        
+        $data = array(
+            'date' => sanitize_text_field($_POST['date'] ?? ''),
+            'remark' => sanitize_text_field($_POST['remark'] ?? '')
+        );
+        
+        $result = Stand120_Reconciliation::submit($data);
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
+    }
+    
+    /**
+     * Get reconciliation status for a date range
+     */
+    private static function get_reconciliation_status() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized'));
+            return;
+        }
+        
+        $start_date = sanitize_text_field($_POST['start_date'] ?? date('Y-m-01'));
+        $end_date = sanitize_text_field($_POST['end_date'] ?? date('Y-m-t'));
+        
+        $dates = Stand120_Reconciliation::get_status($start_date, $end_date);
+        
+        wp_send_json_success(array('dates' => $dates));
+    }
+    
+    /**
+     * Get reconciliation for a specific date
+     */
+    private static function get_reconciliation_for_date() {
+        if (!Stand120_Auth::is_admin()) {
+            wp_send_json_error(array('message' => 'Unauthorized'));
+            return;
+        }
+        
+        $date = sanitize_text_field($_POST['date'] ?? '');
+        
+        if (empty($date)) {
+            wp_send_json_error(array('message' => 'Date is required'));
+            return;
+        }
+        
+        $result = Stand120_Reconciliation::get_for_date($date);
+        
         wp_send_json_success($result);
     }
 }
