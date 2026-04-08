@@ -66,10 +66,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         <i class="fas fa-cog"></i> Clock-In Device Settings
     </h3>
     
+    <div style="background: rgba(var(--primary-rgb, 110, 86, 207), 0.1); padding: 12px 16px; border-radius: 8px; margin-bottom: 20px;">
+        <strong><i class="fas fa-info-circle"></i> Your current detected IP:</strong>
+        <span id="currentDetectedIp" style="font-family: monospace; font-weight: 600;">Loading...</span>
+        <button type="button" id="useCurrentIp" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem; margin-left: 8px;">
+            <i class="fas fa-crosshairs"></i> Use This IP
+        </button>
+    </div>
+    
     <div class="form-group">
         <label class="form-label">Allowed Device IP Address</label>
         <input type="text" id="deviceIp" class="form-control" placeholder="e.g., 192.168.1.100">
-        <small style="color: var(--text-muted);">Only this IP can submit clock-ins. Leave empty to allow all.</small>
+        <small style="color: var(--text-muted);">Only this IP can submit clock-ins. Leave empty to allow all. Use the "Use This IP" button above to auto-fill.</small>
     </div>
     
     <div class="form-group">

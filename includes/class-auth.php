@@ -139,47 +139,94 @@ class Stand120_Auth {
     }
     
     /**
-     * Login user
+     * Resolve a login identifier to a WordPress user object.
+     * Tries: user_login (exact), email, user_login (case-insensitive), display_name.
      */
-    public static function login($username, $password) {
-        $credentials = array(
-            'user_login' => $username,
-            'user_password' => $password,
-            'remember' => true
-        );
+    private static function resolve_user($identifier) {
+        // 1. Exact user_login match
+        $user = get_user_by('login', $identifier);
+        if ($user) {
+            return $user;
+        }
         
-        $user = wp_signon($credentials, is_ssl());
-        
-        if (is_wp_error($user) && is_email($username)) {
-            $user_by_email = get_user_by('email', $username);
-            if ($user_by_email) {
-                $credentials['user_login'] = $user_by_email->user_login;
-                $user = wp_signon($credentials, is_ssl());
+        // 2. Email match
+        if (is_email($identifier)) {
+            $user = get_user_by('email', $identifier);
+            if ($user) {
+                return $user;
             }
         }
         
+        // 3. Case-insensitive user_login lookup via DB
+        global $wpdb;
+        $row = $wpdb->get_row($wpdb->prepare(
+            "SELECT ID FROM {$wpdb->users} WHERE LOWER(user_login) = LOWER(%s) LIMIT 1",
+            $identifier
+        ));
+        if ($row) {
+            return get_user_by('id', $row->ID);
+        }
+        
+        // 4. Display name match (some users try their display name)
+        $row = $wpdb->get_row($wpdb->prepare(
+            "SELECT ID FROM {$wpdb->users} WHERE display_name = %s LIMIT 1",
+            $identifier
+        ));
+        if ($row) {
+            return get_user_by('id', $row->ID);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Login user
+     * Uses wp_authenticate() + wp_set_auth_cookie() instead of wp_signon()
+     * to avoid cookie-setting issues in AJAX contexts.
+     */
+    public static function login($username, $password) {
+        // Resolve the identifier to a real WP user object
+        $resolved_user = self::resolve_user($username);
+        
+        if (!$resolved_user) {
+            return array(
+                'success' => false,
+                'message' => 'No account found with that username or email.'
+            );
+        }
+        
+        // Authenticate using the resolved user_login (wp_authenticate needs the exact login)
+        $user = wp_authenticate($resolved_user->user_login, $password);
+        
         if (is_wp_error($user)) {
+            // Provide a clearer message
+            $error_code = $user->get_error_code();
+            if ($error_code === 'incorrect_password') {
+                return array(
+                    'success' => false,
+                    'message' => 'Incorrect password. Please try again.'
+                );
+            }
             return array(
                 'success' => false,
                 'message' => $user->get_error_message()
             );
         }
         
-        // Check if user has access - allow admins, staff role, or users with stand120_access capability
+        // Set the auth cookie manually — this is the fix for AJAX login failures.
+        // wp_signon() can fail to set cookies when headers are already sent in AJAX.
+        wp_set_auth_cookie($user->ID, true, is_ssl());
+        wp_set_current_user($user->ID);
+        
+        // Ensure user has access capability
         $user_roles = (array) $user->roles;
         $is_admin = in_array('administrator', $user_roles);
         $is_staff_role = in_array('stand120_staff', $user_roles);
         $has_access_cap = $user->has_cap('stand120_access');
         
-        // Allow: administrators, stand120_staff role, or any user with stand120_access capability
-        // Also allow subscribers/editors etc if they were manually added
         if (!$is_admin && !$is_staff_role && !$has_access_cap) {
-            // If none of the above, grant access anyway and add the capability
-            // This ensures all WordPress users can access the system
             $user->add_cap('stand120_access');
         }
-        
-        wp_set_current_user($user->ID);
         
         // Log activity
         Stand120_Database::log_activity('login');

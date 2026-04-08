@@ -2604,6 +2604,15 @@ const ClockInHistory = {
         
         $(document).on('click', '#exportCsv', () => this.exportCsv());
         $(document).on('click', '#saveDeviceSettings', () => this.saveSettings());
+        $(document).on('click', '#useCurrentIp', () => {
+            const currentIp = $('#currentDetectedIp').text().trim();
+            if (currentIp && currentIp !== 'Loading...' && currentIp !== 'Unknown') {
+                $('#deviceIp').val(currentIp);
+                Stand120.showAlert('success', 'IP address filled: ' + currentIp);
+            } else {
+                Stand120.showAlert('danger', 'Could not detect current IP');
+            }
+        });
     },
     
     loadHistory: function() {
@@ -2735,7 +2744,10 @@ const ClockInHistory = {
                 $('#deviceIp').val(response.data.device_ip || '');
                 $('#deviceBuild').val(response.data.device_build || '');
                 $('#lateThreshold').val(response.data.late_threshold || '08:00');
+                $('#currentDetectedIp').text(response.data.current_ip || 'Unknown');
             }
+        }).catch(() => {
+            $('#currentDetectedIp').text('Failed to detect');
         });
     },
     

@@ -227,9 +227,11 @@ class Stand120_Ajax_Handler {
      * Handle login
      */
     private static function handle_login() {
-        $raw_username = trim($_POST['username'] ?? '');
-        $username = is_email($raw_username) ? sanitize_email($raw_username) : sanitize_text_field($raw_username);
-        $password = $_POST['password'] ?? '';
+        // Use wp_unslash + trim to preserve special chars in usernames/emails.
+        // sanitize_text_field strips HTML entities and can corrupt usernames that
+        // contain characters like & or <.
+        $username = trim(wp_unslash($_POST['username'] ?? ''));
+        $password = wp_unslash($_POST['password'] ?? '');
         
         if (empty($username) || empty($password)) {
             wp_send_json_error(array('message' => 'Please enter username and password'));

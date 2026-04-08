@@ -14,6 +14,19 @@ class Stand120_Clock_In {
     const COOLDOWN_SECONDS = 60;
     
     /**
+     * Normalize an IP address for reliable comparison.
+     * Strips IPv4-mapped IPv6 prefix (::ffff:), trims whitespace, lowercases.
+     */
+    private static function normalize_ip($ip) {
+        $ip = trim($ip);
+        // Strip IPv4-mapped IPv6 prefix
+        if (stripos($ip, '::ffff:') === 0) {
+            $ip = substr($ip, 7);
+        }
+        return strtolower($ip);
+    }
+    
+    /**
      * Verify that the request comes from the allowed device
      */
     public static function verify_device($device_ip, $device_build) {
@@ -25,8 +38,16 @@ class Stand120_Clock_In {
             return array('valid' => true, 'message' => 'Device verification not configured');
         }
         
-        if (!empty($allowed_ip) && $device_ip !== $allowed_ip) {
-            return array('valid' => false, 'message' => 'Clock-in is only allowed from the designated device');
+        if (!empty($allowed_ip)) {
+            $normalized_client = self::normalize_ip($device_ip);
+            $normalized_allowed = self::normalize_ip($allowed_ip);
+            
+            if ($normalized_client !== $normalized_allowed) {
+                return array(
+                    'valid' => false,
+                    'message' => 'Clock-in is only allowed from the designated device. Your detected IP: ' . $device_ip
+                );
+            }
         }
         
         if (!empty($allowed_build) && $device_build !== $allowed_build) {
@@ -315,20 +336,21 @@ class Stand120_Clock_In {
     }
     
     /**
-     * Get device settings
+     * Get device settings (includes the server-detected IP of the current request)
      */
     public static function get_device_settings() {
         return array(
             'device_ip' => get_option('stand120_allowed_device_ip', ''),
             'device_build' => get_option('stand120_allowed_device_build', ''),
-            'late_threshold' => get_option('stand120_late_threshold', '08:00')
+            'late_threshold' => get_option('stand120_late_threshold', '08:00'),
+            'current_ip' => self::get_client_ip()
         );
     }
     
     /**
      * Get client IP address
      */
-    private static function get_client_ip() {
+    public static function get_client_ip() {
         $ip = '';
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip_list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
