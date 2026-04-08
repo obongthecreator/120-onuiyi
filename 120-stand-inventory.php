@@ -83,6 +83,7 @@ class Stand120_Inventory {
         require_once STAND120_PLUGIN_DIR . 'includes/class-expense-record.php';
         require_once STAND120_PLUGIN_DIR . 'includes/class-admin-panel.php';
         require_once STAND120_PLUGIN_DIR . 'includes/class-reconciliation.php';
+        require_once STAND120_PLUGIN_DIR . 'includes/class-clock-in.php';
     }
     
     /**
@@ -147,6 +148,8 @@ class Stand120_Inventory {
         add_rewrite_rule('^120-stand/profile/?$', 'index.php?stand120_page=profile', 'top');
         add_rewrite_rule('^120-stand/analytics/?$', 'index.php?stand120_page=analytics', 'top');
         add_rewrite_rule('^120-stand/reconciliation/?$', 'index.php?stand120_page=reconciliation', 'top');
+        add_rewrite_rule('^120-stand/clock-in/?$', 'index.php?stand120_page=clock-in', 'top');
+        add_rewrite_rule('^120-stand/clock-in-history/?$', 'index.php?stand120_page=clock-in-history', 'top');
     }
     
     /**
@@ -181,6 +184,12 @@ class Stand120_Inventory {
         
         // Check admin access for reconciliation
         if ($page === 'reconciliation' && !Stand120_Auth::is_admin()) {
+            wp_redirect(home_url('/120-stand/'));
+            exit;
+        }
+        
+        // Check admin access for clock-in history
+        if ($page === 'clock-in-history' && !Stand120_Auth::is_admin()) {
             wp_redirect(home_url('/120-stand/'));
             exit;
         }

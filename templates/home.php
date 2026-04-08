@@ -140,6 +140,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </span>
     </a>
     
+    <!-- Clock In -->
+    <a href="<?php echo home_url('/120-stand/clock-in/'); ?>" class="home-card">
+        <div class="home-card-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <h3>Clock In</h3>
+        <p>Daily staff clock-in. Records your attendance with date and time automatically.</p>
+        <span class="home-card-btn">
+            <i class="fas fa-arrow-right"></i> Open
+        </span>
+    </a>
+    
     <?php if ($is_admin): ?>
     <!-- Admin Panel -->
     <a href="<?php echo home_url('/120-stand/admin-panel/'); ?>" class="home-card">
@@ -172,6 +184,18 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </div>
         <h3>Reconciliation</h3>
         <p>Daily record reconciliation calendar. Two admins must verify each date's records.</p>
+        <span class="home-card-btn">
+            <i class="fas fa-arrow-right"></i> Open
+        </span>
+    </a>
+    
+    <!-- Clock-In History -->
+    <a href="<?php echo home_url('/120-stand/clock-in-history/'); ?>" class="home-card">
+        <div class="home-card-icon">
+            <i class="fas fa-user-clock"></i>
+        </div>
+        <h3>Clock-In History</h3>
+        <p>View staff clock-in records, late arrivals, and export attendance data to CSV.</p>
         <span class="home-card-btn">
             <i class="fas fa-arrow-right"></i> Open
         </span>
