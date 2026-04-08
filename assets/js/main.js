@@ -1755,18 +1755,17 @@ const AdminPanel = {
             }
         });
         
-        Promise.all(promises).then((results) => {
+        Promise.allSettled(promises).then((results) => {
             Stand120.hideLoading();
-            const failed = results.filter(result => !result.success);
-            if (failed.length) {
-                Stand120.showAlert('danger', failed[0].data?.message || 'Failed to save some products');
-                return;
+            const failures = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.success));
+            if (failures.length) {
+                const firstFail = failures[0];
+                const msg = firstFail.status === 'fulfilled' ? (firstFail.value.data?.message || 'Failed to save some products') : 'Network error saving products';
+                Stand120.showAlert('danger', msg);
+            } else {
+                Stand120.showAlert('success', 'Products saved successfully');
             }
-            Stand120.showAlert('success', 'Products saved successfully');
             this.loadData();
-        }).catch(() => {
-            Stand120.hideLoading();
-            Stand120.showAlert('danger', 'Failed to save some products');
         });
     },
     

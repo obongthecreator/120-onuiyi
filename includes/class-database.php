@@ -370,7 +370,7 @@ class Stand120_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'stand120_products';
         
-        $result = $wpdb->insert($table, $data);
+        $result = $wpdb->insert($table, $data, array('%s', '%f', '%s', '%s'));
         
         if ($result !== false) {
             return $wpdb->insert_id;
@@ -386,7 +386,7 @@ class Stand120_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'stand120_products';
         
-        return $wpdb->update($table, $data, array('id' => $id));
+        return $wpdb->update($table, $data, array('id' => $id), array('%s', '%f', '%s'), array('%d'));
     }
     
     /**
@@ -421,13 +421,21 @@ class Stand120_Database {
         // Sanitize IP address
         $ip_address = filter_var($ip_address, FILTER_VALIDATE_IP) ? $ip_address : '';
         
+        // JSON-encode arrays and objects to prevent fatal errors
+        if (is_array($old_value) || is_object($old_value)) {
+            $old_value = wp_json_encode($old_value);
+        }
+        if (is_array($new_value) || is_object($new_value)) {
+            $new_value = wp_json_encode($new_value);
+        }
+        
         $wpdb->insert($table, array(
             'staff_id' => $staff_id,
             'action' => $action,
             'table_name' => $table_name,
             'record_id' => $record_id,
-            'old_value' => is_array($old_value) ? wp_json_encode($old_value) : $old_value,
-            'new_value' => is_array($new_value) ? wp_json_encode($new_value) : $new_value,
+            'old_value' => $old_value,
+            'new_value' => $new_value,
             'ip_address' => $ip_address
         ));
     }
