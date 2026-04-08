@@ -42,7 +42,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 <?php if ($is_admin): ?>
 <div style="background: rgba(var(--primary-rgb, 99,102,241), 0.1); border: 1px solid rgba(var(--primary-rgb, 99,102,241), 0.3); border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; font-size: 0.9rem; color: var(--text-color);">
     <i class="fas fa-info-circle" style="color: var(--primary-color);"></i>
-    <strong>Admin:</strong> Double-click on <strong>Old Cash</strong> or <strong>Cash Left</strong> cells to edit them. Changes will automatically propagate to linked days.
+    <strong>Admin:</strong> Double-click on <strong>Old Cash</strong>, <strong>Card Exp Cash Left</strong>, or <strong>Cash Left</strong> cells to edit them. Changes will automatically propagate to linked days.
 </div>
 <?php endif; ?>
 
@@ -181,6 +181,10 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             ? `<td class="formatted-number editable-cell" data-field="cash_left" data-record-id="${r.id}" data-raw-value="${r.cash_left}" style="font-weight:600;color:var(--primary-color);" title="Double-click to edit"><span class="editable-value">₦${Stand120.formatNumber(r.cash_left)} <i class="fas fa-pencil-alt edit-icon"></i></span></td>`
                             : `<td class="formatted-number" style="font-weight:600;color:var(--primary-color)">₦${Stand120.formatNumber(r.cash_left)}</td>`;
                         
+                        const cardExpCashLeftCell = isAdmin
+                            ? `<td class="formatted-number editable-cell" data-field="market_card_expense" data-record-id="${r.id}" data-raw-value="${r.market_card_expense}" title="Double-click to edit"><span class="editable-value">₦${Stand120.formatNumber(r.market_card_expense)} <i class="fas fa-pencil-alt edit-icon"></i></span></td>`
+                            : `<td class="formatted-number">₦${Stand120.formatNumber(r.market_card_expense)}</td>`;
+                        
                         $tbody.append(`<tr>
                             <td>${r.summary_date}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.total_sales)}</td>
@@ -190,7 +194,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
                             <td>${extrasRemark}</td>
                             <td class="formatted-number">₦${Stand120.formatNumber(r.expenses_amount)}</td>
                             <td>${expensesRemark}</td>
-                            <td class="formatted-number">₦${Stand120.formatNumber(r.market_card_expense)}</td>
+                            ${cardExpCashLeftCell}
                             ${oldCashCell}
                             ${cashLeftCell}
                         </tr>`);

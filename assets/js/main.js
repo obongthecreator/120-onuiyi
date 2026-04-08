@@ -1685,23 +1685,60 @@ const AdminPanel = {
     },
     
     addProductRow: function() {
-        const row = `
-            <tr data-id="new">
-                <td><input type="text" class="table-input product-name" placeholder="Product name"></td>
-                <td><input type="number" class="table-input product-price" placeholder="0"></td>
-                <td>
-                    <select class="table-input product-type">
+        const self = this;
+        const content = `
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label class="form-label">Product Name</label>
+                    <input type="text" class="form-control" name="name" required placeholder="Enter product name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price (₦)</label>
+                    <input type="number" class="form-control" name="price" required placeholder="0" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-control" name="type">
                         <option value="menu">Menu Item</option>
                         <option value="fruit">Fruit</option>
                         <option value="non_fruit">Non-Fruit</option>
                     </select>
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-danger delete-product"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
+                </div>
+            </form>
         `;
-        $('#productsTable tbody').append(row);
+        
+        Stand120.showModal({
+            title: 'Add New Product',
+            content: content,
+            confirmText: 'Add Product'
+        }).then(confirmed => {
+            if (confirmed) {
+                const formData = {};
+                $('#addProductForm').serializeArray().forEach(item => {
+                    formData[item.name] = item.value;
+                });
+                
+                if (!formData.name || !formData.name.trim()) {
+                    Stand120.showAlert('danger', 'Product name is required');
+                    return;
+                }
+                
+                Stand120.showLoading('Adding product...');
+                
+                Stand120.ajax('add_product', formData).then(response => {
+                    Stand120.hideLoading();
+                    if (response.success) {
+                        Stand120.showAlert('success', 'Product added successfully');
+                        self.loadData();
+                    } else {
+                        Stand120.showAlert('danger', response.data?.message || 'Failed to add product');
+                    }
+                }).catch(err => {
+                    Stand120.hideLoading();
+                    Stand120.showAlert('danger', 'Failed to add product. Please try again.');
+                });
+            }
+        });
     },
     
     deleteProduct: async function(e) {
@@ -1735,16 +1772,21 @@ const AdminPanel = {
         $('#productsTable tbody tr').each(function() {
             const $row = $(this);
             const rowId = $row.data('id');
-            const product = {
-                name: $row.find('.product-name').val(),
-                price: $row.find('.product-price').val(),
-                type: $row.find('.product-type').val()
-            };
-            if (rowId !== 'new' && rowId) {
-                product.id = rowId;
+            // Only update existing products (new products are added via the Add Product modal)
+            if (rowId && rowId !== 'new') {
+                products.push({
+                    id: rowId,
+                    name: $row.find('.product-name').val(),
+                    price: $row.find('.product-price').val(),
+                    type: $row.find('.product-type').val()
+                });
             }
-            products.push(product);
         });
+        
+        if (products.length === 0) {
+            Stand120.showAlert('info', 'No products to save');
+            return;
+        }
         
         // Validate: ensure all products have names
         const emptyNames = products.filter(p => !p.name || !p.name.trim());
@@ -1755,13 +1797,10 @@ const AdminPanel = {
         
         Stand120.showLoading('Saving products...');
         
+        const self = this;
         // Save each product individually
         const promises = products.map(product => {
-            if (product.id) {
-                return Stand120.ajax('update_product', product);
-            } else {
-                return Stand120.ajax('add_product', product);
-            }
+            return Stand120.ajax('update_product', product);
         });
         
         Promise.allSettled(promises).then((results) => {
@@ -1774,7 +1813,7 @@ const AdminPanel = {
             } else {
                 Stand120.showAlert('success', 'Products saved successfully');
             }
-            this.loadData();
+            self.loadData();
         });
     },
     

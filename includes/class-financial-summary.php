@@ -390,11 +390,34 @@ class Stand120_Financial_Summary {
             $update_data['cash_left'] = floatval($data['cash_left']);
         }
         
+        if (isset($data['market_card_expense'])) {
+            $update_data['market_card_expense'] = floatval($data['market_card_expense']);
+        }
+        
         if (empty($update_data)) {
             return array('success' => false, 'message' => 'No fields to update');
         }
         
         $wpdb->update($table, $update_data, array('id' => $record_id));
+        
+        // If market_card_expense was changed, recalculate cash_left for this record
+        if (isset($data['market_card_expense'])) {
+            $updated = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $record_id));
+            if ($updated) {
+                $new_cash_left = (floatval($updated->cash_sales) + floatval($updated->old_cash) + floatval($updated->market_card_expense) + floatval($updated->extras_amount)) - floatval($updated->expenses_amount);
+                $wpdb->update($table, array('cash_left' => $new_cash_left), array('id' => $record_id));
+                
+                // Also propagate cash_left to next day's old_cash
+                $next_date = date('Y-m-d', strtotime($updated->summary_date . ' +1 day'));
+                $next_record = $wpdb->get_row($wpdb->prepare(
+                    "SELECT id FROM $table WHERE summary_date = %s",
+                    $next_date
+                ));
+                if ($next_record) {
+                    $wpdb->update($table, array('old_cash' => $new_cash_left), array('id' => $next_record->id));
+                }
+            }
+        }
         
         // Propagate linked changes between days
         $record_date = $existing->summary_date;
