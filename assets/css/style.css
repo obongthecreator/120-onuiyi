@@ -11,18 +11,18 @@
     --bg-primary: #FFFFFF;
     --bg-secondary: #FAFAFA;
     --bg-card: rgba(255, 255, 255, 0.95);
-    --bg-glass: rgba(139, 0, 0, 0.05);
+    --bg-glass: rgba(255, 255, 255, 0.25);
     --text-primary: #1a1a1a;
     --text-secondary: #333333;
     --text-muted: #666666;
     --text-white: #FFFFFF;
-    --border-color: rgba(139, 0, 0, 0.12);
-    --border-glass: rgba(139, 0, 0, 0.15);
+    --border-color: rgba(255, 255, 255, 0.3);
+    --border-glass: rgba(255, 255, 255, 0.35);
     --success-color: #28a745;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
     --info-color: #17a2b8;
-    --shadow-glass: 0 8px 32px 0 rgba(139, 0, 0, 0.1);
+    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
     --blur-glass: blur(10px);
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
@@ -61,7 +61,7 @@
 
 .glass-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
 }
 
 /* Header */
@@ -345,7 +345,7 @@
 
 .home-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 45px 0 rgba(139, 0, 0, 0.25);
+    box-shadow: 0 15px 45px 0 rgba(0, 0, 0, 0.12);
     border-color: var(--primary-color);
 }
 
@@ -484,6 +484,7 @@
     border-radius: var(--border-radius-sm);
     color: var(--text-primary);
     font-size: 1rem;
+    font-weight: 700;
     transition: all var(--transition-fast);
 }
 
@@ -495,11 +496,12 @@
 
 .form-control::placeholder {
     color: var(--text-muted);
+    font-weight: 400;
 }
 
 .form-control:disabled,
 .form-control[readonly] {
-    background: rgba(139, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.15);
     cursor: not-allowed;
 }
 
@@ -549,7 +551,7 @@ select.form-control {
 }
 
 .table thead {
-    background: rgba(139, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .table th {
@@ -568,6 +570,7 @@ select.form-control {
     border-top: 1px solid var(--border-glass);
     color: var(--text-secondary);
     font-size: 0.85rem;
+    font-weight: 700;
 }
 
 .table tbody tr {
@@ -575,7 +578,7 @@ select.form-control {
 }
 
 .table tbody tr:hover {
-    background: rgba(139, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .table-input {
@@ -588,17 +591,18 @@ select.form-control {
     color: var(--text-primary);
     font-size: 0.85rem;
     text-align: right;
+    font-weight: 700;
 }
 
 .table-input:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .table-input:disabled,
 .table-input[readonly] {
-    background: rgba(139, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.15);
     cursor: not-allowed;
 }
 
@@ -641,7 +645,7 @@ select.form-control {
 
 .payment-option.selected {
     border-color: var(--primary-color);
-    background: rgba(139, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .payment-option input {
@@ -796,7 +800,7 @@ select.form-control {
     overflow-y: auto;
     transform: scale(0.9);
     transition: transform var(--transition-normal);
-    box-shadow: 0 20px 60px rgba(139, 0, 0, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
 }
 
 .modal-overlay.active .modal-content {
@@ -992,7 +996,7 @@ select.form-control {
     padding: 6px 0;
     padding-bottom: calc(6px + env(safe-area-inset-bottom));
     z-index: 1000;
-    box-shadow: 0 -4px 20px rgba(139, 0, 0, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .bottom-nav-item {
@@ -1041,7 +1045,7 @@ select.form-control {
     width: 100%;
     max-width: 400px;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(139, 0, 0, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
 }
 
 .login-logo {

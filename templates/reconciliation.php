@@ -174,7 +174,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
 }
 .reconciliation-calendar .cal-day:hover {
     border-color: var(--primary-color);
-    background: rgba(139,0,0,0.1);
+    background: rgba(255, 255, 255, 0.15);
     transform: scale(1.05);
 }
 .reconciliation-calendar .cal-day.empty {

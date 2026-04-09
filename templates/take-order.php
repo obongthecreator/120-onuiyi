@@ -115,7 +115,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </div>
         
         <!-- Cash Amount Section (Hidden by default) -->
-        <div id="cashSection" class="glass-card" style="display: none; margin-top: 16px; background: rgba(139, 0, 0, 0.03);">
+        <div id="cashSection" class="glass-card" style="display: none; margin-top: 16px;">
             <h4 style="color: var(--primary-color); margin-bottom: 12px;">
                 <i class="fas fa-money-bill-wave"></i> Cash Payment
             </h4>
@@ -126,7 +126,7 @@ include STAND120_PLUGIN_DIR . 'templates/partials/header.php';
         </div>
         
         <!-- Transfer Amount Section (Hidden by default) -->
-        <div id="transferSection" class="glass-card" style="display: none; margin-top: 16px; background: rgba(139, 0, 0, 0.03);">
+        <div id="transferSection" class="glass-card" style="display: none; margin-top: 16px;">
             <h4 style="color: var(--primary-color); margin-bottom: 12px;">
                 <i class="fas fa-credit-card"></i> Transfer/Card Payment
             </h4>
