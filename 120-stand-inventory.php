@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('STAND120_VERSION', '1.1.0');
+define('STAND120_VERSION', '1.2.0');
 define('STAND120_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('STAND120_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('STAND120_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -212,50 +212,18 @@ class Stand120_Inventory {
     
     /**
      * Enqueue scripts and styles
+     *
+     * Note: Custom page templates (header.php / footer.php / login.php) load
+     * jQuery, CSS, stand120_ajax config, main.js and sw-register.js directly
+     * via <script>/<link> tags.  We intentionally do NOT wp_enqueue them here
+     * because doing so causes wp_footer() to output the same assets a second
+     * time, which:
+     *   1. Triggers const-redeclaration SyntaxErrors in main.js
+     *   2. Loads WordPress's bundled jQuery which calls jQuery.noConflict(),
+     *      removing the global $ that modules outside the IIFE rely on.
      */
     public function enqueue_scripts() {
-        $page = get_query_var('stand120_page');
-        
-        if (!$page) {
-            return;
-        }
-        
-        // Enqueue styles
-        wp_enqueue_style(
-            'stand120-styles',
-            STAND120_PLUGIN_URL . 'assets/css/style.css',
-            array(),
-            STAND120_VERSION
-        );
-        
-        // Enqueue scripts
-        wp_enqueue_script(
-            'stand120-scripts',
-            STAND120_PLUGIN_URL . 'assets/js/main.js',
-            array('jquery'),
-            STAND120_VERSION,
-            true
-        );
-        
-        // Localize script
-        wp_localize_script('stand120-scripts', 'stand120_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('stand120_nonce'),
-            'plugin_url' => STAND120_PLUGIN_URL,
-            'home_url' => home_url('/120-stand/'),
-            'is_logged_in' => Stand120_Auth::is_logged_in(),
-            'is_admin' => Stand120_Auth::is_admin(),
-            'current_user' => Stand120_Auth::get_current_user_data()
-        ));
-        
-        // Register service worker
-        wp_enqueue_script(
-            'stand120-sw-register',
-            STAND120_PLUGIN_URL . 'assets/js/sw-register.js',
-            array(),
-            STAND120_VERSION,
-            true
-        );
+        // Templates handle their own asset loading — nothing to enqueue.
     }
     
     /**
